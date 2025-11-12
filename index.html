@@ -130,16 +130,16 @@
       </select>
       <p style="font-size:0.8rem; color:#8aa2c1; margin-top:8px;">Hold Ctrl (or Cmd on Mac) to select multiple lines. Default shows only the median.</p>
     </div>
-    <!-- Net worth category selector: allows the user to toggle household and individual series on the net worth chart.  Both are shown by default. -->
+    <!-- Global unit selector: toggle entire dashboard between Households and Individuals (default: Households) -->
     <div style="text-align:center; margin: 10px 0 30px 0;">
-      <label for="groupSelect" style="margin-right:10px; font-weight:bold;">Select net worth categories:</label>
-      <select id="groupSelect" multiple size="2" style="padding: 5px 10px; border-radius:5px; min-width:150px;">
+      <label for="unitSelect" style="margin-right:10px; font-weight:bold;">View as:</label>
+      <select id="unitSelect" style="padding: 5px 10px; border-radius:5px; min-width:180px;">
         <option value="households" selected>Households</option>
-        <option value="individuals" selected>Individuals</option>
+        <option value="individuals">Individuals</option>
       </select>
-      <p style="font-size:0.8rem; color:#8aa2c1; margin-top:8px;">Hold Ctrl (Cmd on Mac) to toggle categories. Both are shown by default.</p>
+      <p style="font-size:0.8rem; color:#8aa2c1; margin-top:8px;">Applies to all charts. Default shows Households.</p>
     </div>
-    <div class="charts-grid">
+      <div class="charts-grid">
       <!-- Median Income Chart (2025 estimate) -->
       <div class="chart-card">
         <h3 id="incomeTitle">Estimated Median Employment Income by Age (Individuals, 2025)</h3>
@@ -169,32 +169,48 @@
           <canvas id="scatterChart"></canvas>
         </div>
       </div>
-      <!-- Net Worth by Percentile (2025) -->
-      <div class="chart-card" style="grid-column: span 2;">
-        <h3 id="percentileNetWorthTitle">Net Worth by Percentile (2025)</h3>
-        <div class="chart-container" style="height: 500px;">
+      <!-- Net Worth Distribution (Histogram) -->
+      <div class="chart-card">
+        <h3 id="percentileNetWorthTitle">Net Worth Distribution (Histogram, 2025)</h3>
+        <div class="chart-container">
           <canvas id="percentileNetWorthChart"></canvas>
         </div>
       </div>
-      <!-- Income by Percentile (2025) -->
-      <div class="chart-card" style="grid-column: span 2;">
-        <h3 id="percentileIncomeTitle">Income by Percentile (2025)</h3>
-        <div class="chart-container" style="height: 500px;">
+      <!-- Income Distribution (Histogram) -->
+      <div class="chart-card">
+        <h3 id="percentileIncomeTitle">Income Distribution (Histogram, 2025)</h3>
+        <div class="chart-container">
           <canvas id="percentileIncomeChart"></canvas>
         </div>
       </div>
+
+      <!-- Wealth Composition by Age (stacked area) -->
+      <div class="chart-card">
+        <h3 id="wealthCompositionTitle">Wealth Composition by Age (2025)</h3>
+        <div class="chart-container">
+          <canvas id="wealthCompositionChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Income Percentile by Gender -->
+      <div class="chart-card">
+        <h3 id="genderIncomeTitle">Income Percentile by Gender (2025)</h3>
+        <div class="chart-container">
+          <canvas id="genderIncomeChart"></canvas>
+        </div>
+      </div>
       <!-- Projected Median Net Worth by Province (2025) -->
-      <div class="chart-card" style="grid-column: span 2;">
+      <div class="chart-card">
         <h3 id="provinceTitle">Projected Median Net Worth by Province (2025)</h3>
-        <div class="chart-container" style="height: 500px;">
+        <div class="chart-container">
           <canvas id="provinceChart"></canvas>
         </div>
       </div>
 
       <!-- Median Income by Province (2025) -->
-      <div class="chart-card" style="grid-column: span 2;">
+      <div class="chart-card">
         <h3 id="provinceIncomeTitle">Median Income by Province (2025)</h3>
-        <div class="chart-container" style="height: 500px;">
+        <div class="chart-container">
           <canvas id="provinceIncomeChart"></canvas>
         </div>
       </div>
@@ -587,6 +603,8 @@
     let scatterChartInstance;
     let percentileNetWorthChartInstance;
     let percentileIncomeChartInstance;
+    let wealthCompositionChartInstance;
+    let genderIncomeChartInstance;
 
     // Labels for percentile charts (1..99)
     const percentileLabels = Array.from({ length: 99 }, (_, i) => String(i + 1));
@@ -634,7 +652,7 @@
       return bestIdx;
     }
 
-    // Plugin to draw a user reference line: vertical (by index) or horizontal (by value)
+    // Plugin to draw a user reference line: vertical (by index or numeric x) or horizontal (by y)
     const userVLinePlugin = {
       id: 'userVLine',
       afterDraw(chart, args, options) {
@@ -651,6 +669,29 @@
           ctx.moveTo(x, chartArea.top);
           ctx.lineTo(x, chartArea.bottom);
           ctx.stroke();
+          if (options.label) {
+            ctx.setLineDash([]);
+            ctx.fillStyle = options.color || 'rgba(244,67,54,1)';
+            ctx.font = '12px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            ctx.fillText(options.label, x + 6, chartArea.top + 6);
+          }
+        } else if (options.xValue != null && scales.x) {
+          // Vertical line at a numeric x-value (e.g., user value on histogram)
+          const x = scales.x.getPixelForValue(options.xValue);
+          ctx.beginPath();
+          ctx.moveTo(x, chartArea.top);
+          ctx.lineTo(x, chartArea.bottom);
+          ctx.stroke();
+          if (options.label) {
+            ctx.setLineDash([]);
+            ctx.fillStyle = options.color || 'rgba(244,67,54,1)';
+            ctx.font = '12px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            ctx.fillText(options.label, x + 6, chartArea.top + 6);
+          }
         } else if (options.yValue != null && scales.y) {
           // Horizontal line at a numeric y-value (e.g., percentile)
           const y = scales.y.getPixelForValue(options.yValue);
@@ -663,6 +704,39 @@
       }
     };
     Chart.register(userVLinePlugin);
+
+    // Plugin to draw one or more reference vertical lines (e.g., Median)
+    const medianVLinePlugin = {
+      id: 'medianVLine',
+      afterDraw(chart, args, options) {
+        if (!options) return;
+        const { ctx, chartArea, scales } = chart;
+        const lines = Array.isArray(options) ? options : [options];
+        ctx.save();
+        lines.forEach(line => {
+          if (line && line.xValue != null && scales?.x) {
+            const x = scales.x.getPixelForValue(line.xValue);
+            ctx.strokeStyle = line.color || 'rgba(255,255,255,0.6)';
+            ctx.setLineDash(line.dash || [2,2]);
+            ctx.lineWidth = line.width || 1;
+            ctx.beginPath();
+            ctx.moveTo(x, chartArea.top);
+            ctx.lineTo(x, chartArea.bottom);
+            ctx.stroke();
+            if (line.label) {
+              ctx.setLineDash([]);
+              ctx.fillStyle = line.color || 'rgba(255,255,255,0.7)';
+              ctx.font = '12px sans-serif';
+              ctx.textAlign = 'left';
+              ctx.textBaseline = 'top';
+              ctx.fillText(line.label, x + 6, chartArea.top + 6);
+            }
+          }
+        });
+        ctx.restore();
+      }
+    };
+    Chart.register(medianVLinePlugin);
 
     /**
      * Compute axis bounds given an array of values and a desired step size.
@@ -703,6 +777,9 @@
     function updateCharts(region) {
       const incomeRatio = incomeRatios[region] || 1;
       const netRatio = netWorthRatios[region] || 1;
+      const unitEl = document.getElementById('unitSelect');
+      const unit = unitEl ? unitEl.value : 'households';
+      const HOUSEHOLD_INCOME_MULTIPLIER = 1.6; // assumption: median household employment income ~1.6x individual
       // Determine which percentile lines the user has selected
       const selectedPcts = (function() {
         const sel = document.getElementById('percentileSelect');
@@ -768,7 +845,11 @@
         return { datasets, values: allVals };
       }
       // Prepare scaled arrays for each percentile for incomes
-      const scaledIncome = baseIncome.map(v => Math.round(v * incomeRatio));
+      // Scale employment income by region; adjust for unit (households vs individuals)
+      let scaledIncome = baseIncome.map(v => Math.round(v * incomeRatio));
+      if (unit === 'households') {
+        scaledIncome = scaledIncome.map(v => Math.round(v * HOUSEHOLD_INCOME_MULTIPLIER));
+      }
       const incomePctArrays = {
         p10: baseIncomeP10.map(v => Math.round(v * incomeRatio)),
         p25: baseIncomeP25.map(v => Math.round(v * incomeRatio)),
@@ -777,7 +858,8 @@
         p90: baseIncomeP90.map(v => Math.round(v * incomeRatio)),
         p99: baseIncomeP99.map(v => Math.round(v * incomeRatio))
       };
-      const incomeResult = buildPercentileDatasets('income', scaledIncome, incomePctArrays, percentileColors.income, 'Median Employment Income (Individuals)');
+      const incomeLabelBase = unit === 'households' ? 'Median Employment Income (Households)' : 'Median Employment Income (Individuals)';
+      const incomeResult = buildPercentileDatasets('income', scaledIncome, incomePctArrays, percentileColors.income, incomeLabelBase);
       // Preserve user dataset if present
       const incomeUserIdx = incomeChartInstance.data.datasets.findIndex(ds => ds.label === 'You');
       let incomeUserDs = null;
@@ -792,11 +874,29 @@
       incomeChartInstance.options.scales.y.max = incAxis.max;
       incomeChartInstance.update();
 
+      // Update gender income chart (lines for Women and Men) — use individuals baseline shape with simple ratios
+      const womenRatio = 0.88; // placeholder; replace with StatsCan data when available
+      const menRatio = 1.00;
+      const womenIncome = baseIncome.map(v => Math.round(v * incomeRatio * (unit==='households' ? HOUSEHOLD_INCOME_MULTIPLIER : 1) * womenRatio));
+      const menIncome = baseIncome.map(v => Math.round(v * incomeRatio * (unit==='households' ? HOUSEHOLD_INCOME_MULTIPLIER : 1) * menRatio));
+      genderIncomeChartInstance.data.labels = ageLabels;
+      genderIncomeChartInstance.data.datasets[0].data = womenIncome;
+      genderIncomeChartInstance.data.datasets[1].data = menIncome;
+      // Force axes to start at zero
+      let gVals = womenIncome.concat(menIncome);
+      const gAxis = computeAxis(gVals, 5000);
+      genderIncomeChartInstance.options.scales.y.min = 0;
+      genderIncomeChartInstance.options.scales.y.max = gAxis.max;
+      genderIncomeChartInstance.update();
+
       // Income composition breakdown chart
       // Compute total income values for the selected region.  These values include
       // all income sources.  The composition shares below determine how
       // employment, investment, pension and transfer income contribute at each age.
-      const scaledTotalIncome = baseTotalIncome.map(v => Math.round(v * incomeRatio));
+      let scaledTotalIncome = baseTotalIncome.map(v => Math.round(v * incomeRatio));
+      if (unit === 'households') {
+        scaledTotalIncome = scaledTotalIncome.map(v => Math.round(v * HOUSEHOLD_INCOME_MULTIPLIER));
+      }
       const empData = [];
       const invData = [];
       const penData = [];
@@ -843,17 +943,26 @@
         compositionChartInstance.update();
       }
 
-      // Net worth chart (median net worth)
-      const scaledNet = baseNetWorth.map(v => Math.round(v * netRatio));
-      const netPctArrays = {
+      // Net worth chart (median net worth) for selected unit
+      const scaledNet = (unit === 'households' ? baseNetWorth : baseIndNetWorth).map(v => Math.round(v * netRatio));
+      const netPctArrays = (unit === 'households') ? {
         p10: baseNetWorthP10.map(v => Math.round(v * netRatio)),
         p25: baseNetWorthP25.map(v => Math.round(v * netRatio)),
         p50: scaledNet,
         p75: baseNetWorthP75.map(v => Math.round(v * netRatio)),
         p90: baseNetWorthP90.map(v => Math.round(v * netRatio)),
         p99: baseNetWorthP99.map(v => Math.round(v * netRatio))
+      } : {
+        p10: baseIndNetWorthP10.map(v => Math.round(v * netRatio)),
+        p25: baseIndNetWorthP25.map(v => Math.round(v * netRatio)),
+        p50: scaledNet,
+        p75: baseIndNetWorthP75.map(v => Math.round(v * netRatio)),
+        p90: baseIndNetWorthP90.map(v => Math.round(v * netRatio)),
+        p99: baseIndNetWorthP99.map(v => Math.round(v * netRatio))
       };
-      const netResult = buildPercentileDatasets('netWorth', scaledNet, netPctArrays, percentileColors.netWorth, 'Median Net Worth (Households)');
+      const netLabelBase = unit === 'households' ? 'Median Net Worth (Households)' : 'Median Net Worth (Individuals)';
+      const netColorMap = unit === 'households' ? percentileColors.netWorth : percentileColors.indNetWorth;
+      const netResult = buildPercentileDatasets(unit === 'households' ? 'netWorth' : 'indNetWorth', scaledNet, netPctArrays, netColorMap, netLabelBase);
       // Preserve zero line dataset (Zero Net Worth) and user dataset
       let zeroNetDs = null;
       let netUserDs = null;
@@ -876,72 +985,98 @@
       netWorthChartInstance.options.scales.y.max = netAxis.max;
       netWorthChartInstance.update();
 
-      // Build the combined net worth chart for households and individuals based on the group selector.
-      const groupSelect = document.getElementById('groupSelect');
-      const selectedGroups = groupSelect ? Array.from(groupSelect.selectedOptions).map(opt => opt.value) : ['households','individuals'];
-      let netWorthDatasetsCombined = [];
-      let netWorthValuesCombined = [];
-      // Retrieve zero and user datasets from the existing net worth chart
-      let zeroNetDsCombined = null;
-      let netUserDsCombined = null;
-      netWorthChartInstance.data.datasets.forEach(ds => {
-        if (ds.label === 'Zero Net Worth') zeroNetDsCombined = ds;
-        if (ds.label === 'You' && userActive) netUserDsCombined = ds;
-      });
-      // Helper to add datasets and accumulate values
-      function addGroupDatasets(label, scaledArray, pctArrays, colorMap) {
-        const res = buildPercentileDatasets(label === 'Median Net Worth (Households)' ? 'netWorth' : 'indNetWorth', scaledArray, pctArrays, colorMap, label);
-        netWorthDatasetsCombined = netWorthDatasetsCombined.concat(res.datasets);
-        netWorthValuesCombined = netWorthValuesCombined.concat(res.values);
-      }
-      // Households group
-      if (selectedGroups.includes('households')) {
-        const scaledHouse = baseNetWorth.map(v => Math.round(v * netRatio));
-        const netPctArraysH = {
-          p10: baseNetWorthP10.map(v => Math.round(v * netRatio)),
-          p25: baseNetWorthP25.map(v => Math.round(v * netRatio)),
-          p50: scaledHouse,
-          p75: baseNetWorthP75.map(v => Math.round(v * netRatio)),
-          p90: baseNetWorthP90.map(v => Math.round(v * netRatio)),
-          p99: baseNetWorthP99.map(v => Math.round(v * netRatio))
-        };
-        addGroupDatasets('Median Net Worth (Households)', scaledHouse, netPctArraysH, percentileColors.netWorth);
-      }
-      // Individuals group
-      if (selectedGroups.includes('individuals')) {
-        const scaledInd = baseIndNetWorth.map(v => Math.round(v * netRatio));
-        const netPctArraysI = {
-          p10: baseIndNetWorthP10.map(v => Math.round(v * netRatio)),
-          p25: baseIndNetWorthP25.map(v => Math.round(v * netRatio)),
-          p50: scaledInd,
-          p75: baseIndNetWorthP75.map(v => Math.round(v * netRatio)),
-          p90: baseIndNetWorthP90.map(v => Math.round(v * netRatio)),
-          p99: baseIndNetWorthP99.map(v => Math.round(v * netRatio))
-        };
-        addGroupDatasets('Median Net Worth (Individuals)', scaledInd, netPctArraysI, percentileColors.indNetWorth);
-      }
-      // Append zero reference and user datasets
-      if (zeroNetDsCombined) netWorthDatasetsCombined.push(zeroNetDsCombined);
-      if (netUserDsCombined) netWorthDatasetsCombined.push(netUserDsCombined);
-      netWorthChartInstance.data.datasets = netWorthDatasetsCombined;
-      // Compute axis bounds for combined net worth chart
-      let combinedVals = netWorthValuesCombined.slice();
-      if (userActive) combinedVals.push(userNetWorthVal);
-      // include zero line values to ensure zero appears
-      combinedVals = combinedVals.concat(new Array(ageLabels.length).fill(0));
-      let combinedAxis = computeAxis(combinedVals, 200000);
-      netWorthChartInstance.options.scales.y.min = combinedAxis.min;
-      netWorthChartInstance.options.scales.y.max = combinedAxis.max;
-      netWorthChartInstance.update();
+      // Wealth Composition chart — assets stacked above zero, debts stacked below, plus net worth line
+      (function updateWealthComposition(){
+        const useNet = (unit==='households' ? baseNetWorth : baseIndNetWorth).map(v => Math.round(v * netRatio));
+        // Approximate debt curve: peaks near mid-30s, declines after 50
+        const peak = unit==='households' ? 200000 : 120000;
+        const centerAge = 37; const sigma = 10;
+        const debts = ageLabels.map((ageStr,i)=>{
+          const age = parseInt(ageStr,10);
+          const gauss = Math.exp(-0.5 * Math.pow((age - centerAge)/sigma, 2));
+          let val = Math.round(peak * gauss);
+          if (age < 20) val = Math.round(val*0.4);
+          if (age > 70) val = Math.round(val*0.2);
+          return val; // positive magnitude; we'll plot negative
+        });
+        // Total assets approximated as net worth + debt
+        const totalAssets = useNet.map((nw,i)=> Math.max(0, nw + debts[i]));
+        // Split assets by shares varying with age (more financial/pension later)
+        const shares = ageLabels.map((aStr,i)=>{
+          const t = i/(ageLabels.length-1);
+          const realEstate = 0.55 - 0.15*t; // falls with age
+          const financial = 0.25 + 0.15*t; // rises with age
+          const pensions = 0.20 + 0.00*t;
+          const sum = realEstate + financial + pensions;
+          return { re: realEstate/sum, fin: financial/sum, pen: pensions/sum };
+        });
+        const re = totalAssets.map((TA,i)=> Math.round(TA * shares[i].re));
+        const fin = totalAssets.map((TA,i)=> Math.round(TA * shares[i].fin));
+        const pen = totalAssets.map((TA,i)=> Math.round(TA * shares[i].pen));
+        const deb = debts.map(d=> -d); // negative for plotting
+        const net = useNet; // already median net worth
+        wealthCompositionChartInstance.data.labels = ageLabels;
+        wealthCompositionChartInstance.data.datasets[0].data = re;
+        wealthCompositionChartInstance.data.datasets[1].data = fin;
+        wealthCompositionChartInstance.data.datasets[2].data = pen;
+        wealthCompositionChartInstance.data.datasets[3].data = deb;
+        wealthCompositionChartInstance.data.datasets[4].data = net;
+        // Stacking: assets vs debts separated
+        wealthCompositionChartInstance.options.scales.y.stacked = true;
+        wealthCompositionChartInstance.options.scales.x.stacked = true;
+        // Compute axis from combined arrays
+        let wVals = re.concat(fin, pen, deb, net);
+        const wAxis = computeAxis(wVals, 200000);
+        wealthCompositionChartInstance.options.scales.y.min = wAxis.min;
+        wealthCompositionChartInstance.options.scales.y.max = wAxis.max;
+        wealthCompositionChartInstance.update();
+      })();
 
-      // Update scatter chart (Income vs Net Worth). Use the median total income as x and median household net worth as y.
-      const scaledTotal = baseTotalIncome.map(v => Math.round(v * incomeRatio));
-      const scaledNetForScatter = baseNetWorth.map(v => Math.round(v * netRatio));
+      // Update scatter chart (Income vs Net Worth, Median). X = median total income, Y = median net worth for selected unit.
+      const scaledTotal = (unit === 'households'
+        ? baseTotalIncome.map(v => Math.round(v * incomeRatio * HOUSEHOLD_INCOME_MULTIPLIER))
+        : baseTotalIncome.map(v => Math.round(v * incomeRatio)));
+      const scaledNetForScatter = (unit === 'households'
+        ? baseNetWorth.map(v => Math.round(v * netRatio))
+        : baseIndNetWorth.map(v => Math.round(v * netRatio)));
       const scatterData = [];
       for (let i = 0; i < ageLabels.length; i++) {
         scatterData.push({ x: scaledTotal[i], y: scaledNetForScatter[i] });
       }
+      // Base dataset is median
+      scatterChartInstance.data.datasets[0].label = 'Median';
       scatterChartInstance.data.datasets[0].data = scatterData;
+      // Add faint percentile overlays when selected (p10, p25, p75, p90, p99)
+      const pToArray = (pKey) => {
+        const incMap = { p10: baseTotalIncomeP10, p25: baseTotalIncomeP25, p50: baseTotalIncome, p75: baseTotalIncomeP75, p90: baseTotalIncomeP90, p99: baseTotalIncomeP99 };
+        const netMapH = { p10: baseNetWorthP10, p25: baseNetWorthP25, p50: baseNetWorth, p75: baseNetWorthP75, p90: baseNetWorthP90, p99: baseNetWorthP99 };
+        const netMapI = { p10: baseIndNetWorthP10, p25: baseIndNetWorthP25, p50: baseIndNetWorth, p75: baseIndNetWorthP75, p90: baseIndNetWorthP90, p99: baseIndNetWorthP99 };
+        const incArr = (incMap[pKey] || baseTotalIncome).map(v => Math.round(v * incomeRatio * (unit === 'households' ? HOUSEHOLD_INCOME_MULTIPLIER : 1)));
+        const netArr = ((unit === 'households' ? netMapH[pKey] : netMapI[pKey]) || (unit==='households'?baseNetWorth:baseIndNetWorth)).map(v => Math.round(v * netRatio));
+        return { incArr, netArr };
+      };
+      // Remove any previous percentile overlay datasets (keep index 0 for median and any 'You' dataset)
+      scatterChartInstance.data.datasets = scatterChartInstance.data.datasets.filter((ds, i) => i === 0 || ds.label === 'You');
+      const faintGreen = 'rgba(102,187,106,0.18)';
+      const faintBlue = 'rgba(41,182,246,0.18)';
+      const selectedPctsForScatter = selectedPcts.filter(p => p !== 'p50');
+      selectedPctsForScatter.forEach(p => {
+        const { incArr, netArr } = pToArray(p);
+        const pts = incArr.map((x, i) => ({ x, y: netArr[i] }));
+        scatterChartInstance.data.datasets.push({
+          label: p.toUpperCase(),
+          type: 'scatter',
+          data: pts,
+          borderColor: unit === 'households' ? faintGreen : faintGreen,
+          backgroundColor: unit === 'households' ? faintGreen : faintGreen,
+          pointBackgroundColor: unit === 'households' ? faintGreen : faintGreen,
+          pointBorderColor: unit === 'households' ? faintGreen : faintGreen,
+          pointRadius: 2,
+          pointHoverRadius: 2,
+          showLine: false,
+          order: 1
+        });
+      });
       // Colour code the scatter points by age.  We map age from blue to red across the
       // entire age range using an HSL colour gradient.  Each point is given a
       // corresponding colour so that younger ages appear blue and older ages fade to red.
@@ -997,7 +1132,7 @@
       // Province bar chart with percentile overlays and user line
       // Rebuild the bar dataset and percentile line datasets for the province chart.
       // Highlight the selected province by changing its bar colour.
-      const barColors = baseProvinceLabels.map(label => label === region ? '#ffa726' : '#42a5f5');
+      const barColors = baseProvinceLabels.map(label => label === region ? '#ffa726' : '#66bb6a');
       // Remove any existing user dataset before rebuilding the chart
       const existingDs = provinceChartInstance.data.datasets;
       let userLine = null;
@@ -1018,46 +1153,38 @@
       barDataset.data = baseProvinceValues.slice();
       barDataset.backgroundColor = barColors;
       barDataset.order = 1;
-      // Determine percentile line datasets for provinces based on selected percentiles
+      // Determine percentile bar datasets for provinces based on selected percentiles
       const provincePctRatios = { p10: 0.10, p25: 0.35, p75: 1.50, p90: 1.80, p99: 12 };
-      const provinceLineDatasets = [];
-      selectedPcts.forEach(p => {
-        if (p === 'p50') return; // median is shown as bars
+      const provinceBarDatasets = [];
+      // Deterministic order for percentiles so median appears in the middle
+      const pctOrder = ['p10','p25','p75','p90','p99'];
+      const colorScaleNW = {
+        p10: 'rgba(102,187,106,0.18)',
+        p25: 'rgba(102,187,106,0.28)',
+        p75: 'rgba(102,187,106,0.50)',
+        p90: 'rgba(102,187,106,0.65)',
+        p99: 'rgba(102,187,106,0.80)'
+      };
+      pctOrder.forEach(p => {
+        if (!selectedPcts.includes(p)) return;
         const ratio = provincePctRatios[p];
         if (!ratio) return;
         const values = baseProvinceValues.map(v => Math.round(v * ratio));
-        let pctLabel = '';
-        switch (p) {
-          case 'p10': pctLabel = '10th Percentile'; break;
-          case 'p25': pctLabel = '25th Percentile'; break;
-          case 'p75': pctLabel = '75th Percentile'; break;
-          case 'p90': pctLabel = '90th Percentile'; break;
-          case 'p99': pctLabel = '99th Percentile'; break;
-          default: pctLabel = p; break;
-        }
-        provinceLineDatasets.push({
-          label: pctLabel,
-          data: values,
-          type: 'line',
-          borderColor: percentileColors.netWorth[p] || '#66bb6a',
-          borderDash: [4,4],
-          borderWidth: 1,
-          fill: false,
-          pointRadius: 0,
-          order: 2
-        });
+        const labels = {p10:'10th Percentile',p25:'25th Percentile',p75:'75th Percentile',p90:'90th Percentile',p99:'99th Percentile'};
+        provinceBarDatasets.push({ label: labels[p], data: values, type: 'bar', backgroundColor: colorScaleNW[p], borderWidth: 0, order: 2 });
       });
-      // Assemble new dataset list: bar dataset + percentile lines
+      // Assemble new dataset list: lower percentiles, median, then upper percentiles
       const newProvinceDatasets = [];
-      newProvinceDatasets.push(barDataset);
-      provinceLineDatasets.forEach(ds => newProvinceDatasets.push(ds));
+      const lower = provinceBarDatasets.filter(ds => /10th|25th/.test(ds.label));
+      const upper = provinceBarDatasets.filter(ds => /75th|90th|99th/.test(ds.label));
+      lower.forEach(ds => newProvinceDatasets.push(ds));
+      newProvinceDatasets.push(barDataset); // median in the middle
+      upper.forEach(ds => newProvinceDatasets.push(ds));
       // Note: user line will be re-added by addUserMarkers() after updateCharts.
       provinceChartInstance.data.datasets = newProvinceDatasets;
       // Compute axis bounds including bars, percentile lines and user value if present
       let provinceValsForAxis = baseProvinceValues.slice();
-      provinceLineDatasets.forEach(ds => {
-        provinceValsForAxis = provinceValsForAxis.concat(ds.data);
-      });
+      provinceBarDatasets.forEach(ds => { provinceValsForAxis = provinceValsForAxis.concat(ds.data); });
       if (userActive) provinceValsForAxis.push(userNetWorthVal);
       let provinceAxis = computeAxis(provinceValsForAxis, 50000);
       provinceChartInstance.options.scales.y.min = 0;
@@ -1069,7 +1196,7 @@
       // median employment income at age 40 (baseIncome[22]) scaled by the
       // province-specific income ratio.  This yields a single value per
       // province suitable for bar display.
-      const baseMedianIncome = baseIncome[22];
+      const baseMedianIncome = (unit === 'households') ? Math.round(baseIncome[22] * HOUSEHOLD_INCOME_MULTIPLIER) : baseIncome[22];
       const provinceIncomeBars = baseProvinceLabels.map(lbl => {
         const ratio = incomeRatios[lbl] || 1;
         return Math.round(baseMedianIncome * ratio);
@@ -1081,42 +1208,35 @@
       // proportions of the median income, based on 2016 census income
       // distributions【605841652791315†L220-L244】.
       const provinceIncomePctRatios = { p10: 0.22, p25: 0.54, p75: 1.64, p90: 2.44, p99: 6 };
-      const incomeLineDatasets = [];
-      selectedPcts.forEach(p => {
-        if (p === 'p50') return;
+      const incomeBarPctDatasets = [];
+      const pctOrderInc = ['p10','p25','p75','p90','p99'];
+      const colorScaleInc = {
+        p10: 'rgba(41,182,246,0.18)',
+        p25: 'rgba(41,182,246,0.28)',
+        p75: 'rgba(41,182,246,0.50)',
+        p90: 'rgba(41,182,246,0.65)',
+        p99: 'rgba(41,182,246,0.80)'
+      };
+      pctOrderInc.forEach(p => {
+        if (!selectedPcts.includes(p)) return;
         const ratio = provinceIncomePctRatios[p];
         if (!ratio) return;
         const values = provinceIncomeBars.map(v => Math.round(v * ratio));
-        let pctLabel = '';
-        switch (p) {
-          case 'p10': pctLabel = '10th Percentile'; break;
-          case 'p25': pctLabel = '25th Percentile'; break;
-          case 'p75': pctLabel = '75th Percentile'; break;
-          case 'p90': pctLabel = '90th Percentile'; break;
-          case 'p99': pctLabel = '99th Percentile'; break;
-          default: pctLabel = p; break;
-        }
-        incomeLineDatasets.push({
-          label: pctLabel,
-          data: values,
-          type: 'line',
-          borderColor: percentileColors.income[p] || '#29b6f6',
-          borderDash: [4,4],
-          borderWidth: 1,
-          fill: false,
-          pointRadius: 0,
-          order: 2
-        });
+        const labels = {p10:'10th Percentile',p25:'25th Percentile',p75:'75th Percentile',p90:'90th Percentile',p99:'99th Percentile'};
+        incomeBarPctDatasets.push({ label: labels[p], data: values, type: 'bar', backgroundColor: colorScaleInc[p], borderWidth: 0, order: 2 });
       });
-      // Assemble datasets: bar dataset plus percentile lines
+      // Assemble datasets: bar dataset plus percentile bars
       const newIncomeDatasets = [];
+      const lowerI = incomeBarPctDatasets.filter(ds => /10th|25th/.test(ds.label));
+      const upperI = incomeBarPctDatasets.filter(ds => /75th|90th|99th/.test(ds.label));
+      lowerI.forEach(ds => newIncomeDatasets.push(ds));
       newIncomeDatasets.push({ label: 'Median Income', data: provinceIncomeBars, backgroundColor: incomeBarColors, type: 'bar', order: 1 });
-      incomeLineDatasets.forEach(ds => newIncomeDatasets.push(ds));
+      upperI.forEach(ds => newIncomeDatasets.push(ds));
       // Assign datasets to the chart
       provinceIncomeChartInstance.data.datasets = newIncomeDatasets;
       // Compute axis bounds including percentile lines and the user's income
       let provinceIncomeVals = provinceIncomeBars.slice();
-      incomeLineDatasets.forEach(ds => { provinceIncomeVals = provinceIncomeVals.concat(ds.data); });
+      incomeBarPctDatasets.forEach(ds => { provinceIncomeVals = provinceIncomeVals.concat(ds.data); });
       if (userActive) provinceIncomeVals.push(userIncomeVal);
       const provinceIncomeAxis = computeAxis(provinceIncomeVals, 5000);
       provinceIncomeChartInstance.options.scales.y.min = 0;
@@ -1124,32 +1244,24 @@
       provinceIncomeChartInstance.update();
       // Update titles
       const suffix = region === 'Canada' ? 'Canada' : region;
-      document.getElementById('incomeTitle').textContent = `Estimated Median Employment Income by Age (Individuals, 2025) – ${suffix}`;
-      document.getElementById('compositionTitle').textContent = `Income Composition Breakdown by Age (2025) – ${suffix}`;
-      document.getElementById('netWorthTitle').textContent = `Estimated Median Net Worth by Age (Households, 2025) – ${suffix}`;
-      // Update chart titles.  The net worth title reflects the selected groups: households and/or individuals.
-      // If both groups are selected, use a generic title; if a single group is selected, specify which.
-      let netTitle = '';
-      if (selectedGroups.includes('households') && selectedGroups.includes('individuals')) {
-        netTitle = `Estimated Median Net Worth by Age (2025) – ${suffix}`;
-      } else if (selectedGroups.includes('households')) {
-        netTitle = `Estimated Median Net Worth by Age (Households, 2025) – ${suffix}`;
-      } else {
-        netTitle = `Estimated Median Net Worth by Age (Individuals, 2025) – ${suffix}`;
-      }
-      document.getElementById('netWorthTitle').textContent = netTitle;
-      document.getElementById('scatterTitle').textContent = `Income vs Net Worth by Age (2025) - ${suffix}`;
+      const unitTitle = unit === 'households' ? 'Households' : 'Individuals';
+      document.getElementById('incomeTitle').textContent = `Estimated Median Employment Income by Age (${unitTitle}, 2025) - ${suffix}`;
+      document.getElementById('compositionTitle').textContent = `Income Composition Breakdown by Age (Median, 2025) - ${suffix}`;
+      document.getElementById('netWorthTitle').textContent = `Estimated Median Net Worth by Age (${unitTitle}, 2025) - ${suffix}`;
+      document.getElementById('scatterTitle').textContent = `Income vs Net Worth by Age (Median, 2025) - ${suffix}`;
       // Update percentile charts for current region using region-wide medians
       let regionMedianNetWorth;
       let regionMedianIncome;
       const provinceIndex = baseProvinceLabels.indexOf(region);
-      const nationalMedianNetWorth = 652286; // projected national household median
-      const nationalMedianIncome = baseIncome[22];
+      const nationalMedianNetWorthHousehold = 652286; // projected national household median
+      const nationalMedianIncomeIndividual = baseIncome[22];
+      const nationalMedianNetWorth = (unit === 'households') ? nationalMedianNetWorthHousehold : Math.round(nationalMedianNetWorthHousehold * 0.6);
+      const nationalMedianIncome = (unit === 'households') ? Math.round(nationalMedianIncomeIndividual * HOUSEHOLD_INCOME_MULTIPLIER) : nationalMedianIncomeIndividual;
       if (region === 'Canada' || provinceIndex === -1) {
         regionMedianNetWorth = nationalMedianNetWorth;
         regionMedianIncome = nationalMedianIncome;
       } else {
-        regionMedianNetWorth = baseProvinceValues[provinceIndex];
+        regionMedianNetWorth = (unit === 'households') ? baseProvinceValues[provinceIndex] : Math.round(baseProvinceValues[provinceIndex] * 0.6);
         regionMedianIncome = Math.round((incomeRatios[region] || 1) * nationalMedianIncome);
       }
       // Estimate normal distribution parameters from anchor ratios
@@ -1185,54 +1297,73 @@
         return (((((a[0]*r + a[1])*r + a[2])*r + a[3])*r + a[4])*r + a[5]) * q /
                (((((b[0]*r + b[1])*r + b[2])*r + b[3])*r + b[4])*r + 1);
       }
-      function buildNormalScatter(mu, sigma) {
+      // Build histogram-style distributions from normal approximation
+      function buildNormalHistogram(mu, sigma, binCount = 30) {
+        const minX = Math.max(0, mu - 3.5 * sigma);
+        const maxX = mu + 3.5 * sigma;
+        const width = (maxX - minX) / binCount;
         const pts = [];
-        for (let p = 1; p <= 99; p++) {
-          const z = normInv(p/100);
-          let x = mu + sigma * z;
-          if (!isFinite(x)) x = mu;
-          if (x < 0) x = 0;
-          pts.push({ x, y: p });
+        const invSQRT2PI = 1 / Math.sqrt(2 * Math.PI);
+        for (let i = 0; i < binCount; i++) {
+          const xMid = minX + (i + 0.5) * width;
+          const z = (xMid - mu) / sigma;
+          const pdf = invSQRT2PI * Math.exp(-0.5 * z * z) / sigma; // density per $1
+          const prob = pdf * width; // probability mass in this bin
+          pts.push({ x: xMid, y: prob * 100 }); // percentage
         }
-        return pts;
+        return { points: pts, minX, maxX };
       }
       const netParams = estimateNormalParams(regionMedianNetWorth, 0.10, 1.80);
       const incParams = estimateNormalParams(regionMedianIncome, 0.22, 2.44);
-      const netScatter = buildNormalScatter(netParams.mu, netParams.sigma);
-      const incScatter = buildNormalScatter(incParams.mu, incParams.sigma);
-      percentileNetWorthChartInstance.data.labels = percentileLabels;
-      percentileNetWorthChartInstance.data.datasets = [ { label: 'Net Worth by Percentile', data: netScatter, color: '#66bb6a', type: 'scatter', pointRadius: 2 } ];
-      percentileIncomeChartInstance.data.labels = percentileLabels;
-      percentileIncomeChartInstance.data.datasets = [ { label: 'Income by Percentile', data: incScatter, color: '#29b6f6', type: 'scatter', pointRadius: 2 } ];
-      // Axes: X in dollars, Y in percentile
+      const netHist = buildNormalHistogram(netParams.mu, netParams.sigma);
+      const incHist = buildNormalHistogram(incParams.mu, incParams.sigma);
+
+      // Update datasets
+      percentileNetWorthChartInstance.data.labels = [];
+      percentileNetWorthChartInstance.data.datasets = [ { label: 'Net Worth Distribution', data: netHist.points, backgroundColor: '#66bb6a' } ];
+      percentileIncomeChartInstance.data.labels = [];
+      percentileIncomeChartInstance.data.datasets = [ { label: 'Income Distribution', data: incHist.points, backgroundColor: '#29b6f6' } ];
+      // Axes: X in dollars (linear), Y in percent probability
       percentileNetWorthChartInstance.options.scales = {
-        x: { type: 'linear', position: 'bottom', ticks: { color: '#b0c5e8', callback: (v)=> '$' + Math.round(v/1000).toLocaleString() + 'k', maxTicksLimit: 10 }, grid: { color: '#1f3a64' } },
-        y: { min: 0, max: 100, ticks: { color: '#b0c5e8', callback: (v)=> v + '%' }, grid: { color: '#1f3a64' } }
+        x: { type: 'linear', position: 'bottom', ticks: { color: '#b0c5e8', callback: (v)=> '$' + Math.round(v/1000).toLocaleString() + 'k', maxTicksLimit: 10 }, grid: { color: '#1f3a64' }, min: netHist.minX, max: netHist.maxX },
+        y: { min: 0, ticks: { color: '#b0c5e8', callback: (v)=> v + '%' }, grid: { color: '#1f3a64' } }
       };
       percentileIncomeChartInstance.options.scales = {
-        x: { type: 'linear', position: 'bottom', ticks: { color: '#b0c5e8', callback: (v)=> '$' + Math.round(v/1000).toLocaleString() + 'k', maxTicksLimit: 10 }, grid: { color: '#1f3a64' } },
-        y: { min: 0, max: 100, ticks: { color: '#b0c5e8', callback: (v)=> v + '%' }, grid: { color: '#1f3a64' } }
+        x: { type: 'linear', position: 'bottom', ticks: { color: '#b0c5e8', callback: (v)=> '$' + Math.round(v/1000).toLocaleString() + 'k', maxTicksLimit: 10 }, grid: { color: '#1f3a64' }, min: incHist.minX, max: incHist.maxX },
+        y: { min: 0, ticks: { color: '#b0c5e8', callback: (v)=> v + '%' }, grid: { color: '#1f3a64' } }
       };
-      document.getElementById('percentileNetWorthTitle').textContent = `Net Worth by Percentile (2025) - ${suffix}`;
-      document.getElementById('percentileIncomeTitle').textContent = `Income by Percentile (2025) - ${suffix}`;
+      // Save dist params for tooltips
+      percentileNetWorthChartInstance.options.plugins.distParams = { mu: netParams.mu, sigma: netParams.sigma };
+      percentileIncomeChartInstance.options.plugins.distParams = { mu: incParams.mu, sigma: incParams.sigma };
+      // Draw a subtle median line on both distributions
+      percentileNetWorthChartInstance.options.plugins.medianVLine = { xValue: netParams.mu, color: 'rgba(255,255,255,0.6)', dash: [2,2], width: 1, label: 'Median' };
+      percentileIncomeChartInstance.options.plugins.medianVLine = { xValue: incParams.mu, color: 'rgba(255,255,255,0.6)', dash: [2,2], width: 1, label: 'Median' };
+      // Custom tooltip for histograms (percent at $x)
+      const histLabelPctile = (ctx) => {
+        const x = ctx.parsed?.x ?? 0;
+        const dp = ctx?.chart?.options?.plugins?.distParams || { mu: 0, sigma: 1 };
+        function erf(x){ const sign=x<0?-1:1; x=Math.abs(x); const a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911; const t=1/(1+p*x); const y=1-(((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x); return sign*y; }
+        function normCdf(z){ return 0.5*(1+erf(z/Math.SQRT2)); }
+        const pct = Math.max(0, Math.min(100, 100*normCdf((x - dp.mu)/Math.max(1, dp.sigma))));
+        const toOrdinal = (n)=>{n=Math.round(n); const s=['th','st','nd','rd']; const v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]);};
+        return `Percentile: ${toOrdinal(pct)} — $${Math.round(x).toLocaleString()}`;
+      };
+      percentileNetWorthChartInstance.options.plugins.tooltip = { mode: 'nearest', intersect: true, callbacks: { label: histLabelPctile } };
+      percentileIncomeChartInstance.options.plugins.tooltip = { mode: 'nearest', intersect: true, callbacks: { label: histLabelPctile } };
+      document.getElementById('percentileNetWorthTitle').textContent = `Net Worth Distribution (Histogram, 2025) - ${suffix}`;
+      document.getElementById('percentileIncomeTitle').textContent = `Income Distribution (Histogram, 2025) - ${suffix}`;
       if (userActive) {
-        // Compute user percentile from normal CDF
-        function normCdf(z) { return 0.5 * (1 + erf(z/Math.SQRT2)); }
-        function erf(x) {
-          // Abramowitz and Stegun approximation
-          const sign = x < 0 ? -1 : 1; x = Math.abs(x);
-          const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741, a4 = -1.453152027, a5 = 1.061405429, p = 0.3275911;
-          const t = 1/(1 + p*x);
-          const y = 1 - (((((a5*t + a4)*t) + a3)*t + a2)*t + a1)*t*Math.exp(-x*x);
-          return sign*y;
-        }
-        const netP = Math.max(0, Math.min(100, 100*normCdf((userNetWorthVal - netParams.mu)/netParams.sigma)));
-        const incP = Math.max(0, Math.min(100, 100*normCdf((userIncomeVal - incParams.mu)/incParams.sigma)));
-        percentileNetWorthChartInstance.options.plugins.userVLine = { yValue: netP, color: 'rgba(244,67,54,1)', dash: [6,3], width: 2 };
-        percentileIncomeChartInstance.options.plugins.userVLine = { yValue: incP, color: 'rgba(244,67,54,1)', dash: [6,3], width: 2 };
+        // Draw vertical line at user's value on histograms with percentile labels
+        function erf(x){ const sign=x<0?-1:1; x=Math.abs(x); const a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911; const t=1/(1+p*x); const y=1-(((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x); return sign*y; }
+        function normCdf(z){ return 0.5*(1+erf(z/Math.SQRT2)); }
+        const netPct = Math.max(0, Math.min(100, 100*normCdf((userNetWorthVal - netParams.mu)/Math.max(1,netParams.sigma))));
+        const incPct = Math.max(0, Math.min(100, 100*normCdf((userIncomeVal - incParams.mu)/Math.max(1,incParams.sigma))));
+        const toOrdinal = (n)=>{n=Math.round(n); const s=['th','st','nd','rd']; const v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]);};
+        percentileNetWorthChartInstance.options.plugins.userVLine = { xValue: userNetWorthVal, color: 'rgba(244,67,54,1)', dash: [6,3], width: 2, label: `You: ${toOrdinal(netPct)} percentile` };
+        percentileIncomeChartInstance.options.plugins.userVLine = { xValue: userIncomeVal, color: 'rgba(244,67,54,1)', dash: [6,3], width: 2, label: `You: ${toOrdinal(incPct)} percentile` };
       } else {
-        percentileNetWorthChartInstance.options.plugins.userVLine = { yValue: null };
-        percentileIncomeChartInstance.options.plugins.userVLine = { yValue: null };
+        percentileNetWorthChartInstance.options.plugins.userVLine = { xValue: null };
+        percentileIncomeChartInstance.options.plugins.userVLine = { xValue: null };
       }
       percentileNetWorthChartInstance.update();
       percentileIncomeChartInstance.update();
@@ -1325,16 +1456,15 @@ function createChart(canvasId, dataInfo, type = 'line') {
     xTickOptions.autoSkip = true; xTickOptions.maxTicksLimit = 10;
   }
 
-  // First dataset color for watermark
-  const firstDS = datasets[0] || {};
-  const firstColor = firstDS.borderColor || firstDS.backgroundColor || '#4fc3f7';
+  // Watermark colour: consistent faint blue across all charts
+  const watermarkColor = '#6aa3f4';
 
   // Base options; special-case scatter axes below
   const options = {
     responsive: true,
     maintainAspectRatio: false,
-    interaction: { mode: 'nearest', intersect: false },
-    hover: { mode: 'nearest', intersect: false },
+    interaction: { mode: 'nearest', intersect: true },
+    hover: { mode: 'nearest', intersect: true },
     scales: {
       x: {
         stacked: isStacked,
@@ -1357,6 +1487,8 @@ function createChart(canvasId, dataInfo, type = 'line') {
     plugins: {
       legend: { display: datasets.length > 1, labels: { color: '#e0e6ed' } },
       tooltip: {
+        mode: 'nearest',
+        intersect: true,
         callbacks: {
           label: (ctx) => {
             const label = ctx.dataset.label || '';
@@ -1366,7 +1498,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
           }
         }
       },
-      watermark: { text: 'wealthdashboard.ca', color: firstColor, opacity: 0.12, fontSize: 20 }
+      watermark: { text: 'wealthdashboard.ca', color: watermarkColor, opacity: 0.10, fontSize: 18 }
     }
   };
 
@@ -1467,7 +1599,6 @@ function createChart(canvasId, dataInfo, type = 'line') {
         labels: ageLabels,
         datasets: [
           { label: 'Median Net Worth (Households)', data: baseNetWorth, color: '#66bb6a' },
-          { label: 'Median Net Worth (Individuals)', data: baseIndNetWorth, color: '#EF5350' },
           Object.assign({}, zeroLine, { data: baseZeroData.slice() })
         ],
         step: 200000
@@ -1480,10 +1611,10 @@ function createChart(canvasId, dataInfo, type = 'line') {
           {
             label: 'Income vs Net Worth',
             data: [],
-            borderColor: '#8e24aa',
-            backgroundColor: '#8e24aa',
-            pointBackgroundColor: '#8e24aa',
-            pointBorderColor: '#8e24aa',
+            borderColor: '#66bb6a',
+            backgroundColor: '#66bb6a',
+            pointBackgroundColor: '#66bb6a',
+            pointBorderColor: '#66bb6a',
             // Increase the base point size to improve visibility.  A larger
             // point radius and hover radius make scatter points easier to see.
             pointRadius: 5,
@@ -1499,7 +1630,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
       // selected province will be highlighted via updateCharts().
       provinceChartInstance = createChart('provinceChart', {
         labels: baseProvinceLabels,
-        datasets: [ { label: 'Median Net Worth', data: baseProvinceValues, backgroundColor: '#42a5f5' } ],
+        datasets: [ { label: 'Median Net Worth', data: baseProvinceValues, backgroundColor: '#66bb6a' } ],
         step: 50000
       }, 'bar');
 
@@ -1513,20 +1644,43 @@ function createChart(canvasId, dataInfo, type = 'line') {
         step: 5000
       }, 'bar');
 
-      // Initialize percentile charts as scatter: X=value, Y=percentile
+      // Wealth Composition baseline; data is computed in updateCharts per region/unit
+      wealthCompositionChartInstance = createChart('wealthCompositionChart', {
+        labels: ageLabels,
+        datasets: [
+          { label: 'Real Estate', data: new Array(ageLabels.length).fill(0), borderColor: '#66bb6a', backgroundColor: 'rgba(102,187,106,0.55)', fill: true, stack: 'assets' },
+          { label: 'Financial Assets', data: new Array(ageLabels.length).fill(0), borderColor: '#29b6f6', backgroundColor: 'rgba(41,182,246,0.55)', fill: true, stack: 'assets' },
+          { label: 'Pensions', data: new Array(ageLabels.length).fill(0), borderColor: '#ab47bc', backgroundColor: 'rgba(171,71,188,0.55)', fill: true, stack: 'assets' },
+          { label: 'Debts', data: new Array(ageLabels.length).fill(0), borderColor: '#ffa726', backgroundColor: 'rgba(255,167,38,0.55)', fill: true, stack: 'debts' },
+          { label: 'Net Worth', data: new Array(ageLabels.length).fill(0), color: '#66bb6a', type: 'line', pointRadius: 0, order: 999 }
+        ],
+        step: 200000
+      }, 'line');
+
+      // Income Percentile by Gender — line chart similar to individual income by age (placeholder ratios)
+      genderIncomeChartInstance = createChart('genderIncomeChart', {
+        labels: ageLabels,
+        datasets: [
+          { label: 'Women (Median)', data: new Array(ageLabels.length).fill(0), color: '#42a5f5' },
+          { label: 'Men (Median)', data: new Array(ageLabels.length).fill(0), color: '#1e88e5' }
+        ],
+        step: 5000
+      }, 'line');
+
+      // Initialize distribution charts as bar (histogram-like)
       percentileNetWorthChartInstance = createChart('percentileNetWorthChart', {
-        labels: percentileLabels,
-        datasets: [ { label: 'Net Worth by Percentile', data: [], color: '#66bb6a', type: 'scatter', pointRadius: 2 } ],
+        labels: [],
+        datasets: [ { label: 'Net Worth Distribution', data: [], backgroundColor: '#66bb6a' } ],
         step: null
-      }, 'scatter');
-      percentileNetWorthChartInstance.options.plugins.userVLine = { yValue: null };
+      }, 'bar');
+      percentileNetWorthChartInstance.options.plugins.userVLine = { xValue: null };
 
       percentileIncomeChartInstance = createChart('percentileIncomeChart', {
-        labels: percentileLabels,
-        datasets: [ { label: 'Income by Percentile', data: [], color: '#29bbf6', type: 'scatter', pointRadius: 2 } ],
+        labels: [],
+        datasets: [ { label: 'Income Distribution', data: [], backgroundColor: '#29bbf6' } ],
         step: null
-      }, 'scatter');
-      percentileIncomeChartInstance.options.plugins.userVLine = { yValue: null };
+      }, 'bar');
+      percentileIncomeChartInstance.options.plugins.userVLine = { xValue: null };
       // Hook up the dropdown to update the charts when a region is selected
       const select = document.getElementById('provinceSelect');
       select.addEventListener('change', function() {
@@ -1540,10 +1694,10 @@ function createChart(canvasId, dataInfo, type = 'line') {
         const currentRegion = document.getElementById('provinceSelect').value;
         updateCharts(currentRegion);
       });
-      // When the net worth group selection changes, refresh the charts for the current region.
-      const groupSelectEl = document.getElementById('groupSelect');
-      if (groupSelectEl) {
-        groupSelectEl.addEventListener('change', function() {
+      // Unit selector: switch between Households and Individuals across all charts
+      const unitSelectEl = document.getElementById('unitSelect');
+      if (unitSelectEl) {
+        unitSelectEl.addEventListener('change', function() {
           const region = document.getElementById('provinceSelect').value;
           updateCharts(region);
         });
@@ -1615,20 +1769,27 @@ function createChart(canvasId, dataInfo, type = 'line') {
         const region = document.getElementById('provinceSelect').value;
         // Rebuild percentile curves for current region
         const provinceIndex = baseProvinceLabels.indexOf(region);
-        const nationalMedianNetWorth = 652286;
-        const nationalMedianIncome = baseIncome[22];
-        const regionMedianNetWorth = (region === 'Canada' || provinceIndex === -1) ? nationalMedianNetWorth : baseProvinceValues[provinceIndex];
-        const regionMedianIncome = (region === 'Canada' || provinceIndex === -1) ? nationalMedianIncome : Math.round((incomeRatios[region] || 1) * nationalMedianIncome);
+        const unitEl = document.getElementById('unitSelect');
+        const unit = unitEl ? unitEl.value : 'households';
+        const HOUSEHOLD_INCOME_MULTIPLIER = 1.6;
+        const nationalMedianNetWorthHousehold = 652286;
+        const nationalMedianIncomeIndividual = baseIncome[22];
+        const nationalMedianNetWorth = (unit === 'households') ? nationalMedianNetWorthHousehold : Math.round(nationalMedianNetWorthHousehold * 0.6);
+        const nationalMedianIncome = (unit === 'households') ? Math.round(nationalMedianIncomeIndividual * HOUSEHOLD_INCOME_MULTIPLIER) : nationalMedianIncomeIndividual;
+        const regionMedianNetWorth = (region === 'Canada' || provinceIndex === -1) ? nationalMedianNetWorth : (unit==='households'? baseProvinceValues[provinceIndex] : Math.round(baseProvinceValues[provinceIndex]*0.6));
+        const regionMedianIncome = Math.round((incomeRatios[region] || 1) * nationalMedianIncome);
         // Estimate parameters and compute user's percentile via normal CDF
         const z = 1.2815515655446004;
         const sNet = ((regionMedianNetWorth - regionMedianNetWorth*0.10)/z + (regionMedianNetWorth*1.80 - regionMedianNetWorth)/z)/2;
         const sInc = ((regionMedianIncome - regionMedianIncome*0.22)/z + (regionMedianIncome*2.44 - regionMedianIncome)/z)/2;
         function erf(x){ const sign=x<0?-1:1; x=Math.abs(x); const a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911; const t=1/(1+p*x); const y=1-(((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x); return sign*y; }
         function normCdf(z){ return 0.5*(1+erf(z/Math.SQRT2)); }
-        const netP = Math.max(0, Math.min(100, 100*normCdf((userNetWorthVal - regionMedianNetWorth)/Math.max(1,sNet))));
-        const incP = Math.max(0, Math.min(100, 100*normCdf((userIncomeVal - regionMedianIncome)/Math.max(1,sInc))));
-        percentileNetWorthChartInstance.options.plugins.userVLine = { yValue: netP, color: 'rgba(244,67,54,1)', dash: [6,3], width: 2 };
-        percentileIncomeChartInstance.options.plugins.userVLine = { yValue: incP, color: 'rgba(244,67,54,1)', dash: [6,3], width: 2 };
+        // For histogram view, show a vertical line at user's value with percentile labels
+        const netPct = Math.max(0, Math.min(100, 100*normCdf((userNetWorthVal - regionMedianNetWorth)/Math.max(1,sNet))));
+        const incPct = Math.max(0, Math.min(100, 100*normCdf((userIncomeVal - regionMedianIncome)/Math.max(1,sInc))));
+        const toOrdinal = (n)=>{n=Math.round(n); const s=['th','st','nd','rd']; const v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]);};
+        percentileNetWorthChartInstance.options.plugins.userVLine = { xValue: userNetWorthVal, color: 'rgba(244,67,54,1)', dash: [6,3], width: 2, label: `You: ${toOrdinal(netPct)} percentile` };
+        percentileIncomeChartInstance.options.plugins.userVLine = { xValue: userIncomeVal, color: 'rgba(244,67,54,1)', dash: [6,3], width: 2, label: `You: ${toOrdinal(incPct)} percentile` };
         percentileNetWorthChartInstance.update();
         percentileIncomeChartInstance.update();
       } catch (e) { /* no-op */ }
@@ -1658,7 +1819,9 @@ function createChart(canvasId, dataInfo, type = 'line') {
         pointHoverRadius: 6,
         fill: false,
         showLine: false,
-        borderWidth: 0
+        borderWidth: 0,
+        order: 9999,
+        clip: false
       };
       if (existingIndex >= 0) {
         chart.data.datasets[existingIndex].data = dataArray;

@@ -303,12 +303,12 @@
     @media (max-width: 720px) {
       .profile-item { flex:1 1 48%; }
       .profile-actions { width:100%; justify-content:flex-start; margin-left:0; }
-      .profile-actions button { flex:1 1 140px; }
+      .profile-actions button { flex:1 1 140px; padding:7px 10px; font-size:0.92rem; }
     }
     @media (max-width: 520px) {
       .profile-item { flex:1 1 100%; }
       .profile-actions { flex-direction:column; align-items:stretch; }
-      .profile-actions button { width:100%; }
+      .profile-actions button { width:100%; padding:7px 10px; font-size:0.9rem; }
     }
 
     /* Projection section */
@@ -486,7 +486,7 @@
 
       <!-- Income composition breakdown chart (2025) -->
       <div class="chart-card">
-        <h3 id="compositionTitle">Income Composition Breakdown by Age (2025)
+        <h3 id="compositionTitle">Median Income Composition by Age (Households, 2025)
           <span class="info-icon" tabindex="0" role="button" aria-label="Chart info: Income Composition Breakdown by Age (Median, 2025) — Canada."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip">Stacked bands show how the mix of employment, investment, pension and transfer income evolves across the life cycle for the selected geography. Stacked area showing employment, investment, pension and transfer components of total income by age. Values scale with selected province and household/individual view.</span></span>
         </h3>
         <div class="chart-container">
@@ -728,32 +728,6 @@
         </details>
       </div>
 
-      <!-- Net Discretionary Income by Province -->
-      <div class="chart-card">
-        <h3 id="provinceDiscretionaryTitle">Net Discretionary Income by Province (Income – Cost of Living)
-          <span class="info-icon" tabindex="0" role="button" aria-label="Chart info: net discretionary income by province (income minus spending)."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip">Bars show how much of the median household income remains after covering average annual household expenditures in each province. Estimated median income minus average expenditures by province (2025). Uses unit-aware income and spending estimates; whiskers show percentile discretionary ranges.</span></span>
-        </h3>
-        <div class="chart-container">
-          <canvas id="provinceDiscretionaryChart"></canvas>
-        </div>
-        <details class="source-box">
-          <summary>Sources &amp; Methods</summary>
-          <div class="source-content">
-            <p><strong>Sources:</strong></p>
-            <ul>
-              <li>Statistics Canada — Canadian Income Survey (Table 11-10-0190-01, household median income)</li>
-              <li>Statistics Canada — Household Spending Survey (Table 11-10-0223-01)</li>
-            </ul>
-
-            <p><strong>Methods:</strong></p>
-            <ul>
-              <li>Household income is derived from CIS medians scaled by provincial income ratios and household size adjustments.</li>
-              <li>Average expenditure reflects 2022 SHS data indexed to 2025 using Bank of Canada CPI; the computeDiscretionary function subtracts costs from income.</li>
-              <li><strong>Whiskers:</strong> For province charts that show whiskers, vertical whisker lines represent the 10th–90th percentile range and are drawn over the median bars for context.</li>
-            </ul>
-          </div>
-        </details>
-      </div>
       </div>
     </section>
     <!-- About / Sources -->
@@ -895,6 +869,34 @@
         // Hide if no tooltip
         if (!tooltip || tooltip.opacity === 0) {
           tooltipEl.classList.remove('show');
+          return;
+        }
+
+        const isHistogram = chart?.canvas?.id === 'percentileNetWorthChart' || chart?.canvas?.id === 'percentileIncomeChart';
+
+        // Special-case histogram charts: show value + percentile, suppress y-value
+        if (isHistogram && tooltip.dataPoints && tooltip.dataPoints.length) {
+          const dp = tooltip.dataPoints[0];
+          const valX = dp.parsed?.x ?? 0;
+          const distParams = chart.options?.plugins?.distParams || { mu: 0, sigma: 1 };
+          const sigmaSafe = Math.max(1, distParams.sigma || 1);
+          const z = (valX - (distParams.mu || 0)) / sigmaSafe;
+          const erf = (x)=>{ const sign=x<0?-1:1; x=Math.abs(x); const a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911; const t=1/(1+p*x); const y=1-(((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x); return sign*y; };
+          const normCdf = (v)=> 0.5*(1+erf(v/Math.SQRT2));
+          const pct = Math.max(0, Math.min(100, 100*normCdf(z)));
+          const toOrdinal = (n)=>{n=Math.round(n); const s=['th','st','nd','rd']; const v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]);};
+          const valueLabel = `${fmtDollar(valX)} — ${toOrdinal(pct)} percentile`;
+          let html = '<div class="tt-body">';
+          const color = dp.element?.options?.borderColor || dp.dataset?.borderColor || dp.dataset?.backgroundColor || '#29b6f6';
+          html += `<div class="tt-row highlight"><div class="tt-swatch" style="background:${color};"></div><div><div class="tt-label">${dp.dataset?.label || ''}</div><div class="tt-value">${valueLabel}</div></div></div>`;
+          html += '</div>';
+          tooltipEl.innerHTML = html;
+          const canvasRect = chart.canvas.getBoundingClientRect();
+          const left = canvasRect.left + window.scrollX + (tooltip.caretX ?? (canvasRect.width / 2));
+          const top = canvasRect.top + window.scrollY + (tooltip.caretY ?? 0);
+          tooltipEl.style.left = left + 'px';
+          tooltipEl.style.top = (top + 12) + 'px';
+          tooltipEl.classList.add('show');
           return;
         }
 
@@ -1635,12 +1637,13 @@
     // increases.  Median uses the base colour for each chart.
     const percentileColors = {
       income: {
-        p10: '#B3E5FC',
-        p25: '#81D4FA',
-        p50: '#29B6F6',
-        p75: '#0288D1',
-        p90: '#01579B',
-        p99: '#002F6C'
+        // Darkest at 10th, lightest at 99th
+        p10: '#002F6C',
+        p25: '#01579B',
+        p50: '#0288D1',
+        p75: '#29B6F6',
+        p90: '#81D4FA',
+        p99: '#B3E5FC'
       },
       totalIncome: {
         p10: '#FFECB3',
@@ -1651,12 +1654,13 @@
         p99: '#E65100'
       },
       netWorth: {
-        p10: '#C8E6C9',
-        p25: '#A5D6A7',
+        // Darkest at 10th, lightest at 99th; median stays green
+        p10: '#004D40',
+        p25: '#1B5E20',
         p50: '#66BB6A',
-        p75: '#388E3C',
-        p90: '#1B5E20',
-        p99: '#004D40'
+        p75: '#A5D6A7',
+        p90: '#C8E6C9',
+        p99: '#E8F5E9'
       },
       top1: {
         p10: '#F8BBD0',
@@ -1685,12 +1689,13 @@
       ,
       // Individual median net worth chart colors (similar palette to avgIndividuals)
       indNetWorth: {
-        p10: '#FFCDD2',
-        p25: '#EF9A9A',
-        p50: '#EF5350',
-        p75: '#E53935',
-        p90: '#B71C1C',
-        p99: '#880E4F'
+        // Match household palette so median line stays green across views
+        p10: '#004D40',
+        p25: '#1B5E20',
+        p50: '#66BB6A',
+        p75: '#A5D6A7',
+        p90: '#C8E6C9',
+        p99: '#E8F5E9'
       }
     };
 
@@ -1700,7 +1705,6 @@
     let provinceChartInstance;
     let compositionChartInstance;
     let provinceIncomeChartInstance;
-    let provinceDiscretionaryChartInstance;
     let scatterChartInstance;
     let percentileNetWorthChartInstance;
     let percentileIncomeChartInstance;
@@ -2065,6 +2069,13 @@
       const gAxis = computeAxis(gVals, 5000);
       genderIncomeChartInstance.options.scales.y.min = 0;
       genderIncomeChartInstance.options.scales.y.max = gAxis.max;
+      genderIncomeChartInstance.options.scales.y.title.text = unit === 'households'
+        ? 'Median Employment Income ($ - Households)'
+        : 'Median Employment Income ($ - Individuals)';
+      if (genderIncomeChartInstance.options.scales.y.ticks) {
+        genderIncomeChartInstance.options.scales.y.ticks.display = true;
+        genderIncomeChartInstance.options.scales.y.ticks.maxTicksLimit = 8;
+      }
       genderIncomeChartInstance.update();
 
       // Income composition breakdown chart
@@ -2118,6 +2129,13 @@
         compositionChartInstance.options.scales.y.stacked = true;
         compositionChartInstance.options.scales.y.min = 0;
         compositionChartInstance.options.scales.y.max = compAxis.max;
+        compositionChartInstance.options.scales.y.title.text = unit === 'households'
+          ? 'Income Components ($ - Households)'
+          : 'Income Components ($ - Individuals)';
+        if (compositionChartInstance.options.scales.y.ticks) {
+          compositionChartInstance.options.scales.y.ticks.display = true;
+          compositionChartInstance.options.scales.y.ticks.maxTicksLimit = 8;
+        }
         compositionChartInstance.update();
       }
 
@@ -2204,6 +2222,13 @@
         const wAxis = computeAxis(wVals, 200000);
         wealthCompositionChartInstance.options.scales.y.min = wAxis.min;
         wealthCompositionChartInstance.options.scales.y.max = wAxis.max;
+        wealthCompositionChartInstance.options.scales.y.title.text = unit==='households'
+          ? 'Assets & Liabilities ($ - Households)'
+          : 'Assets & Liabilities ($ - Individuals)';
+        if (wealthCompositionChartInstance.options.scales.y.ticks) {
+          wealthCompositionChartInstance.options.scales.y.ticks.display = true;
+          wealthCompositionChartInstance.options.scales.y.ticks.maxTicksLimit = 8;
+        }
         wealthCompositionChartInstance.update();
       })();
 
@@ -2285,6 +2310,13 @@
         y: {
           min: yAxis.min,
           max: yAxis.max,
+          title: {
+            display: true,
+            text: unit === 'households'
+              ? 'Median Net Worth ($ - Households)'
+              : 'Median Net Worth ($ - Individuals)',
+            color: '#e0e6ed'
+          },
           ticks: {
             color: '#b0c5e8',
             callback: function(value) {
@@ -2347,6 +2379,13 @@
       provinceChartInstance.options.scales.y.beginAtZero = true;
       provinceChartInstance.options.scales.y.min = 0;
       provinceChartInstance.options.scales.y.max = provinceAxis.max;
+      provinceChartInstance.options.scales.y.title.text = unit === 'households'
+        ? 'Median Net Worth ($ - Households)'
+        : 'Median Net Worth ($ - Individuals)';
+      if (provinceChartInstance.options.scales.y.ticks) {
+        provinceChartInstance.options.scales.y.ticks.display = true;
+        provinceChartInstance.options.scales.y.ticks.maxTicksLimit = 8;
+      }
       provinceChartInstance.update();
 
       // Province income chart (median and percentile income by province)
@@ -2380,28 +2419,14 @@
       provinceIncomeChartInstance.options.scales.y.beginAtZero = true;
       provinceIncomeChartInstance.options.scales.y.min = 0;
       provinceIncomeChartInstance.options.scales.y.max = provinceIncomeAxis.max;
-      provinceIncomeChartInstance.update();
-      // Net discretionary chart: compute whiskers from income percentiles minus spending
-      if (provinceDiscretionaryChartInstance) {
-        try {
-          // Choose spending estimates based on unit (approximate individuals at 60% of household spending)
-          const spendingUsed = (unit === 'households') ? provinceSpendingEstimates : provinceSpendingEstimates.map(v => Math.round(v * 0.6));
-          // Use provinceIncomeBars (unit-aware) and spendingUsed to compute median discretionary values
-          const discValues = provinceIncomeBars.map((inc, idx) => Math.round(inc - (spendingUsed[idx] || 0)));
-          // Compute whiskers from earlier p10/p90 income values adjusted by spendingUsed
-          const p10DiscValues = p10IncomeValues.map((v, idx) => Math.round(v - (spendingUsed[idx] || 0)));
-          const p90DiscValues = p90IncomeValues.map((v, idx) => Math.round(v - (spendingUsed[idx] || 0)));
-          provinceDiscretionaryChartInstance._whiskers = { p10: p10DiscValues, p90: p90DiscValues };
-          // Update the bar dataset and axis to reflect unit-aware discretionary values
-          provinceDiscretionaryChartInstance.data.datasets = [ { label: 'Net Discretionary Income', data: discValues, backgroundColor: baseProvinceLabels.map(lbl => lbl === region ? '#ffa726' : '#00bfa5') } ];
-          let discVals = discValues.slice();
-          discVals = discVals.concat(p10DiscValues, p90DiscValues);
-          let discAxis = computeAxis(discVals, 5000);
-          provinceDiscretionaryChartInstance.options.scales.y.min = Math.min(discAxis.min, -20000);
-          provinceDiscretionaryChartInstance.options.scales.y.max = Math.max(discAxis.max, 40000);
-          provinceDiscretionaryChartInstance.update();
-        } catch (e) { /* no-op */ }
+      provinceIncomeChartInstance.options.scales.y.title.text = unit === 'households'
+        ? 'Median Employment Income ($ - Households)'
+        : 'Median Employment Income ($ - Individuals)';
+      if (provinceIncomeChartInstance.options.scales.y.ticks) {
+        provinceIncomeChartInstance.options.scales.y.ticks.display = true;
+        provinceIncomeChartInstance.options.scales.y.ticks.maxTicksLimit = 8;
       }
+      provinceIncomeChartInstance.update();
       
       // Update titles (preserve info-icon spans)
       const suffix = region === 'Canada' ? 'Canada' : region;
@@ -2416,7 +2441,7 @@
       // Update composition title - preserve info-icon
       const compositionTitleEl = document.getElementById('compositionTitle');
       const compositionIcon = compositionTitleEl.querySelector('.info-icon');
-      compositionTitleEl.textContent = `Income Composition Breakdown by Age (Median, 2025) - ${suffix}`;
+      compositionTitleEl.textContent = `Median Income Composition by Age (${unitTitle}, 2025) - ${suffix}`;
       if (compositionIcon) compositionTitleEl.appendChild(compositionIcon);
       
       // Update net worth title - preserve info-icon
@@ -2424,6 +2449,22 @@
       const netWorthIcon = netWorthTitleEl.querySelector('.info-icon');
       netWorthTitleEl.textContent = `Estimated Median Net Worth by Age (${unitTitle}, 2025) - ${suffix}`;
       if (netWorthIcon) netWorthTitleEl.appendChild(netWorthIcon);
+      
+      // Update wealth composition title - preserve info-icon
+      const wealthTitleEl = document.getElementById('wealthCompositionTitle');
+      if (wealthTitleEl) {
+        const wealthIcon = wealthTitleEl.querySelector('.info-icon');
+        wealthTitleEl.textContent = `Wealth Composition by Age (${unitTitle}, 2025)`;
+        if (wealthIcon) wealthTitleEl.appendChild(wealthIcon);
+      }
+      
+      // Update gender income title - preserve info-icon
+      const genderTitleEl = document.getElementById('genderIncomeTitle');
+      if (genderTitleEl) {
+        const genderIcon = genderTitleEl.querySelector('.info-icon');
+        genderTitleEl.textContent = `Income Percentile by Gender (${unitTitle}, 2025) - ${suffix}`;
+        if (genderIcon) genderTitleEl.appendChild(genderIcon);
+      }
       
       // Update scatter title - preserve info-icon
       const scatterTitleEl = document.getElementById('scatterTitle');
@@ -2506,11 +2547,11 @@
       percentileIncomeChartInstance.data.datasets = [ { label: 'Income Distribution', data: incHist.points, backgroundColor: '#29b6f6' } ];
       // Axes: X in dollars (linear), Y in percent probability
       percentileNetWorthChartInstance.options.scales = {
-        x: { type: 'linear', position: 'bottom', ticks: { color: '#b0c5e8', callback: (v)=> '$' + Math.round(v/1000).toLocaleString() + 'k', maxTicksLimit: 10 }, grid: { color: '#1f3a64' }, min: netHist.minX, max: netHist.maxX },
+        x: { type: 'linear', position: 'bottom', ticks: { color: '#b0c5e8', callback: (v)=> '$' + Math.round(v/1000).toLocaleString() + 'k', maxTicksLimit: 10 }, grid: { color: '#1f3a64' }, min: netHist.minX, max: netHist.maxX, title: { display: true, text: unit === 'households' ? 'Net Worth ($ - Households)' : 'Net Worth ($ - Individuals)', color: '#e0e6ed' } },
         y: { min: 0, ticks: { color: '#b0c5e8', callback: (v)=> v + '%' }, grid: { color: '#1f3a64' } }
       };
       percentileIncomeChartInstance.options.scales = {
-        x: { type: 'linear', position: 'bottom', ticks: { color: '#b0c5e8', callback: (v)=> '$' + Math.round(v/1000).toLocaleString() + 'k', maxTicksLimit: 10 }, grid: { color: '#1f3a64' }, min: incHist.minX, max: incHist.maxX },
+        x: { type: 'linear', position: 'bottom', ticks: { color: '#b0c5e8', callback: (v)=> '$' + Math.round(v/1000).toLocaleString() + 'k', maxTicksLimit: 10 }, grid: { color: '#1f3a64' }, min: incHist.minX, max: incHist.maxX, title: { display: true, text: unit === 'households' ? 'Employment Income ($ - Households)' : 'Employment Income ($ - Individuals)', color: '#e0e6ed' } },
         y: { min: 0, ticks: { color: '#b0c5e8', callback: (v)=> v + '%' }, grid: { color: '#1f3a64' } }
       };
       // Save dist params for tooltips
@@ -2562,12 +2603,12 @@
       // Update province titles - preserve info-icons
       const provinceNetWorthEl = document.getElementById('provinceTitle');
       const provinceNetWorthIcon = provinceNetWorthEl.querySelector('.info-icon');
-      provinceNetWorthEl.textContent = `Projected Median Net Worth by Province (2025)`;
+      provinceNetWorthEl.textContent = `Projected Median Net Worth by Province (${unitTitle}, 2025)`;
       if (provinceNetWorthIcon) provinceNetWorthEl.appendChild(provinceNetWorthIcon);
       
       const provinceIncomeEl = document.getElementById('provinceIncomeTitle');
       const provinceIncomeIcon = provinceIncomeEl.querySelector('.info-icon');
-      provinceIncomeEl.textContent = `Median Income by Province (2025)`;
+      provinceIncomeEl.textContent = `Median Income by Province (${unitTitle}, 2025)`;
       if (provinceIncomeIcon) provinceIncomeEl.appendChild(provinceIncomeIcon);
       // If the user has entered comparison data, replot the markers after updating the charts.
       if (userActive) {
@@ -2814,7 +2855,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
         ],
         step: 5000,
         axisLabels: {
-          x: 'Age (Years - Individuals)',
+          x: 'Age (Years)',
           y: 'Median Employment Income ($ - Individuals / Households)'
         }
       }, 'line');
@@ -2831,7 +2872,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
       label: 'Employment Income',
       data: baseTotalIncome.map(() => 0),
       borderColor: '#42a5f5',
-      backgroundColor: 'rgba(66,165,245,0.6)',
+      backgroundColor: 'rgba(66,165,245,0.25)',
       fill: true,
       stack: 'income'
     },
@@ -2839,7 +2880,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
       label: 'Investment Income',
       data: baseTotalIncome.map(() => 0),
       borderColor: '#66bb6a',
-      backgroundColor: 'rgba(102,187,106,0.6)',
+      backgroundColor: 'rgba(102,187,106,0.25)',
       fill: true,
       stack: 'income'
     },
@@ -2847,7 +2888,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
       label: 'Pension Income',
       data: baseTotalIncome.map(() => 0),
       borderColor: '#ffa726',
-      backgroundColor: 'rgba(255,167,38,0.6)',
+      backgroundColor: 'rgba(255,167,38,0.25)',
       fill: true,
       stack: 'income'
     },
@@ -2855,14 +2896,14 @@ function createChart(canvasId, dataInfo, type = 'line') {
       label: 'Government Transfers',
       data: baseTotalIncome.map(() => 0),
       borderColor: '#ab47bc',
-      backgroundColor: 'rgba(171,71,188,0.6)',
+      backgroundColor: 'rgba(171,71,188,0.25)',
       fill: true,
       stack: 'income'
     }
   ],
   step: 5000,
   axisLabels: {
-    x: 'Age (Years - Individuals)',
+    x: 'Age (Years)',
     y: 'Income Components ($ - Individuals / Households)'
   }
 }, 'line');
@@ -2877,7 +2918,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
         ],
         step: 200000,
         axisLabels: {
-          x: 'Age (Years - Individuals)',
+          x: 'Age (Years)',
           y: 'Median Net Worth ($ - Households / Individuals)'
         }
       }, 'line');
@@ -2934,37 +2975,6 @@ function createChart(canvasId, dataInfo, type = 'line') {
         }
       }, 'bar');
 
-      provinceDiscretionaryChartInstance = createChart('provinceDiscretionaryChart', {
-        labels: baseProvinceLabels,
-        datasets: [
-          {
-            label: 'Net Discretionary Income (Households)',
-            data: provinceDiscretionaryValues,
-            backgroundColor: baseProvinceLabels.map(() => '#00bfa5')
-          }
-        ],
-        step: 5000,
-        axisLabels: {
-          x: 'Province (Households)',
-          y: 'Net Discretionary Income ($ - Households)'
-        },
-        tooltip: {
-          callbacks: {
-            label: (ctx) => {
-              const idx = ctx.dataIndex;
-              const income = provinceHouseholdIncomeValues[idx];
-              const spending = provinceSpendingEstimates[idx];
-              const net = provinceDiscretionaryValues[idx];
-              return [
-                `Median income: $${income.toLocaleString()}`,
-                `Cost of living: $${spending.toLocaleString()}`,
-                `Net discretionary: $${net.toLocaleString()}`
-              ];
-            }
-          }
-        }
-      }, 'bar');
-
       // Wealth Composition baseline; data is computed in updateCharts per region/unit
       wealthCompositionChartInstance = createChart('wealthCompositionChart', {
         labels: ageLabels,
@@ -2977,7 +2987,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
         ],
         step: 200000,
         axisLabels: {
-          x: 'Age (Years - Individuals)',
+          x: 'Age (Years)',
           y: 'Assets & Liabilities ($ - Households / Individuals)'
         }
       }, 'line');
@@ -2986,12 +2996,12 @@ function createChart(canvasId, dataInfo, type = 'line') {
       genderIncomeChartInstance = createChart('genderIncomeChart', {
         labels: ageLabels,
         datasets: [
-          { label: 'Women (Median)', data: new Array(ageLabels.length).fill(0), color: '#42a5f5' },
+          { label: 'Women (Median)', data: new Array(ageLabels.length).fill(0), color: '#ab47bc' },
           { label: 'Men (Median)', data: new Array(ageLabels.length).fill(0), color: '#1e88e5' }
         ],
         step: 5000,
         axisLabels: {
-          x: 'Age (Years - Individuals)',
+          x: 'Age (Years)',
           y: 'Median Employment Income ($ - Individuals / Households)'
         }
       }, 'line');
@@ -3679,8 +3689,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
         get scatter() { return scatterChartInstance; },
         get composition() { return compositionChartInstance; },
         get gender() { return genderChartInstance; },
-        get provinceIncome() { return provinceIncomeChartInstance; },
-        get discretionary() { return provinceDiscretionaryChartInstance; }
+        get provinceIncome() { return provinceIncomeChartInstance; }
       },
       benchmark: (region = 'Canada', iterations = 1) => {
         const times = [];

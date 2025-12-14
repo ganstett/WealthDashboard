@@ -296,3 +296,33 @@ select { -webkit-appearance: none; -moz-appearance: none; appearance: none; }
     box-sizing: border-box;
   }
 }
+
+/* Mobile title + stat tiles: prevent cutoff and stack tiles */
+@media (max-width: 600px) {
+  /* Title element */
+  .page-brand {
+    font-size: clamp(28px, 7vw, 44px);
+    line-height: 1.05;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    word-break: break-word;
+    padding: 0 4px;
+  }
+  .hero {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+  /* Stat tiles wrapper and cards */
+  .results-grid {
+    display: grid;
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+    align-items: stretch;
+    justify-items: stretch;
+  }
+  .metric-card {
+    width: 100% !important;
+    max-width: none !important;
+  }
+}

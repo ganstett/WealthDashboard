@@ -1,0 +1,218 @@
+/* Lightweight stylesheet for iterative development.
+   This file is intentionally minimal and additive — it does not remove
+   or override the comprehensive inline styles already present in the
+   HTML. Use this for quick tweaks during live-preview sessions. */
+:root {
+  --bg: #0a1931;
+  --card-bg: #13294b;
+  --muted: #9fb6c8;
+  --accent: #00bfa5;
+  --text: #e0e6ed;
+}
+/* Fix layout: allow the page to grow with content; remove fixed height to avoid double scrollbars */
+html { }
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.container { max-width: 100%; margin: 0 auto; padding: 20px 0; box-sizing: border-box; }
+/* Ensure chart cards flexibly fill available space in the grid/flex layout. Allow two per row on larger screens and one per row on small screens. */
+.chart-card {
+  min-height: 380px;
+  transition: box-shadow 0.25s ease, opacity 0.25s ease;
+  will-change: box-shadow, opacity;
+  flex: 1 1 calc(50% - 24px);
+  max-width: 620px;
+  min-width: 360px;
+  position: relative;
+}
+.chart-card:hover { box-shadow: 0 12px 24px rgba(0,0,0,0.4); }
+.chart-card h3 { color: var(--accent); }
+.chart-card canvas { width: 100% !important; height: 100% !important; display: block; }
+.chart-brand { position: absolute; right: 8px; bottom: 22px; text-align: right; font-size: 12px; color: rgba(255, 255, 255, 0.85); font-weight: 500; text-shadow: 0 0 4px rgba(0, 0, 0, 0.6); pointer-events: none; }
+.snapshot-btn { background: rgba(7,18,39,0.6); color: var(--text); border-radius: 999px; padding: 6px 12px; }
+/* Utility helpers for quick live edits */
+.vibe-hidden { display: none !important; }
+.vibe-debug-border { outline: 2px dashed #ffeb3b; }
+
+/* Keep the input/profile bar aligned to chart grid without shrinking global width */
+.profile-card {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* Layout for the charts grid: two per row where space allows; collapse to one per row on narrow screens */
+.charts-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: start;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+}
+@media (max-width: 960px) {
+  .chart-card {
+    flex: 1 1 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+}
+
+.references-section { margin-top: 28px; }
+.references-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.reference-block { background: rgba(7,18,39,0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 12px; }
+.reference-title { font-weight: 700; color: #e6f4ff; margin-bottom: 6px; }
+.reference-links { display: flex; flex-direction: column; gap: 4px; }
+.reference-links a { color: #6aa3f4; }
+
+/* Info icon styling: inline display with SVG first */
+.info-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(0, 191, 165, 0.1);
+  color: var(--accent);
+  margin-left: 8px;
+  vertical-align: middle;
+  position: relative;
+  cursor: pointer;
+}
+
+/* SVG icon (primary display) */
+.info-icon svg {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+/* Fallback text "i" - only shows if SVG doesn't load */
+.info-icon::before {
+  content: 'i';
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--accent);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* Hidden by default; only shows if SVG is missing */
+  display: none;
+}
+
+/* Show fallback "i" if SVG is missing or broken */
+.info-icon:not(:has(svg)) ::before {
+  display: block;
+}
+
+/* Tooltip positioning */
+.info-icon .info-tooltip {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 100%;
+  left: auto;
+  transform: none;
+  z-index: 1000;
+  max-width: 450px !important;
+  width: 450px !important;
+  white-space: normal !important;
+  word-wrap: break-word !important;
+}
+#unitInfoIcon .info-tooltip {
+  top: 100%;
+  left: 100%;
+  right: auto;
+  transform: translate(6px, 4px);
+  max-width: 900px !important;
+  width: 700px !important;
+}
+
+/* High-contrast form controls (inputs, selects, textareas) */
+:root {
+  --control-bg: rgba(255,255,255,0.03);
+  --control-border: rgba(255,255,255,0.14);
+  --control-placeholder: rgba(224,230,237,0.55);
+  --control-focus-shadow: rgba(0,191,165,0.14);
+}
+
+input[type="text"], input[type="number"], input[type="search"],
+input[type="email"], textarea, select, .filter-input, .control input, .control select {
+  background: var(--control-bg) !important;
+  border: 1px solid var(--control-border) !important;
+  color: var(--text) !important;
+  padding: 8px 12px !important;
+  border-radius: 8px !important;
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.25);
+  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+/* Make placeholders readable */
+input::placeholder, textarea::placeholder {
+  color: var(--control-placeholder) !important;
+  opacity: 1;
+}
+
+/* Focus states: clear, visible, same colour scheme */
+input:focus, textarea:focus, select:focus {
+  outline: none !important;
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 4px var(--control-focus-shadow) !important;
+}
+
+/* Slightly stronger contrast for compact header controls */
+.header-control input, .header-control select {
+  padding: 10px 14px !important;
+  background: rgba(255,255,255,0.028) !important;
+}
+
+/* Ensure selects keep their chevrons visible on dark background */
+select { -webkit-appearance: none; -moz-appearance: none; appearance: none; }
+
+/* Final layout guardrails for chart grid */
+.charts-grid {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 28px !important;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  box-sizing: border-box;
+}
+.chart-card {
+  flex: 1 1 calc(50% - 24px) !important;
+  max-width: 620px !important;
+  min-width: 360px !important;
+}
+@media (max-width: 960px) {
+  .chart-card {
+    flex: 1 1 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+}
+/* Mobile-first fixes: ensure one chart per row with no empty side space */
+@media (max-width: 700px) {
+  .charts-grid {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: 18px !important;
+    padding: 0 10px;
+  }
+  .chart-card {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+  }
+}

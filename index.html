@@ -613,27 +613,29 @@
 
     <!-- Percentile tiles - separate section placed under inputs -->
     <section id="section-percentiles" aria-live="polite">
+      <div id="mobileStatStack">
       <div class="results-grid" id="resultTiles" style="display:none;">
-        <div class="metric-card" id="incomePctTile">
+        <div class="metric-card statCard" id="incomePctTile">
           <div class="metric-label">Income percentile</div>
           <div id="incomePercentileValue" class="metric-value tile-value">—</div>
           <div id="incomePercentileSubtext" class="metric-sub tile-sub">of peers</div>
         </div>
-        <div class="metric-card" id="netPctTile">
+        <div class="metric-card statCard" id="netPctTile">
           <div class="metric-label">Net worth percentile</div>
           <div id="netWorthPercentileValue" class="metric-value tile-value">-</div>
           <div id="netWorthPercentileSubtext" class="metric-sub tile-sub">of peers</div>
         </div>
-        <div class="metric-card" id="medianIncomeTile">
+        <div class="metric-card statCard" id="medianIncomeTile">
           <div class="metric-label">Median income at selected age</div>
           <div id="medianIncomeValue" class="metric-value tile-value">-</div>
           <div id="medianIncomeSubtext" class="metric-sub tile-sub">for - ? age -</div>
         </div>
-        <div class="metric-card" id="medianNetWorthTile">
+        <div class="metric-card statCard" id="medianNetWorthTile">
           <div class="metric-label">Median net worth at selected age</div>
           <div id="medianNetWorthValue" class="metric-value tile-value">-</div>
           <div id="medianNetWorthSubtext" class="metric-sub tile-sub">for - ? age -</div>
         </div>
+      </div>
       </div>
     </section>
 

@@ -152,8 +152,8 @@
       padding: 10px 12px;
       border-radius: 10px;
       box-shadow: 0 12px 36px rgba(2,6,23,0.7);
-      font-size: 0.85rem;
-      line-height: 1.3;
+      font-size: 0.78rem; /* match axis-label sizing */
+      line-height: 1.25;
       z-index: 2000;
       opacity: 0;
       transition: opacity 140ms ease, transform 140ms ease;
@@ -528,6 +528,50 @@
     .proj-card { flex:1; background: var(--bg-surface); padding:10px; border-radius:10px; border:1px solid var(--border-subtle); text-align:center; }
     .proj-card .label { color:#9fb6c8; font-size:0.85rem; }
     .proj-card .value { color:#e6f4ff; font-weight:700; font-size:1.25rem; margin-top:6px; }
+    /* Mobile typography aligned to YouTube iOS scale */
+    @media (max-width: 768px) {
+      html {
+        -webkit-text-size-adjust: 100%;
+      }
+      h1 {
+        font-size: 18px;
+        line-height: 1.25;
+        font-weight: 600;
+      }
+      h2 {
+        font-size: 16px;
+        line-height: 1.25;
+        font-weight: 600;
+      }
+      h3 {
+        font-size: 15px;
+        line-height: 1.25;
+        font-weight: 500;
+      }
+      body,
+      p,
+      .subtitle,
+      .chart-subtitle,
+      .pill,
+      .info-text {
+        font-size: 13px;
+        line-height: 1.3;
+        font-weight: 400;
+      }
+      .muted,
+      .chart-note,
+      .tooltip,
+      .axis-label,
+      .small-text {
+        font-size: 12px;
+        line-height: 1.25;
+        font-weight: 400;
+      }
+      .micro-text {
+        font-size: 11px;
+        line-height: 1.2;
+      }
+    }
   </style>
   <link rel="stylesheet" href="./styles.css">
 </head>
@@ -675,7 +719,7 @@
     <div class="charts-grid">
       <!-- Median Income Chart (2026 estimate) -->
       <div class="chart-card">
-        <h3 id="incomeTitle">Estimated Median Employment Income by Age (Individuals, 2026)
+        <h3 id="incomeTitle">Estimated Employment Income by Age (Individuals, 2026)
           <span class="info-icon" tabindex="0" role="button" aria-label="Chart info: Estimated 2026 employment income by age with percentile ranges."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip">Shows estimated 2026 employment income by age, including median and percentile ranges, adjusted for your selected province and household/individual view.</span></span>
         </h3>
         <div class="chart-container">
@@ -703,7 +747,7 @@
 
       <!-- Median Net Worth Chart (2026 estimate) -->
       <div class="chart-card">
-        <h3 id="netWorthTitle">Estimated Median Net Worth by Age (Households, 2026)
+        <h3 id="netWorthTitle">Estimated Net Worth by Age (Households, 2026)
           <span class="info-icon" tabindex="0" role="button" aria-label="Chart info: Estimated 2026 net worth by age with percentile ranges."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip">Shows estimated 2026 median net worth by age, including typical accumulation during working years and gradual drawdown in retirement, adjusted for your selected province and household/individual view.</span></span>
         </h3>
         <div class="chart-container">
@@ -1526,8 +1570,8 @@
           incomeChartInstance.options.scales.y.min = Math.min(0, axis.min);
           incomeChartInstance.options.scales.y.max = axis.max;
           incomeChartInstance.options.scales.y.title.text = unit === 'households'
-            ? 'Median Employment Income ($ - Households)'
-            : 'Median Employment Income ($ - Individuals)';
+            ? 'Employment Income ($ - Households)'
+            : 'Employment Income ($ - Individuals)';
           incomeChartInstance.update();
         }
       }
@@ -1587,8 +1631,8 @@
             netWorthChartInstance.options.scales.y.ticks = { stepSize: 100000, maxTicksLimit: 14 };
           }
           netWorthChartInstance.options.scales.y.title.text = unit === 'households'
-            ? 'Median Net Worth ($ - Households)'
-            : 'Median Net Worth ($ - Individuals)';
+            ? 'Net Worth ($ - Households)'
+            : 'Net Worth ($ - Individuals)';
           netWorthChartInstance.update();
         }
       }
@@ -2796,8 +2840,8 @@
       incomeChartInstance.options.scales.y.min = 0;
       incomeChartInstance.options.scales.y.max = incAxis.max;
       incomeChartInstance.options.scales.y.title.text = unit === 'households'
-        ? 'Median Employment Income ($ - Households)'
-        : 'Median Employment Income ($ - Individuals)';
+        ? 'Employment Income ($ - Households)'
+        : 'Employment Income ($ - Individuals)';
       incomeChartInstance.update();
 
       // Update gender income chart using CIS-derived female-to-male ratio (~0.88 nationwide)
@@ -2823,8 +2867,8 @@
       genderIncomeChartInstance.options.scales.y.min = 0;
       genderIncomeChartInstance.options.scales.y.max = gAxis.max;
       genderIncomeChartInstance.options.scales.y.title.text = unit === 'households'
-        ? 'Median Employment Income ($ - Households)'
-        : 'Median Employment Income ($ - Individuals)';
+        ? 'Employment Income ($ - Households)'
+        : 'Employment Income ($ - Individuals)';
       if (genderIncomeChartInstance.options.scales.y.ticks) {
         genderIncomeChartInstance.options.scales.y.ticks.display = true;
         genderIncomeChartInstance.options.scales.y.ticks.maxTicksLimit = 8;
@@ -3086,8 +3130,8 @@
           title: {
             display: true,
             text: unit === 'households'
-              ? 'Median Employment Income ($ - Households)'
-              : 'Median Employment Income ($ - Individuals)',
+              ? 'Employment Income ($ - Households)'
+              : 'Employment Income ($ - Individuals)',
             color: '#e0e6ed'
           }
         },
@@ -3097,8 +3141,8 @@
           title: {
             display: true,
             text: unit === 'households'
-              ? 'Median Net Worth ($ - Households)'
-              : 'Median Net Worth ($ - Individuals)',
+              ? 'Net Worth ($ - Households)'
+              : 'Net Worth ($ - Individuals)',
             color: '#e0e6ed'
           },
           ticks: {
@@ -3240,7 +3284,7 @@
       // Update income title - preserve info-icon
       const incomeTitleEl = document.getElementById('incomeTitle');
       const incomeIcon = incomeTitleEl.querySelector('.info-icon');
-      incomeTitleEl.textContent = `Estimated Median Employment Income by Age (${unitTitle}, ${BASE_YEAR}) - ${suffix}`;
+      incomeTitleEl.textContent = `Estimated Employment Income by Age (${unitTitle}, ${BASE_YEAR}) - ${suffix}`;
       if (incomeIcon) incomeTitleEl.appendChild(incomeIcon);
       
       // Update composition title - preserve info-icon
@@ -3252,7 +3296,7 @@
       // Update net worth title - preserve info-icon
       const netWorthTitleEl = document.getElementById('netWorthTitle');
       const netWorthIcon = netWorthTitleEl.querySelector('.info-icon');
-      netWorthTitleEl.textContent = `Estimated Median Net Worth by Age (${unitTitle}, ${BASE_YEAR}) - ${suffix}`;
+      netWorthTitleEl.textContent = `Estimated Net Worth by Age (${unitTitle}, ${BASE_YEAR}) - ${suffix}`;
       if (netWorthIcon) netWorthTitleEl.appendChild(netWorthIcon);
       
       // Update wealth composition title - preserve info-icon
@@ -3720,7 +3764,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
         step: 5000,
         axisLabels: {
           x: 'Age (Years)',
-          y: 'Median Employment Income ($ - Individuals / Households)'
+          y: 'Employment Income ($ - Individuals / Households)'
         },
         tooltip: {
           enabled: true,
@@ -3810,7 +3854,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
         step: 200000,
         axisLabels: {
           x: 'Age (Years)',
-          y: 'Median Net Worth ($ - Households / Individuals)'
+          y: 'Net Worth ($ - Households / Individuals)'
         }
       }, 'line');
       // Build the scatter chart for income vs net worth.  This uses the median total income

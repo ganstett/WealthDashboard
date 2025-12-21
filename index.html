@@ -152,12 +152,17 @@
       padding: 10px 12px;
       border-radius: 10px;
       box-shadow: 0 12px 36px rgba(2,6,23,0.7);
-      font-size: 0.78rem; /* match axis-label sizing */
+      font-size: 11px; /* match inline line-label size on desktop */
       line-height: 1.25;
       z-index: 2000;
       opacity: 0;
       transition: opacity 140ms ease, transform 140ms ease;
       will-change: transform, opacity;
+    }
+    @media (max-width: 640px) {
+      .chartjs-tooltip {
+        font-size: 10px; /* match inline line-label size on mobile */
+      }
     }
     .chartjs-tooltip.show {
       opacity: 1;
@@ -168,8 +173,11 @@
     .chartjs-tooltip .tt-swatch { width:10px; height:10px; border-radius:2px; flex:0 0 10px; }
     .chartjs-tooltip .tt-value { color: var(--text); font-weight:600; }
     .chartjs-tooltip .tt-row.highlight { background: linear-gradient(90deg, rgba(41,182,246,0.06), rgba(0,0,0,0)); padding:6px 8px; border-radius:6px; }
-    .chartjs-tooltip .tt-row .tt-label { color: var(--muted); font-size:0.85rem; }
+    .chartjs-tooltip .tt-row .tt-label { color: var(--muted); font-size: 11px; }
     .chartjs-tooltip .tt-row.highlight .tt-label { color: var(--accent); font-weight:700; }
+    @media (max-width: 640px) {
+      .chartjs-tooltip .tt-row .tt-label { font-size: 10px; }
+    }
 
     /* Snapshot button */
     .snapshot-btn { display:inline-block; margin:12px 0 0 0; padding:6px 12px; font-size:0.85rem; border-radius:999px; border:1px solid rgba(255,255,255,0.06); background: rgba(7,18,39,0.6); color:#dbefff; cursor:pointer; }
@@ -2572,23 +2580,29 @@
 
     // Apply mobile-friendly defaults before charts are created
     (function applyChartDefaultsForDevice(){
-      const mobile = isMobileChart();
+      const mobile = window.innerWidth <= 768;
 
       // Tooltip sizing
       Chart.defaults.plugins.tooltip.enabled = true;
-      Chart.defaults.plugins.tooltip.padding = mobile ? 8 : 12;
+      Chart.defaults.plugins.tooltip.padding = mobile ? 6 : 10;
       Chart.defaults.plugins.tooltip.boxPadding = mobile ? 4 : 6;
       Chart.defaults.plugins.tooltip.caretSize = mobile ? 6 : 8;
-      Chart.defaults.plugins.tooltip.cornerRadius = mobile ? 10 : 12;
+      Chart.defaults.plugins.tooltip.cornerRadius = 6;
       Chart.defaults.plugins.tooltip.titleFont = {
         family: Chart.defaults.font.family,
         size: mobile ? 12 : 14,
-        weight: '600'
+        weight: '500',
+        lineHeight: 1.2
       };
       Chart.defaults.plugins.tooltip.bodyFont = {
         family: Chart.defaults.font.family,
-        size: mobile ? 12 : 13,
-        weight: '500'
+        size: mobile ? 11 : 13,
+        weight: '400',
+        lineHeight: 1.25
+      };
+      Chart.defaults.plugins.tooltip.footerFont = {
+        family: Chart.defaults.font.family,
+        size: mobile ? 10 : 12
       };
 
       // Lines + points

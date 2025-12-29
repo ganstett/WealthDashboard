@@ -229,7 +229,7 @@
       gap: 8px;
       font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       font-size: clamp(32px, 4.5vw, 48px);
-      letter-spacing: 0.08em;
+      letter-spacing: 0.02em;
       text-transform: uppercase;
       color: var(--text-secondary);
       margin-bottom: 12px;
@@ -301,6 +301,31 @@
     .reference-block.reference-tools-card .tools-body { flex:1; }
     .reference-block.reference-tools-card .reference-title { margin-bottom: 4px; }
     .reference-block.reference-tools-card .tools-body p { margin: 0 0 6px; }
+    .reference-block.reference-tools-card a { color: #6aa3f4; }
+    .contact-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 12px 14px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.22);
+      max-width: 620px;
+      min-width: 360px;
+      width: min(100%, 620px);
+      margin: 12px auto 0;
+      color: var(--text-secondary);
+      box-sizing: border-box;
+    }
+    .contact-card h3 {
+      margin: 0 0 6px;
+      font-size: 1rem;
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .contact-card p {
+      margin: 0 0 4px;
+      line-height: 1.4;
+      color: rgba(226, 232, 240, 0.85);
+    }
     .chart-card {
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
@@ -1287,6 +1312,13 @@
 
       </div>
     </section>
+    </div>
+    <div class="content-width">
+      <div class="contact-card" aria-label="Contact information">
+        <h3>Contact</h3>
+        <p>Questions, feedback, or data corrections welcome.</p>
+        <p><a href="mailto:contact@wealthdashboard.ca" style="color: inherit; text-decoration: underline;">contact@wealthdashboard.ca</a></p>
+      </div>
     </div>
     <section id="sources-links" class="references-section">
       <div class="content-width">

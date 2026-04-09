@@ -244,6 +244,16 @@
       }
     }
 
+
+    @media (hover: none) {
+      .info-icon:hover .info-tooltip,
+      .info-icon:focus .info-tooltip {
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
+    }
+
     /* Custom Chart.js external tooltip styles (tactile, elevated, responsive) */
     .chartjs-tooltip {
       position: absolute;
@@ -435,7 +445,7 @@
     .charts-grid {
       display: flex;
       flex-wrap: wrap;
-      gap: 28px;
+      gap: 16px;
       justify-content: center;
       box-sizing: border-box;
       width: 100%;
@@ -489,7 +499,7 @@
       max-width: 620px;
       min-width: 360px;
       position: relative;
-      overflow: visible;
+      overflow: hidden;
     }
     .chart-card:hover {
       box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
@@ -504,7 +514,7 @@
       overflow: visible;
       white-space: normal;
       position: relative;
-      z-index: 1;
+      z-index: 1002;
       padding-right: 34px;
     }
     .chart-card .chart-info-icon {
@@ -513,7 +523,126 @@
       right: 10px;
       margin-left: 0;
       transform: translateY(2px);
+      z-index: 1001;
     }
+    .chart-card .chart-info-icon.active {
+      background: rgba(0, 191, 165, 0.25);
+      border-color: rgba(0, 191, 165, 0.6);
+      box-shadow: 0 0 16px rgba(0, 191, 165, 0.5);
+    }
+    /* Hide the old small tooltip when using overlay */
+    .chart-info-icon .info-tooltip {
+      display: none !important;
+    }
+
+    /* Full-screen chart info overlay - FIXED VERSION */
+    .chart-info-overlay {
+      position: absolute;
+      top: 50px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(7, 18, 39, 0.96);
+      backdrop-filter: blur(10px);
+      border-radius: 0 0 16px 16px;
+      padding: 24px;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      overflow-y: auto;
+      cursor: pointer;
+      pointer-events: none;
+    }
+
+    .chart-info-overlay.visible {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .chart-info-overlay-content {
+      color: #e0e6ed;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      max-width: 100%;
+    }
+
+    .chart-info-overlay-content strong {
+      color: #00dcc8;
+      font-weight: 600;
+      font-size: 1rem;
+      display: block;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+
+    .chart-info-overlay-content strong:first-child {
+      margin-top: 0;
+    }
+
+    .chart-info-overlay-content div {
+      margin-bottom: 14px;
+    }
+
+    .chart-info-overlay-content ul {
+      margin: 8px 0 14px 20px;
+      padding: 0;
+      list-style-type: disc;
+    }
+
+    .chart-info-overlay-content li {
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+
+    /* Close hint at bottom of overlay */
+    .chart-info-overlay-close {
+      position: sticky;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(7, 18, 39, 0.98), rgba(7, 18, 39, 0));
+      padding: 16px 0 0 0;
+      text-align: center;
+      color: #00dcc8;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-top: 24px;
+    }
+
+
+    .overlay-close-btn {
+      background: rgba(0, 191, 165, 0.15);
+      border: 1px solid rgba(0, 191, 165, 0.4);
+      color: #00dcc8;
+      border-radius: 999px;
+      padding: 6px 18px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      margin-top: 8px;
+      display: inline-block;
+    }
+
+    /* Smooth scrollbar for long content */
+    .chart-info-overlay::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .chart-info-overlay::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+    }
+
+    .chart-info-overlay::-webkit-scrollbar-thumb {
+      background: rgba(0, 220, 200, 0.3);
+      border-radius: 4px;
+    }
+
+    .chart-info-overlay::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 220, 200, 0.5);
+    }
+
     .chart-container {
       position: relative;
       width: 100%;
@@ -1445,7 +1574,7 @@
       <!-- Median Income Chart (current-year estimate) -->
       <div class="chart-card">
         <h3 id="incomeTitle">Estimated Employment Income by Age (Individuals, <span data-current-year></span>)
-          <span class="info-icon chart-info-icon" tabindex="0" role="button" data-year-attr="aria-label" data-year-aria-label="Chart info: Estimated {YEAR} employment income by age with percentile ranges."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip">Shows estimated <span data-current-year></span> employment income by age, including median and percentile ranges, adjusted for your selected province and household/individual view.</span></span>
+          <span class="info-icon chart-info-icon" tabindex="0" role="button" data-year-attr="aria-label" data-year-aria-label="Chart info: Estimated {YEAR} employment income by age with percentile ranges."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows estimated <span data-current-year></span> employment income by age, including median and percentile ranges, adjusted for your selected province and household/individual view.</div><div><strong>Sources</strong></div><ul><li>Statistics Canada - Canadian Income Survey (employment income by age)</li><li>Canada Revenue Agency - wage growth trends</li></ul><div><strong>Methods</strong></div><ul><li>2022 income levels are adjusted to <span data-current-year></span> based on recent wage growth and inflation guidance.</li><li>Statistics Canada publishes income by 5-year age brackets; values for individual ages are smoothed between these brackets.</li><li>Percentiles (10th, 25th, median/50th, 75th, 90th) are interpolated from the same anchors using a smooth log-normal fit guided by national decile ratios (9th/1st and 9th/median ~ 3.4 and 2.0):contentReference[oaicite:3]{index=3}; see README for details.</li><li>StatsCan values are published in age bins. We anchor each bin at its midpoint and use monotone cubic interpolation (PCHIP-style) between anchors to generate smooth single-year estimates; this adds no new data, only a smooth path between published anchors.</li><li>Results update automatically when the user selects a different province or household/individual view.</li></ul></span></span>
         </h3>
         <div class="chart-container">
           <div class="chart-loading">
@@ -1454,31 +1583,13 @@
           </div>
           <canvas id="incomeChart" class="chart-canvas" style="display:none;"></canvas>
         </div>
-        <details class="source-box">
-          <summary>Sources &amp; Methods</summary>
-          <div class="source-content">
-            <p><strong>Sources:</strong></p>
-            <ul>
-              <li>Statistics Canada - Canadian Income Survey (employment income by age)</li>
-              <li>Canada Revenue Agency - wage growth trends</li>
-            </ul>
-
-            <p><strong>Methods:</strong></p>
-            <ul>
-              <li>2022 income levels are adjusted to <span data-current-year></span> based on recent wage growth and inflation guidance.</li>
-              <li>Statistics Canada publishes income by 5-year age brackets; values for individual ages are smoothed between these brackets.</li>
-              <li>Percentiles (10th, 25th, median/50th, 75th, 90th) are interpolated from the same anchors using a smooth log-normal fit guided by national decile ratios (9th/1st and 9th/median ~ 3.4 and 2.0):contentReference[oaicite:3]{index=3}; see README for details.</li>
-              <li>StatsCan values are published in age bins. We anchor each bin at its midpoint and use monotone cubic interpolation (PCHIP-style) between anchors to generate smooth single-year estimates; this adds no new data, only a smooth path between published anchors.</li>
-              <li>Results update automatically when the user selects a different province or household/individual view.</li>
-            </ul>
-          </div>
-        </details>
+        
       </div>
 
       <!-- Median Net Worth Chart (current-year estimate) -->
       <div class="chart-card">
         <h3 id="netWorthTitle">Estimated Net Worth by Age (Households, <span data-current-year></span>)
-          <span class="info-icon chart-info-icon" tabindex="0" role="button" data-year-attr="aria-label" data-year-aria-label="Chart info: Estimated {YEAR} net worth by age with percentile ranges."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip">Shows estimated <span data-current-year></span> median net worth by age, including typical accumulation during working years and gradual drawdown in retirement, adjusted for your selected province and household/individual view.</span></span>
+          <span class="info-icon chart-info-icon" tabindex="0" role="button" data-year-attr="aria-label" data-year-aria-label="Chart info: Estimated {YEAR} net worth by age with percentile ranges."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows estimated <span data-current-year></span> median net worth by age, including typical accumulation during working years and gradual drawdown in retirement, adjusted for your selected province and household/individual view.</div><div><strong>Sources</strong></div><ul><li>Statistics Canada - Survey of Financial Security</li><li>Bank of Canada - inflation outlook</li></ul><div><strong>Methods</strong></div><ul><li>StatsCan net worth bins anchor each percentile band (10th, 25th, median/50th, 75th, 90th) at the bin midpoint; monotone cubic (PCHIP) smoothing generates single-year values and enforces ordering.</li><li>Ages ≤22 include a student-debt adjustment (~$20K) ramping to the under-35 median; ages ≥72 taper ~3%/yr to reflect retirement drawdown; smoothing precedes taper to avoid steps.</li><li>Percentile spreads use StatsCan-style decile ratios (9th/1st ~3.4; 9th/median ~2.0); median is kept above lower percentiles by construction.</li><li>Province/unit selection rescales all series using region net-worth ratios and the square-root equivalence scale for households; values are projected to <span data-current-year></span> using inflation guidance.</li><li>StatsCan values are anchored at bin midpoints; monotone cubic (PCHIP) smoothing adds a smooth path between anchors. Results update automatically based on the selected province and household/individual view.</li></ul></span></span>
         </h3>
         <div class="chart-container">
           <div class="chart-loading">
@@ -1487,31 +1598,13 @@
           </div>
           <canvas id="netWorthChart" class="chart-canvas" style="display:none;"></canvas>
         </div>
-        <details class="source-box">
-          <summary>Sources &amp; Methods</summary>
-          <div class="source-content">
-            <p><strong>Sources:</strong></p>
-            <ul>
-              <li>Statistics Canada - Survey of Financial Security</li>
-              <li>Bank of Canada - inflation outlook</li>
-            </ul>
-
-                        <p><strong>Methods:</strong></p>
-            <ul>
-              <li>StatsCan net worth bins anchor each percentile band (10th, 25th, median/50th, 75th, 90th) at the bin midpoint; monotone cubic (PCHIP) smoothing generates single-year values and enforces ordering.</li>
-              <li>Ages ≤22 include a student-debt adjustment (~$20K) ramping to the under-35 median; ages ≥72 taper ~3%/yr to reflect retirement drawdown; smoothing precedes taper to avoid steps.</li>
-              <li>Percentile spreads use StatsCan-style decile ratios (9th/1st ~3.4; 9th/median ~2.0); median is kept above lower percentiles by construction.</li>
-              <li>Province/unit selection rescales all series using region net-worth ratios and the square-root equivalence scale for households; values are projected to <span data-current-year></span> using inflation guidance.</li>
-              <li>StatsCan values are anchored at bin midpoints; monotone cubic (PCHIP) smoothing adds a smooth path between anchors. Results update automatically based on the selected province and household/individual view.</li>
-            </ul>
-          </div>
-        </details>
+        
       </div>
 
       <!-- Income composition breakdown chart (current-year) -->
       <div class="chart-card">
         <h3 id="compositionTitle">Median Income Composition by Age (Households, <span data-current-year></span>)
-          <span class="info-icon chart-info-icon" tabindex="0" role="button" aria-label="Chart info: Income composition by age."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip">Shows how employment income, investment income, pensions, and transfers contribute to total income at each age.</span></span>
+          <span class="info-icon chart-info-icon" tabindex="0" role="button" aria-label="Chart info: Income composition by age."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows how employment income, investment income, pensions, and transfers contribute to total income at each age.</div><div><strong>Sources</strong></div><ul><li>Statistics Canada - Canadian Income Survey</li><li>Survey of Household Spending</li><li>CRA pension and benefit statistics</li></ul><div><strong>Methods</strong></div><ul><li>Income sources (employment, investment income, pensions, transfers) follow age patterns published by Statistics Canada.</li><li>Total income adjusts for the selected province and household/individual view.</li><li>Values between anchor ages are smoothed to form a continuous curve.</li></ul></span></span>
         </h3>
         <div class="chart-container">
           <div class="chart-loading">
@@ -1520,30 +1613,13 @@
           </div>
           <canvas id="compositionChart" class="chart-canvas" style="display:none;"></canvas>
         </div>
-        <details class="source-box">
-          <summary>Sources &amp; Methods</summary>
-          <div class="source-content">
-            <p><strong>Sources:</strong></p>
-            <ul>
-              <li>Statistics Canada - Canadian Income Survey</li>
-              <li>Survey of Household Spending</li>
-              <li>CRA pension and benefit statistics</li>
-            </ul>
-
-            <p><strong>Methods:</strong></p>
-            <ul>
-              <li>Income sources (employment, investment income, pensions, transfers) follow age patterns published by Statistics Canada.</li>
-              <li>Total income adjusts for the selected province and household/individual view.</li>
-              <li>Values between anchor ages are smoothed to form a continuous curve.</li>
-            </ul>
-          </div>
-        </details>
+        
       </div>
 
       <!-- Median Wealth Composition by Age (stacked area) -->
       <div class="chart-card">
         <h3 id="wealthCompositionTitle">Median Wealth Composition by Age (Households, <span data-current-year></span>)
-          <span class="info-icon chart-info-icon" tabindex="0" role="button" aria-label="Chart info: Wealth composition by age."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip">Shows how real estate, financial assets, pensions, and debt typically change with age, along with resulting net worth.</span></span>
+          <span class="info-icon chart-info-icon" tabindex="0" role="button" aria-label="Chart info: Wealth composition by age."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows how real estate, financial assets, pensions, and debt typically change with age, along with resulting net worth.</div><div><strong>Sources</strong></div><ul><li>Statistics Canada - Survey of Financial Security</li><li>CMHC and Bank of Canada - household credit statistics</li></ul><div><strong>Methods</strong></div><ul><li>Real estate, financial assets, pensions, and debt follow age patterns in the Survey of Financial Security.</li><li>Values are smoothed across ages and updated for the selected province and household/individual view.</li><li>Net worth is displayed as a line across the stacked asset and debt areas.</li></ul></span></span>
         </h3>
         <div class="chart-container">
           <div class="chart-loading">
@@ -1552,23 +1628,7 @@
           </div>
           <canvas id="wealthCompositionChart" class="chart-canvas" style="display:none;"></canvas>
         </div>
-        <details class="source-box">
-          <summary>Sources &amp; Methods</summary>
-          <div class="source-content">
-            <p><strong>Sources:</strong></p>
-            <ul>
-              <li>Statistics Canada - Survey of Financial Security</li>
-              <li>CMHC and Bank of Canada - household credit statistics</li>
-            </ul>
-
-            <p><strong>Methods:</strong></p>
-            <ul>
-              <li>Real estate, financial assets, pensions, and debt follow age patterns in the Survey of Financial Security.</li>
-              <li>Values are smoothed across ages and updated for the selected province and household/individual view.</li>
-              <li>Net worth is displayed as a line across the stacked asset and debt areas.</li>
-            </ul>
-          </div>
-        </details>
+        
       </div>
 
       </div>
@@ -1579,7 +1639,7 @@
       <!-- Income Distribution (Histogram) -->
       <div class="chart-card">
         <h3 id="percentileIncomeTitle">Income Distribution (Histogram, <span data-current-year></span>)
-          <span class="info-icon chart-info-icon" tabindex="0" role="button" data-year-attr="aria-label" data-year-aria-label="Chart info: Income distribution histogram ({YEAR})."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip">Shows the estimated distribution of employment income in <span data-current-year></span> for your selected province and household/individual view.</span></span>
+          <span class="info-icon chart-info-icon" tabindex="0" role="button" data-year-attr="aria-label" data-year-aria-label="Chart info: Income distribution histogram ({YEAR})."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows the estimated distribution of employment income in <span data-current-year></span> for your selected province and household/individual view.</div><div><strong>Sources</strong></div><ul><li>Statistics Canada - Canadian Income Survey</li><li>CRA tax-filer percentile tables</li></ul><div><strong>Methods</strong></div><ul><li>Published income percentiles are used to build a smooth distribution curve.</li><li>The curve is divided into income ranges (bins) to show how earnings are distributed across the population.</li><li>Results adjust based on the selected province and household/individual view.</li></ul></span></span>
         </h3>
         <div class="chart-container">
           <div class="chart-loading">
@@ -1588,29 +1648,13 @@
           </div>
           <canvas id="percentileIncomeChart" class="chart-canvas" style="display:none;"></canvas>
         </div>
-        <details class="source-box">
-          <summary>Sources &amp; Methods</summary>
-          <div class="source-content">
-            <p><strong>Sources:</strong></p>
-            <ul>
-              <li>Statistics Canada - Canadian Income Survey</li>
-              <li>CRA tax-filer percentile tables</li>
-            </ul>
-
-            <p><strong>Methods:</strong></p>
-            <ul>
-              <li>Published income percentiles are used to build a smooth distribution curve.</li>
-              <li>The curve is divided into income ranges (bins) to show how earnings are distributed across the population.</li>
-              <li>Results adjust based on the selected province and household/individual view.</li>
-            </ul>
-          </div>
-        </details>
+        
       </div>
 
       <!-- Net Worth Distribution (Histogram) -->
       <div class="chart-card">
         <h3 id="percentileNetWorthTitle">Net Worth Distribution (Histogram, <span data-current-year></span>)
-          <span class="info-icon chart-info-icon" tabindex="0" role="button" data-year-attr="aria-label" data-year-aria-label="Chart info: Net worth distribution histogram ({YEAR})."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip">Shows the estimated distribution of household net worth in <span data-current-year></span> for your selected province and household/individual view.</span></span>
+          <span class="info-icon chart-info-icon" tabindex="0" role="button" data-year-attr="aria-label" data-year-aria-label="Chart info: Net worth distribution histogram ({YEAR})."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows the estimated distribution of household net worth in <span data-current-year></span> for your selected province and household/individual view.</div><div><strong>Sources</strong></div><ul><li>Statistics Canada - Survey of Financial Security</li><li>Bank of Canada - inflation adjustments</li></ul><div><strong>Methods</strong></div><ul><li>Percentile points across the wealth distribution are used to build a smooth distribution curve.</li><li>This curve is divided into evenly sized bins to show the estimated distribution of net worth in <span data-current-year></span>.</li><li>Values update when selecting a different province or household/individual view.</li></ul></span></span>
         </h3>
         <div class="chart-container">
           <div class="chart-loading">
@@ -1619,29 +1663,13 @@
           </div>
           <canvas id="percentileNetWorthChart" class="chart-canvas" style="display:none;"></canvas>
         </div>
-        <details class="source-box">
-          <summary>Sources &amp; Methods</summary>
-          <div class="source-content">
-            <p><strong>Sources:</strong></p>
-            <ul>
-              <li>Statistics Canada - Survey of Financial Security</li>
-              <li>Bank of Canada - inflation adjustments</li>
-            </ul>
-
-            <p><strong>Methods:</strong></p>
-            <ul>
-              <li>Percentile points across the wealth distribution are used to build a smooth distribution curve.</li>
-              <li>This curve is divided into evenly sized bins to show the estimated distribution of net worth in <span data-current-year></span>.</li>
-              <li>Values update when selecting a different province or household/individual view.</li>
-            </ul>
-          </div>
-        </details>
+        
       </div>
 
       <!-- Median Income by Province (current-year) -->
       <div class="chart-card">
         <h3 id="provinceIncomeTitle">Median Income by Province (<span data-current-year></span>)
-          <span class="info-icon chart-info-icon" tabindex="0" role="button" data-year-attr="aria-label" data-year-aria-label="Chart info: Median income by province with percentile whiskers ({YEAR})."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip">Shows median employment income across provinces in <span data-current-year></span>, with whiskers marking the 10th and 90th percentile ranges.</span></span>
+          <span class="info-icon chart-info-icon" tabindex="0" role="button" data-year-attr="aria-label" data-year-aria-label="Chart info: Median income by province with percentile whiskers ({YEAR})."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows median employment income across provinces in <span data-current-year></span>, with whiskers marking the 10th and 90th percentile ranges.</div><div><strong>Sources</strong></div><ul><li>Statistics Canada - Canadian Income Survey (provincial medians)</li><li>CRA tax-filer percentile ratios</li></ul><div><strong>Methods</strong></div><ul><li>Provincial income differences are based on Statistics Canada medians.</li><li>Percentile ranges use CRA ratios and are shown as whiskers for the 10th and 90th percentiles.</li><li>Values adjust for household/individual view.</li></ul></span></span>
         </h3>
         <div class="chart-container">
           <div class="chart-loading">
@@ -1650,29 +1678,13 @@
           </div>
           <canvas id="provinceIncomeChart" class="chart-canvas" style="display:none;"></canvas>
         </div>
-        <details class="source-box">
-          <summary>Sources &amp; Methods</summary>
-          <div class="source-content">
-            <p><strong>Sources:</strong></p>
-            <ul>
-              <li>Statistics Canada - Canadian Income Survey (provincial medians)</li>
-              <li>CRA tax-filer percentile ratios</li>
-            </ul>
-
-            <p><strong>Methods:</strong></p>
-            <ul>
-              <li>Provincial income differences are based on Statistics Canada medians.</li>
-              <li>Percentile ranges use CRA ratios and are shown as whiskers for the 10th and 90th percentiles.</li>
-              <li>Values adjust for household/individual view.</li>
-            </ul>
-          </div>
-        </details>
+        
       </div>
 
       <!-- Projected Median Net Worth by Province (current-year) -->
       <div class="chart-card">
         <h3 id="provinceTitle">Projected Median Net Worth by Province (<span data-current-year></span>)
-          <span class="info-icon chart-info-icon" tabindex="0" role="button" data-year-attr="aria-label" data-year-aria-label="Chart info: Projected {YEAR} median net worth by province with percentile whiskers."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip">Shows projected <span data-current-year></span> median net worth by province, with whiskers marking the 10th and 90th percentile ranges.</span></span>
+          <span class="info-icon chart-info-icon" tabindex="0" role="button" data-year-attr="aria-label" data-year-aria-label="Chart info: Projected {YEAR} median net worth by province with percentile whiskers."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows projected <span data-current-year></span> median net worth by province, with whiskers marking the 10th and 90th percentile ranges.</div><div><strong>Sources</strong></div><ul><li>Statistics Canada - Survey of Financial Security (provincial detail)</li><li>Bank of Canada - inflation guidance</li></ul><div><strong>Methods</strong></div><ul><li>Provincial net worth medians are projected to <span data-current-year></span> in constant dollars.</li><li>Percentile ranges are shown as whiskers for the 10th and 90th percentiles.</li><li>Values adjust for household/individual view selection.</li></ul></span></span>
         </h3>
         <div class="chart-container">
           <div class="chart-loading">
@@ -1681,29 +1693,13 @@
           </div>
           <canvas id="provinceChart" class="chart-canvas" style="display:none;"></canvas>
         </div>
-        <details class="source-box">
-          <summary>Sources &amp; Methods</summary>
-          <div class="source-content">
-            <p><strong>Sources:</strong></p>
-            <ul>
-              <li>Statistics Canada - Survey of Financial Security (provincial detail)</li>
-              <li>Bank of Canada - inflation guidance</li>
-            </ul>
-
-            <p><strong>Methods:</strong></p>
-            <ul>
-              <li>Provincial net worth medians are projected to <span data-current-year></span> in constant dollars.</li>
-              <li>Percentile ranges are shown as whiskers for the 10th and 90th percentiles.</li>
-              <li>Values adjust for household/individual view selection.</li>
-            </ul>
-          </div>
-        </details>
+        
       </div>
 
       <!-- Income Percentile by Gender -->
       <div class="chart-card">
         <h3 id="genderIncomeTitle">Income Percentile by Gender (<span data-current-year></span>)
-          <span class="info-icon chart-info-icon" tabindex="0" role="button" aria-label="Chart info: Median income by gender and age."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip">Compares women's and men's median employment income by age, adjusted for province and household/individual view. Shaded bands show the range between the 10th and 90th percentiles for men and women.</span></span>
+          <span class="info-icon chart-info-icon" tabindex="0" role="button" aria-label="Chart info: Median income by gender and age."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Compares women's and men's median employment income by age, adjusted for province and household/individual view. Shaded bands show the range between the 10th and 90th percentiles for men and women.</div><div><strong>Sources</strong></div><ul><li>Statistics Canada - Canadian Income Survey (by sex)</li><li>CRA tax-filer benchmarks</li></ul><div><strong>Methods</strong></div><ul><li>Women-s median income is shown relative to men using the most recent national ratio.</li><li>The same smoothing, provincial adjustments, and household/individual view options apply as in the main income chart.</li></ul></span></span>
         </h3>
         <div class="chart-container">
           <div class="chart-loading">
@@ -1712,28 +1708,13 @@
           </div>
           <canvas id="genderIncomeChart" class="chart-canvas" style="display:none;"></canvas>
         </div>
-        <details class="source-box">
-          <summary>Sources &amp; Methods</summary>
-          <div class="source-content">
-            <p><strong>Sources:</strong></p>
-            <ul>
-              <li>Statistics Canada - Canadian Income Survey (by sex)</li>
-              <li>CRA tax-filer benchmarks</li>
-            </ul>
-
-            <p><strong>Methods:</strong></p>
-            <ul>
-              <li>Women-s median income is shown relative to men using the most recent national ratio.</li>
-              <li>The same smoothing, provincial adjustments, and household/individual view options apply as in the main income chart.</li>
-            </ul>
-          </div>
-        </details>
+        
       </div>
 
       <!-- Income vs Net Worth Scatter Plot (current-year) -->
       <div class="chart-card">
         <h3 id="scatterTitle">Median Income vs Net Worth by Age (Households, <span data-current-year></span>) - Canada
-          <span class="info-icon chart-info-icon" tabindex="0" role="button" aria-label="Chart info: Income and net worth relationship by age."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip">Shows how median income at each age relates to median net worth, using consistent smoothing and inflation adjustments.</span></span>
+          <span class="info-icon chart-info-icon" tabindex="0" role="button" aria-label="Chart info: Income and net worth relationship by age."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows how median income at each age relates to median net worth, using consistent smoothing and inflation adjustments.</div><div><strong>Sources</strong></div><ul><li>Statistics Canada - Canadian Income Survey</li><li>Survey of Financial Security</li></ul><div><strong>Methods</strong></div><ul><li>Each point combines the median income and median net worth for the same age.</li><li>Values follow the same smoothing and inflation-adjustment approach used in the income and wealth charts.</li></ul></span></span>
         </h3>
         <div class="chart-container">
           <div class="chart-loading">
@@ -1742,22 +1723,7 @@
           </div>
           <canvas id="scatterChart" class="chart-canvas" style="display:none;"></canvas>
         </div>
-      <details class="source-box">
-        <summary>Sources &amp; Methods</summary>
-          <div class="source-content">
-            <p><strong>Sources:</strong></p>
-            <ul>
-              <li>Statistics Canada - Canadian Income Survey</li>
-              <li>Survey of Financial Security</li>
-            </ul>
-
-            <p><strong>Methods:</strong></p>
-            <ul>
-              <li>Each point combines the median income and median net worth for the same age.</li>
-              <li>Values follow the same smoothing and inflation-adjustment approach used in the income and wealth charts.</li>
-          </ul>
-        </div>
-      </details>
+      
     </div>
 
     <div class="chart-card info-card" id="usingThisData">
@@ -5546,6 +5512,33 @@ function createChart(canvasId, dataInfo, type = 'line') {
 
     function ensureChartsInitialized() { if (!chartsInitialized) initCharts(); }
 
+    // Clear Chart.js tooltips when clicking outside charts or scrolling
+    (function() {
+      function clearAllChartTooltips() {
+        const charts = (window.allCharts && window.allCharts.length)
+          ? window.allCharts
+          : (window.Chart && window.Chart.instances ? Object.values(window.Chart.instances) : []);
+        charts.forEach(chart => {
+          if (chart && chart.tooltip && typeof chart.tooltip.setActiveElements === 'function') {
+            chart.tooltip.setActiveElements([], { x: 0, y: 0 });
+            if (typeof chart.update === 'function') chart.update('none');
+          }
+        });
+        const tooltipEl = document.querySelector('.chartjs-tooltip');
+        if (tooltipEl) tooltipEl.classList.remove('show');
+      }
+
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('canvas')) clearAllChartTooltips();
+      });
+
+      let scrollTimeout;
+      document.addEventListener('scroll', () => {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(clearAllChartTooltips, 80);
+      }, { passive: true });
+    })();
+
     // Setup nav interactions and lazy initialization once DOM is ready
     document.addEventListener('DOMContentLoaded', function() {
       validateDataObjectsOnLoad();
@@ -6302,6 +6295,11 @@ function createChart(canvasId, dataInfo, type = 'line') {
         if (!card) return;
         const chartContainer = card.querySelector('.chart-container');
         let footer = card.querySelector('.chart-footer-row');
+        const sourceBox = card.querySelector('.source-box');
+        if (!sourceBox) {
+          if (footer) footer.remove();
+          return;
+        }
         if (!footer) {
           footer = document.createElement('div');
           footer.className = 'chart-footer-row';
@@ -6320,7 +6318,6 @@ function createChart(canvasId, dataInfo, type = 'line') {
           sourcesRow.className = 'chart-footer-sources';
           footer.appendChild(sourcesRow);
         }
-        const sourceBox = card.querySelector('.source-box');
         if (sourceBox && sourceBox.parentElement !== sourcesRow) {
           sourcesRow.appendChild(sourceBox);
         }
@@ -6922,6 +6919,141 @@ function createChart(canvasId, dataInfo, type = 'line') {
         
         // Initial position check
         updateAllTooltips();
+      });
+    })();
+  </script>
+  <script>
+    // Chart info overlay system - CLEAN, SIMPLE VERSION
+    (function() {
+      document.addEventListener('DOMContentLoaded', function() {
+        const chartCards = document.querySelectorAll('.chart-card');
+
+        chartCards.forEach(chartCard => {
+          const infoIcon = chartCard.querySelector('.chart-info-icon');
+          if (!infoIcon) return;
+
+          const tooltip = infoIcon.querySelector('.info-tooltip');
+          if (!tooltip) return;
+
+          // Create overlay
+          const overlay = document.createElement('div');
+          overlay.className = 'chart-info-overlay';
+          overlay.setAttribute('role', 'dialog');
+          overlay.setAttribute('aria-label', 'Chart information');
+
+          const content = document.createElement('div');
+          content.className = 'chart-info-overlay-content';
+          content.innerHTML = tooltip.innerHTML;
+
+          const closeHint = document.createElement('div');
+          closeHint.className = 'chart-info-overlay-close';
+          closeHint.innerHTML = '<button class="overlay-close-btn" aria-label="Close">✕ Close</button>';
+
+          overlay.appendChild(content);
+          overlay.appendChild(closeHint);
+          chartCard.appendChild(overlay);
+
+          // Store chart instance reference
+          let chartInstance = null;
+
+          function getChartInstance() {
+            if (!chartInstance) {
+              const canvas = chartCard.querySelector('canvas');
+              if (canvas && window.Chart && typeof window.Chart.getChart === 'function') {
+                chartInstance = window.Chart.getChart(canvas);
+              }
+            }
+            return chartInstance;
+          }
+
+          // Toggle overlay
+          infoIcon.addEventListener('click', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+
+            const isVisible = overlay.classList.contains('visible');
+
+            // Close other overlays
+            document.querySelectorAll('.chart-info-overlay.visible').forEach(otherOverlay => {
+              if (otherOverlay !== overlay) {
+                otherOverlay.classList.remove('visible');
+                const otherCard = otherOverlay.closest('.chart-card');
+                if (otherCard) {
+                  const otherIcon = otherCard.querySelector('.chart-info-icon');
+                  if (otherIcon) otherIcon.classList.remove('active');
+                }
+              }
+            });
+
+            // Toggle this overlay
+            if (isVisible) {
+              overlay.classList.remove('visible');
+              infoIcon.classList.remove('active');
+            } else {
+              overlay.classList.add('visible');
+              infoIcon.classList.add('active');
+
+              // Clear chart tooltip when opening overlay
+              const chart = getChartInstance();
+              if (chart && chart.tooltip) {
+                chart.tooltip.setActiveElements([], { x: 0, y: 0 });
+                chart.update('none');
+              }
+            }
+          });
+
+          // Close on overlay click
+          overlay.addEventListener('click', (e) => {
+            if (e.target === overlay || e.target.classList.contains('chart-info-overlay-close')) {
+              overlay.classList.remove('visible');
+              infoIcon.classList.remove('active');
+            }
+          });
+
+          // Block tooltips while overlay is open
+          const canvas = chartCard.querySelector('canvas');
+          if (canvas) {
+            canvas.addEventListener('mousemove', () => {
+              if (overlay.classList.contains('visible')) {
+                const chart = getChartInstance();
+                if (chart && chart.tooltip) {
+                  chart.tooltip.setActiveElements([], { x: 0, y: 0 });
+                  chart.update('none');
+                }
+              }
+            });
+          }
+        });
+
+        // Close overlays when clicking outside
+        ['click', 'touchstart'].forEach(eventType => {
+          document.addEventListener(eventType, (e) => {
+            if (!e.target.closest('.chart-card')) {
+              document.querySelectorAll('.chart-info-overlay.visible').forEach(overlay => {
+                overlay.classList.remove('visible');
+                const card = overlay.closest('.chart-card');
+                if (card) {
+                  const icon = card.querySelector('.chart-info-icon');
+                  if (icon) icon.classList.remove('active');
+                }
+              });
+            }
+          }, { passive: true });
+        });
+
+        // ESC key
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            document.querySelectorAll('.chart-info-overlay.visible').forEach(overlay => {
+              overlay.classList.remove('visible');
+              const card = overlay.closest('.chart-card');
+              if (card) {
+                const icon = card.querySelector('.chart-info-icon');
+                if (icon) icon.classList.remove('active');
+              }
+            });
+          }
+        });
       });
     })();
   </script>

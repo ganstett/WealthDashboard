@@ -8,13 +8,15 @@
   <!-- Open Graph tags make the site attractive when shared on social media -->
   <meta property="og:title" content="Canada's Wealth Dashboard" />
   <meta property="og:description" content="Explore detailed charts of Canadian median income, net worth by age, wealth distribution and more. Built using multiple data sources for the most comprehensive view available." />
-  <meta property="og:image" content="https://example.com/share-image.png" />
+  <meta property="og:image" content="https://wealthdashboard.ca/share.png" />
   <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://wealthdashboard.ca/" />
+  <link rel="canonical" href="https://wealthdashboard.ca/" />
   <!-- Favicon: SVG (modern browsers) + PNG fallback (Google Search, legacy browsers) -->
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  <link rel="icon" type="image/png" sizes="192x192" href="favicon image.png" />
-  <link rel="icon" type="image/png" sizes="48x48" href="favicon image.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="favicon image.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="favicon_image.png" />
+  <link rel="icon" type="image/png" sizes="48x48" href="favicon_image.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon_image.png" />
   <meta name="theme-color" content="#131e2e" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -182,6 +184,28 @@
       border-right: 6px solid transparent;
       border-bottom: 6px solid rgba(7, 18, 39, 0.98);
     }
+    .info-icon.tooltip-above .info-tooltip {
+      left: 50%;
+      top: 0;
+      bottom: auto;
+      transform: translateX(-50%) translateY(calc(-100% - 8px));
+    }
+    .info-icon.tooltip-above:hover .info-tooltip,
+    .info-icon.tooltip-above:focus .info-tooltip {
+      visibility: visible;
+      opacity: 1;
+      transform: translateX(-50%) translateY(calc(-100% - 4px));
+    }
+    .info-icon.tooltip-above .info-tooltip::after {
+      left: 50%;
+      top: auto;
+      bottom: -6px;
+      transform: translateX(-50%);
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 6px solid rgba(7, 18, 39, 0.98);
+      border-bottom: none;
+    }
     /* Flip to left when near right edge */
     .info-icon.tooltip-left .info-tooltip {
       left: auto;
@@ -223,14 +247,14 @@
         height: 22px;
       }
     }
-    /* For very small screens, center tooltips */
-    @media (max-width: 480px) {
+    /* On mobile, always show tooltips below the icon to prevent off-screen clipping */
+    @media (max-width: 768px) {
       .info-tooltip {
         left: 50% !important;
         right: auto !important;
         top: calc(100% + 10px) !important;
         transform: translateX(-50%) translateY(-4px) !important;
-        max-width: calc(100vw - 30px);
+        max-width: min(300px, calc(100vw - 24px));
       }
       .info-icon:hover .info-tooltip,
       .info-icon:focus .info-tooltip {
@@ -346,14 +370,88 @@
     }
 
     /* Footer */
-    footer.site-footer { margin-top:28px; padding:18px 0; text-align:center; color:#9fb6c8; font-size:0.85rem; border-top:1px solid rgba(255,255,255,0.03); }
-    footer.site-footer a { color:#9fb6c8; }
-    footer.site-footer .content-width { display:flex; flex-direction:column; gap:10px; align-items:center; }
-    footer.site-footer .about-privacy { width: min(900px, 100%); text-align:left; }
-    footer.site-footer .about-privacy summary { font-size:0.85rem; color: rgba(207,216,227,0.9); }
-    footer.site-footer .about-privacy .source-content { font-size:0.82rem; color: rgba(207,216,227,0.78); }
-    .footer-contact { font-size:0.85rem; color:#9fb6c8; }
-    .footer-contact a { color: inherit; text-decoration: underline; }
+    footer.site-footer {
+      margin-top: 40px;
+      padding: 0;
+      text-align: center;
+      color: #9fb6c8;
+      font-size: 0.85rem;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    footer.site-footer a { color: #9fb6c8; }
+
+    /* Footer top bar: copyright + disclosure toggle */
+    .footer-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .footer-bar-left {
+      color: rgba(159,182,200,0.6);
+      font-size: 0.8rem;
+    }
+    .footer-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .footer-disclosure-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: rgba(159,182,200,0.7);
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px 0;
+      transition: color 0.15s;
+      font-family: inherit;
+    }
+    .footer-disclosure-toggle:hover { color: rgba(159,182,200,1); }
+    .footer-disclosure-toggle .toggle-arrow {
+      display: inline-block;
+      transition: transform 0.2s ease;
+      font-size: 0.7rem;
+    }
+    .footer-disclosure-toggle.open .toggle-arrow { transform: rotate(180deg); }
+
+    /* Disclosure panel */
+    .footer-disclosure-panel {
+      display: none;
+      text-align: left;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 20px 0 24px;
+    }
+    .footer-disclosure-panel.open { display: block; }
+    .footer-disclosure-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px 32px;
+    }
+    .footer-disclosure-item strong {
+      display: block;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: rgba(159,182,200,0.5);
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+    .footer-disclosure-item p {
+      margin: 0;
+      font-size: 0.82rem;
+      color: rgba(207,216,227,0.75);
+      line-height: 1.45;
+    }
+    .footer-disclosure-item a { color: #9fb6c8; text-decoration: underline; }
+    @media (max-width: 640px) {
+      .footer-bar { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .footer-disclosure-grid { grid-template-columns: 1fr; gap: 14px; }
+    }
 
     /* Global styles */
     body {
@@ -1180,15 +1278,10 @@
       color: #f87171;
     }
     .field-feedback.is-valid{
-      display: flex;
-      color: #34d399;
+      display: none;
     }
     .field-feedback.is-error::before{
       content: "⚠";
-      font-size: 12px;
-    }
-    .field-feedback.is-valid::before{
-      content: "✓";
       font-size: 12px;
     }
     .calc-indicator{
@@ -1241,30 +1334,142 @@
     @media (max-width:1100px) {
       .controls-grid { grid-template-columns: 1fr 1fr 0.7fr 1fr 1fr; }
     }
-    @media (max-width: 640px) {
-      .controls-grid { grid-template-columns: 1fr; }
+    @media (max-width: 768px) {
+      .controls-grid { grid-template-columns: 1fr 1fr; }
+      .controls-grid > .cta-row {
+        grid-column: auto;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 0;
+        justify-content: flex-start;
+        align-items: stretch;
+      }
+      .controls-grid > .cta-row #compareBtn,
+      .controls-grid > .cta-row #resetBtn {
+        width: 100%;
+        max-width: none;
+        flex: none;
+      }
     }
     @media (max-width: 600px) {
       .cta-row{
-        grid-column: 1 / -1;
-        flex-direction: row;
-        justify-content: center;
-        gap: 12px;
-        margin-top: 12px;
+        gap: 8px;
+        margin-top: 0;
       }
       #compareBtn, #resetBtn {
-        width: auto;
-        max-width: none;
         height: 46px;
         border-radius: 14px;
       }
-      #compareBtn { flex: 1 1 auto; max-width: 260px; }
-      #resetBtn { flex: 0 0 auto; width: 120px; opacity: 0.95; }
+    }
+    /* Expandable detail panel */
+    .detail-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: none;
+      border: none;
+      color: #00bfa5;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 10px 0 2px 0;
+      opacity: 0.75;
+      letter-spacing: 0.2px;
+      transition: opacity 0.15s;
+    }
+    .detail-toggle-btn:hover { opacity: 1; }
+    .detail-toggle-btn .toggle-arrow {
+      display: inline-block;
+      font-size: 0.75em;
+      transition: transform 0.25s;
+    }
+    .detail-toggle-btn.open .toggle-arrow { transform: rotate(180deg); }
+    .detail-panel {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.3s ease;
+    }
+    .detail-panel.open { max-height: 900px; }
+    .detail-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 14px 0 8px;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .detail-section-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      opacity: 0.5;
+      color: #d7eaf9;
+    }
+    .detail-section-hint {
+      font-size: 0.76rem;
+      opacity: 0.35;
+      color: #d7eaf9;
+    }
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px 12px;
+      align-items: end;
+    }
+    .detail-grid-cashflow {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px 12px;
+      align-items: end;
+    }
+    .field-period-tag {
+      font-size: 0.72rem;
+      opacity: 0.45;
+      margin-left: 4px;
+      font-weight: 400;
+      white-space: nowrap;
+    }
+    .detail-panel .label-row {
+      white-space: normal;
+      flex-wrap: wrap;
+    }
+    .period-toggle {
+      display: inline-flex;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      overflow: hidden;
+      height: 32px;
+    }
+    .period-toggle button {
+      background: none;
+      border: none;
+      color: #d7eaf9;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0 11px;
+      cursor: pointer;
+      opacity: 0.45;
+      transition: opacity 0.15s, background 0.15s;
+      white-space: nowrap;
+    }
+    .period-toggle button.active {
+      background: rgba(0,191,165,0.18);
+      opacity: 1;
+      color: #00bfa5;
+    }
+    @media (max-width: 640px) {
+      .detail-grid { grid-template-columns: 1fr 1fr; }
+      .detail-grid-cashflow { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 400px) {
+      .detail-grid { grid-template-columns: 1fr; }
+      .detail-grid-cashflow { grid-template-columns: 1fr; }
     }
     /* Result cards (aligned with hero pills but rectangular) */
-    .results-grid { display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 14px; width:100%; }
-    @media (max-width: 980px) { .results-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-    @media (max-width: 640px) { .results-grid { grid-template-columns: 1fr; } }
+    .results-grid { display:grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 14px; width:100%; }
+    @media (max-width: 1100px) { .results-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (max-width: 750px) { .results-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 480px) { .results-grid { grid-template-columns: 1fr; } }
     @media (max-width: 768px) {
       :root { --mobile-card-margin: 14px; }
       .content-width,
@@ -1288,8 +1493,8 @@
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
       border-radius: 18px;
-      padding: 16px 18px;
-      min-height: 112px;
+      padding: 12px 14px;
+      min-height: 90px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -1298,9 +1503,9 @@
       color: var(--text-secondary);
     }
     .metric-card:hover { box-shadow: 0 10px 28px rgba(0,0,0,0.16); background: var(--bg-surface-hover); }
-    .metric-label { font-size: 0.95rem; opacity: 0.9; text-align:center; }
-    .metric-value { font-size: 1.9rem; font-weight: 800; line-height: 1.1; color: var(--text-primary); text-align:center; }
-    .metric-sub { font-size: 0.9rem; opacity: 0.8; text-align:center; }
+    .metric-label { font-size: 0.82rem; opacity: 0.9; text-align:center; }
+    .metric-value { font-size: 1.6rem; font-weight: 800; line-height: 1.1; color: var(--text-primary); text-align:center; }
+    .metric-sub { font-size: 0.78rem; opacity: 0.8; text-align:center; }
     .section-divider { height:1px; background: rgba(255,255,255,0.08); margin: 18px 0 24px; }
 
     /* Projection section */
@@ -1359,7 +1564,7 @@
 <body>
   <div class="container">
     <section class="hero">
-      <div class="page-brand" aria-label="WealthDashboard.ca">
+      <h1 class="page-brand" aria-label="WealthDashboard.ca" style="margin-top:0;">
         <a href="https://www.wealthdashboard.ca" aria-label="WealthDashboard home" style="display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:inherit;">
           <svg 
             width="64"
@@ -1409,7 +1614,7 @@
           </svg>
           <span class="brand-wealth">WEALTH</span><span class="brand-rest">DASHBOARD.CA</span>
         </a>
-      </div>
+      </h1>
 
       <p class="page-subtitle">
         See how you stack up financially against other Canadians.
@@ -1491,7 +1696,8 @@
                 • Student loans<br>
                 • Credit card balances<br>
                 • Lines of credit<br><br>
-                Do NOT include your annual income.
+                Do NOT include your annual income.<br><br>
+                If you own a home, net worth = home value − mortgage + investments + savings + pension value − other debts.
               </span>
             </span>
           </div>
@@ -1501,6 +1707,100 @@
         <div class="cta-row">
           <button id="compareBtn" class="btn-primary btn-compare">Compare</button>
           <button id="resetBtn" class="btn-primary btn-reset">Reset</button>
+        </div>
+      </div>
+      <!-- More detail toggle -->
+      <button class="detail-toggle-btn" id="detailToggleBtn" type="button" aria-expanded="false" aria-controls="detailPanel">
+        <span class="toggle-arrow">▾</span> More detail (optional)
+      </button>
+      <!-- Expandable detail panel -->
+      <div class="detail-panel" id="detailPanel">
+        <!-- Wealth Detail -->
+        <div class="detail-section-header">
+          <span class="detail-section-title">Wealth Detail</span>
+          <span class="detail-section-hint">Leave any field blank to skip</span>
+        </div>
+        <div class="detail-grid">
+          <div class="control-group">
+            <label class="control-label" for="userHomeVal">Home Value</label>
+            <input id="userHomeVal" type="number" min="0" max="10000000" step="1" placeholder="e.g., 700000" class="control-input" />
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="userMortgage">Mortgage Owed</label>
+            <input id="userMortgage" type="number" min="0" max="5000000" step="1" placeholder="e.g., 450000" class="control-input" />
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="userOtherRE">Other Real Estate</label>
+            <input id="userOtherRE" type="number" min="0" max="10000000" step="1" placeholder="equity value" class="control-input" />
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="userRegistered">TFSA / RRSP / FHSA</label>
+            <input id="userRegistered" type="number" min="0" max="50000000" step="1" placeholder="registered accounts" class="control-input" />
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="userNonReg">Non-Registered</label>
+            <input id="userNonReg" type="number" min="0" max="50000000" step="1" placeholder="taxable investments" class="control-input" />
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="userPension">Pension / DB Plan</label>
+            <input id="userPension" type="number" min="0" max="50000000" step="1" placeholder="commuted value" class="control-input" />
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="userNonMortgageDebt">Non-Mortgage Debt</label>
+            <input id="userNonMortgageDebt" type="number" min="0" max="5000000" step="1" placeholder="car, student, credit" class="control-input" />
+          </div>
+        </div>
+        <!-- Cash Flow -->
+        <div class="detail-section-header" style="margin-top:16px;">
+          <span class="detail-section-title">Cash Flow</span>
+          <div class="period-toggle" id="periodToggle" role="group" aria-label="Cash flow period">
+            <button type="button" class="active" data-period="monthly" id="periodMonthly">Monthly</button>
+            <button type="button" data-period="annual" id="periodAnnual">Annual</button>
+          </div>
+        </div>
+        <div class="detail-grid-cashflow">
+          <div class="control-group">
+            <div class="label-row">
+              <label class="control-label" for="userTakeHome">Take-Home Pay<span class="field-period-tag" id="takeHomePeriodTag">/ mo</span></label>
+              <span class="info-icon tooltip-above" tabindex="0" role="button" aria-label="What to include in take-home pay">
+                <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg>
+                <span class="info-tooltip" style="max-width:min(300px,90vw);">
+                  <strong>Take-Home Pay</strong><br><br>
+                  Your net pay after income tax, CPP, and EI — from all employment sources. This is the amount deposited to your bank account — what you see on your paycheque.<br><br>
+                  <strong>Don't include:</strong> investment returns, rental income, government transfers (OAS, CERB), or one-time windfalls. Those go in net worth, not cash flow.
+                </span>
+              </span>
+            </div>
+            <input id="userTakeHome" type="number" min="0" max="1000000" step="1" placeholder="after tax" class="control-input" />
+          </div>
+          <div class="control-group">
+            <div class="label-row">
+              <label class="control-label" for="userSpending">Spending<span class="field-period-tag" id="spendingPeriodTag">/ mo</span></label>
+              <span class="info-icon tooltip-above" tabindex="0" role="button" aria-label="What to include in spending">
+                <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg>
+                <span class="info-tooltip" style="max-width:min(300px,90vw);">
+                  <strong>Spending</strong><br><br>
+                  Everything you spend on living: housing, food, transport, utilities, subscriptions, insurance, dining, clothing, and minimum loan/mortgage payments.<br><br>
+                  <strong>Don't include:</strong> new savings or investments — those go in the next field. Double-counting is the most common mistake here.
+                </span>
+              </span>
+            </div>
+            <input id="userSpending" type="number" min="0" max="500000" step="1" placeholder="total expenses" class="control-input" />
+          </div>
+          <div class="control-group">
+            <div class="label-row">
+              <label class="control-label" for="userSavingsAmt">Savings / Invested<span class="field-period-tag" id="savingsPeriodTag">/ mo</span></label>
+              <span class="info-icon tooltip-above" tabindex="0" role="button" aria-label="What to include in savings">
+                <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg>
+                <span class="info-tooltip" style="max-width:min(300px,90vw);">
+                  <strong>Savings / Invested</strong><br><br>
+                  New money being put to work: TFSA, RRSP, FHSA, or non-registered contributions, extra mortgage principal payments (above your minimum), and emergency fund top-ups.<br><br>
+                  <strong>Don't include:</strong> minimum debt payments (those are spending). This is money actively building your net worth.
+                </span>
+              </span>
+            </div>
+            <input id="userSavingsAmt" type="number" min="0" max="500000" step="1" placeholder="amount saved" class="control-input" />
+          </div>
         </div>
       </div>
       <div id="inputWarning" class="input-warning" aria-live="polite"></div>
@@ -1532,6 +1832,46 @@
           <div class="metric-label">Median net worth at selected age</div>
           <div id="medianNetWorthValue" class="metric-value tile-value">-</div>
           <div id="medianNetWorthSubtext" class="metric-sub tile-sub">for - ? age -</div>
+        </div>
+        <div class="metric-card statCard result-card" id="effectiveTaxRateTile" style="display:none;">
+          <div class="metric-label">Effective Tax Rate</div>
+          <div id="effectiveTaxRateTileValue" class="metric-value tile-value">-</div>
+          <div id="effectiveTaxRateTileSubtext" class="metric-sub tile-sub">income tax + CPP + EI</div>
+        </div>
+        <div class="metric-card statCard result-card" id="savingsRatePctTile" style="display:none;">
+          <div class="metric-label">Savings Rate</div>
+          <div id="savingsRatePctTileValue" class="metric-value tile-value">-</div>
+          <div id="savingsRatePctTileSubtext" class="metric-sub tile-sub">of take-home pay</div>
+        </div>
+        <div class="metric-card statCard result-card" id="spendingTile" style="display:none;">
+          <div class="metric-label">Annual spending</div>
+          <div id="spendingTileValue" class="metric-value tile-value">-</div>
+          <div id="spendingTileSubtext" class="metric-sub tile-sub">vs. median at your age</div>
+        </div>
+        <div class="metric-card statCard result-card" id="discretionaryTile" style="display:none;">
+          <div class="metric-label">Discretionary income</div>
+          <div id="discretionaryTileValue" class="metric-value tile-value">-</div>
+          <div id="discretionaryTileSubtext" class="metric-sub tile-sub">vs. median at your age</div>
+        </div>
+        <div class="metric-card statCard result-card" id="discPctTile" style="display:none;">
+          <div class="metric-label">Discretionary Income Percentile</div>
+          <div id="discPctTileValue" class="metric-value tile-value">-</div>
+          <div id="discPctTileSubtext" class="metric-sub tile-sub">vs. peers at your age</div>
+        </div>
+        <div class="metric-card statCard result-card" id="savingsRateTile" style="display:none;">
+          <div class="metric-label">Savings rate</div>
+          <div id="savingsRateTileValue" class="metric-value tile-value">-</div>
+          <div id="savingsRateTileSubtext" class="metric-sub tile-sub">vs. median at your age</div>
+        </div>
+        <div class="metric-card statCard result-card" id="savingsAmountTile" style="display:none;">
+          <div class="metric-label">Annual savings</div>
+          <div id="savingsAmountTileValue" class="metric-value tile-value">-</div>
+          <div id="savingsAmountTileSubtext" class="metric-sub tile-sub">vs. median at your age</div>
+        </div>
+        <div class="metric-card statCard result-card" id="debtTile" style="display:none;">
+          <div class="metric-label">Debt Percentile</div>
+          <div id="debtTileValue" class="metric-value tile-value">-</div>
+          <div id="debtTileSubtext" class="metric-sub tile-sub">of peers have less debt</div>
         </div>
       </div>
       </div>
@@ -1639,7 +1979,7 @@
       </div>
     </section>
 
-    <section id="section-networth-charts">
+    <section id="section-networth-charts" style="margin-top:16px;">
       <div class="charts-grid">
       <!-- Income Distribution (Histogram) -->
       <div class="chart-card">
@@ -1688,7 +2028,7 @@
 
       <!-- Projected Median Net Worth by Province (current-year) -->
       <div class="chart-card">
-        <h3 id="provinceTitle">Projected Median Net Worth by Province (<span data-current-year></span>)
+        <h3 id="provinceTitle">Median Net Worth by Province (<span data-current-year></span>)
           <span class="info-icon chart-info-icon" tabindex="0" role="button" data-year-attr="aria-label" data-year-aria-label="Chart info: Projected {YEAR} median net worth by province with percentile whiskers."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows projected <span data-current-year></span> median net worth by province, with whiskers marking the 10th and 90th percentile ranges.</div><div><strong>Sources</strong></div><ul><li>Statistics Canada - Survey of Financial Security (provincial detail)</li><li>Bank of Canada - inflation guidance</li></ul><div><strong>Methods</strong></div><ul><li>Provincial net worth medians are projected to <span data-current-year></span> in constant dollars.</li><li>Percentile ranges are shown as whiskers for the 10th and 90th percentiles.</li><li>Values adjust for household/individual view selection.</li></ul></span></span>
         </h3>
         <div class="chart-container">
@@ -1731,6 +2071,78 @@
       
     </div>
 
+      <!-- Housing Cost Burden by Age -->
+      <div class="chart-card">
+        <h3 id="housingCostTitle">Housing Cost Burden by Age (<span data-current-year></span>)
+          <span class="info-icon chart-info-icon" tabindex="0" role="button" aria-label="Chart info: Housing cost as % of gross income by age."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows what percentage of gross income Canadians typically spend on housing (rent or mortgage, property taxes, and utilities) at each age. The shaded band shows the 25th to 75th percentile range. Adjusts for selected province.</div><div><strong>Sources</strong></div><ul><li>Statistics Canada – Survey of Household Spending (SHS) 2022</li><li>CMHC Housing Market Outlook 2024</li></ul><div><strong>Methods</strong></div><ul><li>Shelter costs include rent or mortgage payments, property taxes, condo fees, and utilities as a share of gross household income.</li><li>Values are projected to <span data-current-year></span> and adjusted by province using regional cost-of-housing indices.</li><li>Provincial adjustments reflect differences in housing costs relative to local incomes (e.g. BC and ON face higher burdens than the national average).</li></ul></span></span>
+        </h3>
+        <div class="chart-container">
+          <div class="chart-loading">
+            <div class="spinner"></div>
+            <span>Loading chart...</span>
+          </div>
+          <canvas id="housingCostChart" class="chart-canvas" style="display:none;"></canvas>
+        </div>
+      </div>
+
+      <!-- Debt Breakdown by Age -->
+      <div class="chart-card">
+        <h3 id="debtBreakdownTitle">Avg. Debt Breakdown by Age (Households, <span data-current-year></span>)
+          <span class="info-icon chart-info-icon" tabindex="0" role="button" aria-label="Chart info: Household debt breakdown by type and age."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows how the typical Canadian household's debt breaks down by type at each age. Mortgage debt dominates the 30s–50s and declines as homes are paid off. Student loans peak in the mid-20s, while consumer and auto debt remain relatively stable across working years.</div><div><strong>Sources</strong></div><ul><li>Statistics Canada – Survey of Financial Security (SFS) 2023</li><li>CMHC Residential Mortgage Industry Report</li><li>Statistics Canada – National Balance Sheet Accounts</li></ul><div><strong>Methods</strong></div><ul><li>Debt averages are per household and include those with $0 of each debt type, so they represent population-wide exposure rather than the balance conditional on having that debt.</li><li>Mortgage debt scales with the selected province's housing market using net-worth ratios. Other debt types scale with provincial income ratios.</li><li>Values are projected to <span data-current-year></span>.</li></ul></span></span>
+        </h3>
+        <div class="chart-container">
+          <div class="chart-loading">
+            <div class="spinner"></div>
+            <span>Loading chart...</span>
+          </div>
+          <canvas id="debtBreakdownChart" class="chart-canvas" style="display:none;"></canvas>
+        </div>
+      </div>
+
+      <!-- Spending by Age -->
+      <div class="chart-card">
+        <h3 id="spendingTitle">Household Spending by Age (<span data-current-year></span>)
+          <span class="info-icon chart-info-icon" tabindex="0" role="button" aria-label="Chart info: Household spending by age."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows total annual household spending at each age, including housing, food, transport, and all other living expenses. The shaded band shows the 25th to 75th percentile range.</div><div><strong>Sources</strong></div><ul><li>Statistics Canada – Survey of Household Spending (SHS) 2022</li><li>Bank of Canada – consumer expenditure inflation adjustments</li></ul><div><strong>Methods</strong></div><ul><li>Total spending includes shelter, food, transport, health, recreation, and personal expenditures.</li><li>Values are projected to <span data-current-year></span> and scale with provincial income ratios.</li></ul></span></span>
+        </h3>
+        <div class="chart-container">
+          <div class="chart-loading"><div class="spinner"></div><span>Loading chart...</span></div>
+          <canvas id="spendingChart" class="chart-canvas" style="display:none;"></canvas>
+        </div>
+      </div>
+
+      <!-- Discretionary Income by Age -->
+      <div class="chart-card">
+        <h3 id="discretionaryTitle">Discretionary Income by Age (<span data-current-year></span>)
+          <span class="info-icon chart-info-icon" tabindex="0" role="button" aria-label="Chart info: Discretionary income (take-home minus spending) by age."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows what's left after subtracting total spending from after-tax take-home pay. Negative values in the early 20s reflect student debt, shared living support, or part-time work. The shaded band shows the 25th–75th percentile range.</div><div><strong>Sources</strong></div><ul><li>Statistics Canada – SHS 2022 &amp; CIS 2022</li><li>CRA tax-filer data for after-tax income</li></ul><div><strong>Methods</strong></div><ul><li>Take-home pay is derived from gross income using effective tax rates by age bracket.</li><li>Discretionary = take-home minus total spending.</li><li>Values scale with provincial income ratios.</li></ul></span></span>
+        </h3>
+        <div class="chart-container">
+          <div class="chart-loading"><div class="spinner"></div><span>Loading chart...</span></div>
+          <canvas id="discretionaryChart" class="chart-canvas" style="display:none;"></canvas>
+        </div>
+      </div>
+
+      <!-- Savings Rate by Age -->
+      <div class="chart-card">
+        <h3 id="savingsRateTitle">Savings Rate by Age (<span data-current-year></span>)
+          <span class="info-icon chart-info-icon" tabindex="0" role="button" aria-label="Chart info: Savings rate as % of take-home pay by age."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows the median savings rate (new savings and investments as a % of take-home pay) by age. Negative values in early working years and retirement reflect spending more than earning — common when student debt peaks or savings are being drawn down. The shaded band shows the 25th–75th percentile range.</div><div><strong>Sources</strong></div><ul><li>Statistics Canada – SHS 2022</li><li>Statistics Canada – National Balance Sheet Accounts</li></ul><div><strong>Methods</strong></div><ul><li>Savings rate = new savings / take-home pay × 100.</li><li>Savings includes TFSA, RRSP, FHSA contributions, extra mortgage principal, and non-registered investing.</li><li>Savings rate is not province-adjusted (it is a ratio).</li></ul></span></span>
+        </h3>
+        <div class="chart-container">
+          <div class="chart-loading"><div class="spinner"></div><span>Loading chart...</span></div>
+          <canvas id="savingsRateChart" class="chart-canvas" style="display:none;"></canvas>
+        </div>
+      </div>
+
+      <!-- Savings Amount by Age -->
+      <div class="chart-card">
+        <h3 id="savingsAmountTitle">Savings Amount by Age (<span data-current-year></span>)
+          <span class="info-icon chart-info-icon" tabindex="0" role="button" aria-label="Chart info: Annual savings in dollars by age."><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><circle cx="12" cy="12" r="9" stroke="#00bfa5" stroke-width="1.4" fill="none"></circle><text x="12" y="15" text-anchor="middle" fill="#00bfa5" font-size="10" font-weight="bold">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows how much the typical Canadian household saves in dollars each year at each age. Negative values indicate net drawdown — more is being spent or withdrawn than saved. The shaded band shows the 25th to 75th percentile range.</div><div><strong>Sources</strong></div><ul><li>Statistics Canada – SHS 2022 &amp; National Balance Sheet Accounts</li><li>CRA after-tax income data</li></ul><div><strong>Methods</strong></div><ul><li>Savings amount = take-home pay × savings rate. Take-home is estimated from gross income using effective tax rates by age bracket.</li><li>Scales with provincial income ratios. Values are projected to <span data-current-year></span>.</li></ul></span></span>
+        </h3>
+        <div class="chart-container">
+          <div class="chart-loading"><div class="spinner"></div><span>Loading chart...</span></div>
+          <canvas id="savingsAmountChart" class="chart-canvas" style="display:none;"></canvas>
+        </div>
+      </div>
+
     <div class="chart-card info-card" id="usingThisData">
       <h3>Using This Data</h3>
 
@@ -1763,13 +2175,6 @@
 
       </div>
     </section>
-    </div>
-    <div class="content-width">
-      <div class="contact-card" aria-label="Contact information">
-        <h3>Contact</h3>
-        <p>Questions, feedback, or data corrections welcome.</p>
-        <p><a href="mailto:contact@wealthdashboard.ca" style="color: inherit; text-decoration: underline;">contact@wealthdashboard.ca</a></p>
-      </div>
     </div>
     <section id="sources-links" class="references-section">
       <div class="content-width">
@@ -1828,21 +2233,58 @@
     </section>
     <footer class="site-footer">
       <div class="content-width">
-        <details class="source-box about-privacy" id="aboutPrivacy">
-          <summary>About, Data &amp; Privacy</summary>
-          <div class="source-content">
-            <p><strong>Purpose:</strong> A Canadian income and net worth comparison dashboard to help you benchmark where you stand.</p>
-            <p><strong>Data sources:</strong> Statistics Canada and the Bank of Canada, with cited tables listed above.</p>
-            <p><strong>Data limitation:</strong> Charts begin at age 21 due to unstable income and net worth measurements at younger ages driven by student enrollment and partial labor-force participation.</p>
-            <p><strong>Educational notice:</strong> This site is for informational and educational use only and is not financial, tax, or legal advice.</p>
-            <p><strong>Privacy:</strong> No personal data is collected or stored.</p>
-            <p><strong>Client-side processing:</strong> All inputs are processed locally in your browser.</p>
-            <p><strong>Contact:</strong> <a href="mailto:contact@wealthdashboard.ca">contact@wealthdashboard.ca</a></p>
+        <div class="footer-bar">
+          <span class="footer-bar-left">© 2026 WealthDashboard.ca &nbsp;·&nbsp; Not financial advice</span>
+          <div class="footer-bar-right">
+            <a href="mailto:contact@wealthdashboard.ca" style="font-size:0.8rem; color:rgba(159,182,200,0.7); text-decoration:none;">contact@wealthdashboard.ca</a>
+            <button class="footer-disclosure-toggle" id="footerDisclosureToggle" aria-expanded="false" aria-controls="footerDisclosurePanel">
+              About &amp; Data <span class="toggle-arrow">▾</span>
+            </button>
           </div>
-        </details>
-        <div class="footer-contact">Contact: <a href="mailto:contact@wealthdashboard.ca">contact@wealthdashboard.ca</a></div>
+        </div>
+
+        <div class="footer-disclosure-panel" id="footerDisclosurePanel">
+          <div class="footer-disclosure-grid">
+            <div class="footer-disclosure-item">
+              <strong>Purpose</strong>
+              <p>A Canadian income and net worth comparison dashboard to help you benchmark where you stand financially.</p>
+            </div>
+            <div class="footer-disclosure-item">
+              <strong>Data Sources</strong>
+              <p>Statistics Canada and the Bank of Canada. Cited tables are listed in the References section above.</p>
+            </div>
+            <div class="footer-disclosure-item">
+              <strong>Data Limitation</strong>
+              <p>Charts begin at age 21. Income and net worth measurements before this age are unstable due to student enrollment and partial labour-force participation.</p>
+            </div>
+            <div class="footer-disclosure-item">
+              <strong>Privacy</strong>
+              <p>No personal data is collected or stored. All inputs are processed locally in your browser and never leave your device.</p>
+            </div>
+            <div class="footer-disclosure-item">
+              <strong>Disclaimer</strong>
+              <p>This site is for informational and educational use only. It is not financial, tax, or legal advice.</p>
+            </div>
+            <div class="footer-disclosure-item">
+              <strong>Contact</strong>
+              <p>Questions or data corrections: <a href="mailto:contact@wealthdashboard.ca">contact@wealthdashboard.ca</a></p>
+            </div>
+          </div>
+        </div>
       </div>
     </footer>
+    <script>
+      (function() {
+        var btn = document.getElementById('footerDisclosureToggle');
+        var panel = document.getElementById('footerDisclosurePanel');
+        if (!btn || !panel) return;
+        btn.addEventListener('click', function() {
+          var open = panel.classList.toggle('open');
+          btn.classList.toggle('open', open);
+          btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+      })();
+    </script>
   <script src="scripts/vibe-utils.js"></script>
   <script src="scripts/chart-strategies.js"></script>
   <script>
@@ -1877,6 +2319,20 @@
       usingBehind: null,
       usingOnTrack: null,
       usingAhead: null,
+      detailToggleBtn: null,
+      detailPanel: null,
+      userHomeVal: null,
+      userMortgage: null,
+      userOtherRE: null,
+      userRegistered: null,
+      userNonReg: null,
+      userPension: null,
+      userTakeHome: null,
+      userSpending: null,
+      userSavingsAmt: null,
+      userNonMortgageDebt: null,
+      periodMonthly: null,
+      periodAnnual: null,
       init: function() {
         this.userAge = document.getElementById('userAge');
         this.userIncome = document.getElementById('userIncome');
@@ -1895,6 +2351,20 @@
         this.usingBehind = document.getElementById('usingBehind');
         this.usingOnTrack = document.getElementById('usingOnTrack');
         this.usingAhead = document.getElementById('usingAhead');
+        this.detailToggleBtn = document.getElementById('detailToggleBtn');
+        this.detailPanel = document.getElementById('detailPanel');
+        this.userHomeVal = document.getElementById('userHomeVal');
+        this.userMortgage = document.getElementById('userMortgage');
+        this.userOtherRE = document.getElementById('userOtherRE');
+        this.userRegistered = document.getElementById('userRegistered');
+        this.userNonReg = document.getElementById('userNonReg');
+        this.userPension = document.getElementById('userPension');
+        this.userTakeHome = document.getElementById('userTakeHome');
+        this.userSpending = document.getElementById('userSpending');
+        this.userSavingsAmt = document.getElementById('userSavingsAmt');
+        this.userNonMortgageDebt = document.getElementById('userNonMortgageDebt');
+        this.periodMonthly = document.getElementById('periodMonthly');
+        this.periodAnnual = document.getElementById('periodAnnual');
       }
     };
 
@@ -1942,6 +2412,42 @@
     };
     Chart.register(provinceWhiskersPlugin);
 
+    // Plugin to draw a $ value label inside the top of each bar on province charts.
+    const provinceBarLabelsPlugin = {
+      id: 'provinceBarLabels',
+      afterDatasetsDraw(chart) {
+        if (!['provinceChart', 'provinceIncomeChart'].includes(chart.canvas.id)) return;
+        const meta = chart.getDatasetMeta(0);
+        if (!meta || !meta.data) return;
+        const ctx = chart.ctx;
+        const mobile = isMobileChart();
+        ctx.save();
+        ctx.font = `bold ${mobile ? 8 : 10}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        meta.data.forEach((bar, i) => {
+          const ds = chart.data.datasets[0];
+          if (!ds) return;
+          const value = ds.data[i];
+          if (value == null || value === 0) return;
+          const barHeight = (bar.base || 0) - bar.y;
+          if (barHeight < 16) return;
+          const formatted = value >= 1000000
+            ? '$' + (value / 1000000).toFixed(2).replace(/\.?0+$/, '') + 'M'
+            : '$' + Math.round(value / 1000) + 'k';
+          const x = bar.x;
+          const y = bar.y + 4;
+          const tw = ctx.measureText(formatted).width;
+          ctx.fillStyle = 'rgba(10,18,35,0.6)';
+          ctx.fillRect(x - tw / 2 - 3, y - 1, tw + 6, 13);
+          ctx.fillStyle = 'rgba(255,255,255,0.92)';
+          ctx.fillText(formatted, x, y);
+        });
+        ctx.restore();
+      }
+    };
+    Chart.register(provinceBarLabelsPlugin);
+
     // Format currency helper (required by tooltip handler)
     function fmtDollar(v) {
       if (v === null || v === undefined) return '$0';
@@ -1983,7 +2489,12 @@
         const pct = clampPercentile(pctIdx + 1);
         const valueLabel = `${fmtDollar(valX)} - ${formatPercentileLabel(pct)}`;
           let html = '<div class="tt-body">';
-          const color = dp.element?.options?.borderColor || dp.dataset?.borderColor || dp.dataset?.backgroundColor || '#29b6f6';
+          const _dpIdx = dp.dataIndex ?? 0;
+          const _rawBorder = dp.element?.options?.borderColor ?? dp.dataset?.borderColor;
+          const _resolvedBorder = Array.isArray(_rawBorder) ? (_rawBorder[_dpIdx] ?? _rawBorder[0]) : _rawBorder;
+          const _rawBg = dp.dataset?.backgroundColor;
+          const _resolvedBg = Array.isArray(_rawBg) ? (_rawBg[_dpIdx] ?? _rawBg[0]) : _rawBg;
+          const color = _resolvedBorder || _resolvedBg || '#29b6f6';
           html += `<div class="tt-row highlight"><div class="tt-swatch" style="background:${color};"></div><div><div class="tt-label">${dp.dataset?.label || ''}</div><div class="tt-value">${valueLabel}</div></div></div>`;
           html += '</div>';
           tooltipEl.innerHTML = html;
@@ -2074,18 +2585,28 @@
             const p10 = (whiskers.p10 && whiskers.p10[idx] !== undefined) ? whiskers.p10[idx] : null;
             const p90 = (whiskers.p90 && whiskers.p90[idx] !== undefined) ? whiskers.p90[idx] : null;
             const medianVal = dp.parsed?.y ?? dp.raw ?? '';
-            const medianColor = dp.element?.options?.borderColor || dp.dataset?.borderColor || dp.dataset?.backgroundColor || '#29b6f6';
             const isIncomeProvince = chart.canvas.id === 'provinceIncomeChart';
             const metricLabel = isIncomeProvince ? 'Income' : 'Net Worth';
             const medianLabel = isIncomeProvince ? 'Median Income' : 'Median Net Worth';
+            // Use fixed semantic colors regardless of which dataset the tooltip hit
+            const barColor    = isIncomeProvince ? '#42a5f5' : '#66bb6a';
+            const whiskerColor = 'rgba(200,210,220,0.7)';
+            const isP25P75 = chart._whiskers?.isP25P75;
+            const lowLabel  = isP25P75 ? `25th percentile (${metricLabel})` : `10th percentile (${metricLabel})`;
+            const highLabel = isP25P75 ? `75th percentile (${metricLabel})` : `90th percentile (${metricLabel})`;
             const row = (label, value, color, highlight=false) => {
               if (value === null || value === undefined) return '';
               return `<div class="tt-row${highlight ? ' highlight' : ''}"><div class="tt-swatch" style="background:${color};"></div><div><div class="tt-label">${label}</div><div class="tt-value">${fmtDollar(Number(value))}</div></div></div>`;
             };
+            let colVal = null;
+            if (isIncomeProvince && chart.data.datasets[1]) {
+              colVal = chart.data.datasets[1].data[idx] ?? null;
+            }
             html += '<div class="tt-body">';
-            html += row(`90th percentile (${metricLabel})`, p90, medianColor, false);
-            html += row(medianLabel, medianVal, medianColor, true);
-            html += row(`10th percentile (${metricLabel})`, p10, medianColor, false);
+            html += row(highLabel, p90, whiskerColor, false);
+            html += row(medianLabel, medianVal, barColor, true);
+            html += row(lowLabel, p10, whiskerColor, false);
+            if (colVal !== null) html += row('Cost of Living', colVal, '#f87171', false);
             html += '</div>';
             tooltipEl.innerHTML = html;
             const canvasRect = chart.canvas.getBoundingClientRect();
@@ -2175,15 +2696,28 @@
             });
             const highlightItem = (closestIndex >=0) ? bodyItems[closestIndex] : null;
             const highlightIndex = highlightItem ? sortedItems.indexOf(highlightItem) : -1;
+            const canvasId = chart?.canvas?.id;
+            const isPctChart = canvasId === 'housingCostChart';
+            const isSavingsRateChart = canvasId === 'savingsRateChart';
+            const fmtValue = isPctChart
+              ? (v) => Number(v).toFixed(1) + '% of income'
+              : isSavingsRateChart
+              ? (v) => Number(v).toFixed(1) + '% savings rate'
+              : (v) => fmtDollar(Number(v));
             html += '<div class="tt-body">';
             sortedItems.forEach((item, idx) => {
               try {
                 const label = (item.dataset && item.dataset.label) ? item.dataset.label : (item.label || '');
                 const parsed = item.parsed;
                 const value = (parsed && (parsed.y !== undefined)) ? parsed.y : (parsed ?? item.raw ?? '');
-                const color = (item.element && item.element.options && (item.element.options.borderColor || item.element.options.backgroundColor)) || item.dataset?.borderColor || item.dataset?.backgroundColor || '#29b6f6';
+                const _iIdx = item.dataIndex ?? 0;
+                const _iRawBorder = item.element?.options?.borderColor ?? item.dataset?.borderColor;
+                const _iResolvedBorder = Array.isArray(_iRawBorder) ? (_iRawBorder[_iIdx] ?? _iRawBorder[0]) : _iRawBorder;
+                const _iRawBg = item.element?.options?.backgroundColor ?? item.dataset?.backgroundColor;
+                const _iResolvedBg = Array.isArray(_iRawBg) ? (_iRawBg[_iIdx] ?? _iRawBg[0]) : _iRawBg;
+                const resolvedColor = _iResolvedBorder || _iResolvedBg || '#29b6f6';
                 const isHighlight = idx === highlightIndex;
-                html += `<div class="tt-row${isHighlight ? ' highlight' : ''}"><div class="tt-swatch" style="background:${color};"></div><div><div class="tt-label">${label}</div><div class="tt-value">${fmtDollar(Number(value))}</div></div></div>`;
+                html += `<div class="tt-row${isHighlight ? ' highlight' : ''}"><div class="tt-swatch" style="background:${resolvedColor};"></div><div><div class="tt-label">${label}</div><div class="tt-value">${fmtValue(value)}</div></div></div>`;
               } catch (innerE) {
                 // ignore row build errors and continue
               }
@@ -2247,6 +2781,12 @@
       Chart.defaults.plugins.tooltip.mode = 'index';
       Chart.defaults.plugins.tooltip.intersect = false;
     }
+    // Hide the DOM tooltip as soon as Chart.js fires its onLeave event
+    Chart.defaults.plugins.tooltip.callbacks = Chart.defaults.plugins.tooltip.callbacks || {};
+    Chart.defaults.onLeave = function() {
+      const tooltipEl = document.querySelector('.chartjs-tooltip');
+      if (tooltipEl) tooltipEl.classList.remove('show');
+    };
 
     // ============================== Data Metric Abstraction ================================
     // A DataMetric encapsulates a base time series (median) and associated percentile
@@ -3457,6 +3997,12 @@
     let percentileIncomeChartInstance;
     let wealthCompositionChartInstance;
     let genderIncomeChartInstance;
+    let housingCostChartInstance;
+    let debtBreakdownChartInstance;
+    let spendingChartInstance;
+    let discretionaryChartInstance;
+    let savingsRateChartInstance;
+    let savingsAmountChartInstance;
 
     // Initialize metric registry and register available metrics.  Each metric
     // encapsulates the base median values and percentile arrays for a
@@ -3512,6 +4058,282 @@
       income: incomeRatios,
       netWorth: netWorthRatios
     });
+
+    // ── Housing Cost Burden (% of gross income) by age, ages 21–80 ──
+    // Median, P25 (lower burden), P75 (higher burden)
+    // Source: Statistics Canada Survey of Household Spending 2022, projected to 2026.
+    // Shelter costs = mortgage/rent + property taxes + utilities as % of gross income.
+    const baseHousingCostPct = [
+      40,39,38,37,36, 35,34,33,32,31,  // 21-30
+      30,29,28,28,27, 27,26,26,25,25,  // 31-40
+      24,24,23,23,22, 22,22,21,21,21,  // 41-50
+      21,21,21,21,21, 21,21,21,21,21,  // 51-60
+      22,22,23,23,24, 24,25,25,26,26,  // 61-70
+      26,27,27,27,27, 27,27,27,27,27   // 71-80
+    ];
+    const baseHousingCostP25 = [
+      26,25,25,24,23, 23,22,21,21,20,  // 21-30
+      19,19,18,18,17, 17,16,16,16,15,  // 31-40
+      15,15,14,14,14, 14,13,13,13,13,  // 41-50
+      13,13,13,13,13, 13,13,13,12,12,  // 51-60
+      13,13,14,14,15, 15,16,16,16,17,  // 61-70
+      17,17,17,17,17, 17,17,17,17,17   // 71-80
+    ];
+    const baseHousingCostP75 = [
+      54,53,51,50,49, 47,46,44,43,41,  // 21-30
+      40,39,38,37,37, 36,35,34,33,33,  // 31-40
+      32,31,31,30,30, 29,29,28,28,28,  // 41-50
+      27,27,27,27,27, 27,27,26,26,26,  // 51-60
+      27,28,29,30,31, 32,33,33,34,35,  // 61-70
+      35,36,36,36,37, 37,37,37,37,37   // 71-80
+    ];
+    // Province-specific housing burden adjustment (percentage points above/below national)
+    // Reflects housing cost relative to local income (e.g. BC+ON face higher burdens)
+    const housingCostProvinceAdj = {
+      'Canada': 0,
+      'British Columbia': 9,
+      'Ontario': 5,
+      'Alberta': -3,
+      'Quebec': -4,
+      'Manitoba': -1,
+      'Saskatchewan': -3,
+      'Nova Scotia': 2,
+      'New Brunswick': -2,
+      'Prince Edward Island': 1,
+      'Newfoundland & Labrador': -2
+    };
+
+    // ── Debt Breakdown by age, ages 21–80 (average $ per household, incl. $0 holders) ──
+    // Source: Statistics Canada SFS 2023, CMHC, projected to 2026.
+    const baseDebtMortgage = [
+        2000,  4000,  8000, 16000, 30000,  // 21-25
+       58000, 95000,148000,202000,238000,  // 26-30
+      264000,280000,291000,297000,298000,  // 31-35
+      295000,287000,276000,264000,251000,  // 36-40
+      237000,222000,206000,190000,174000,  // 41-45
+      158000,142000,126000,111000, 97000,  // 46-50
+       84000, 71000, 60000, 51000, 42000,  // 51-55
+       35000, 28000, 22000, 17000, 13000,  // 56-60
+       10000,  8000,  6000,  5000,  4000,  // 61-65
+        3400,  2900,  2400,  2000,  1700,  // 66-70
+        1400,  1100,   900,   700,   500,  // 71-75
+         400,   300,   250,   200,   150   // 76-80
+    ];
+    const baseDebtStudentLoan = [
+      15000,18000,17500,16000,14000,  // 21-25
+      12000,10000, 7500, 5500, 3800,  // 26-30
+       2600, 1700, 1100,  700,  430,  // 31-35
+        260,  150,   90,   50,   25,  // 36-40
+          0,    0,    0,    0,    0,    0,    0,    0,    0,    0,  // 41-50
+          0,    0,    0,    0,    0,    0,    0,    0,    0,    0,  // 51-60
+          0,    0,    0,    0,    0,    0,    0,    0,    0,    0,  // 61-70
+          0,    0,    0,    0,    0,    0,    0,    0,    0,    0   // 71-80
+    ];
+    const baseDebtAuto = [
+       3000, 5000, 7000, 9000,10500,  // 21-25
+      11500,12500,13500,14500,15000,  // 26-30
+      15500,16000,16500,17000,17000,  // 31-35
+      16800,16500,16000,15500,15000,  // 36-40
+      14500,14000,13500,13000,12500,  // 41-45
+      12000,11500,11000,10500,10000,  // 46-50
+       9500, 9000, 8500, 8000, 7500,  // 51-55
+       7000, 6500, 6000, 5500, 5000,  // 56-60
+       4500, 4000, 3500, 3000, 2500,  // 61-65
+       2200, 1900, 1600, 1400, 1200,  // 66-70
+       1000,  900,  800,  700,  600,  // 71-75
+        500,  450,  400,  350,  300   // 76-80
+    ];
+    const baseDebtConsumer = [
+       4000, 5000, 5500, 6000, 6500,  // 21-25
+       7000, 7500, 8000, 8500, 9000,  // 26-30
+       9500,10000,10200,10400,10500,  // 31-35
+      10500,10500,10500,10500,10500,  // 36-40
+      10200,10000, 9800, 9500, 9200,  // 41-45
+       9000, 8700, 8400, 8100, 7800,  // 46-50
+       7500, 7200, 6900, 6600, 6300,  // 51-55
+       6000, 5700, 5400, 5100, 4800,  // 56-60
+       4500, 4200, 3900, 3600, 3300,  // 61-65
+       3000, 2800, 2600, 2400, 2200,  // 66-70
+       2000, 1800, 1600, 1500, 1300,  // 71-75
+       1100, 1000,  900,  800,  700   // 76-80
+    ];
+
+    // ── Spending / Cash Flow data (annual, household, 60 values ages 21-80) ────
+    const baseSpendingMedian = [
+       42000, 46000, 50000, 55000, 60000,  // 21-25
+       64000, 68000, 72000, 75000, 78000,  // 26-30
+       81000, 83000, 85000, 86000, 87000,  // 31-35
+       87000, 88000, 88000, 87000, 86000,  // 36-40
+       85000, 84000, 83000, 82000, 81000,  // 41-45
+       80000, 79000, 78000, 77000, 76000,  // 46-50
+       74000, 72000, 70000, 68000, 66000,  // 51-55
+       64000, 62000, 60000, 58000, 56000,  // 56-60
+       55000, 54000, 53000, 52000, 51000,  // 61-65
+       50000, 49000, 48000, 47000, 46000,  // 66-70
+       46000, 45000, 44000, 43000, 43000,  // 71-75
+       42000, 42000, 41000, 41000, 40000   // 76-80
+    ];
+    const baseSpendingP25 = [
+       30000, 33000, 36000, 39000, 43000,
+       46000, 49000, 52000, 54000, 56000,
+       58000, 60000, 61000, 62000, 63000,
+       63000, 63000, 63000, 63000, 62000,
+       61000, 61000, 60000, 59000, 58000,
+       58000, 57000, 56000, 55000, 55000,
+       53000, 52000, 50000, 49000, 47000,
+       46000, 45000, 43000, 42000, 40000,
+       39000, 39000, 38000, 37000, 37000,
+       36000, 35000, 35000, 34000, 33000,
+       33000, 32000, 32000, 31000, 31000,
+       30000, 30000, 29000, 29000, 29000
+    ];
+    const baseSpendingP75 = [
+       56000, 61000, 66000, 72000, 78000,
+       84000, 88000, 93000, 97000,101000,
+      104000,107000,109000,110000,112000,
+      113000,113000,113000,112000,111000,
+      110000,108000,107000,105000,104000,
+      103000,101000,100000, 99000, 98000,
+       95000, 93000, 90000, 87000, 85000,
+       82000, 80000, 78000, 75000, 72000,
+       71000, 69000, 68000, 67000, 65000,
+       64000, 63000, 62000, 60000, 59000,
+       59000, 58000, 57000, 55000, 55000,
+       54000, 54000, 53000, 52000, 52000
+    ];
+
+    const baseDiscretionaryMedian = [
+       -4000, -1000,  2000,  5000,  7000,  // 21-25
+        9000, 12000, 15000, 18000, 20000,  // 26-30
+       22000, 24000, 26000, 27000, 28000,  // 31-35
+       29000, 30000, 31000, 32000, 33000,  // 36-40
+       34000, 35000, 36000, 36000, 37000,  // 41-45
+       37000, 38000, 38000, 38000, 37000,  // 46-50
+       36000, 35000, 34000, 32000, 30000,  // 51-55
+       28000, 26000, 24000, 22000, 20000,  // 56-60
+       19000, 18000, 17000, 16000, 15000,  // 61-65
+       14000, 14000, 13000, 13000, 12000,  // 66-70
+       12000, 11000, 11000, 10000, 10000,  // 71-75
+        9000,  9000,  8000,  8000,  7000   // 76-80
+    ];
+    const baseDiscretionaryP25 = [
+      -15000,-12000, -9000, -6000, -3000,
+       -1000,  2000,  4000,  6000,  8000,
+        9000, 11000, 12000, 13000, 14000,
+       14000, 15000, 15000, 16000, 16000,
+       17000, 17000, 17000, 18000, 18000,
+       18000, 18000, 18000, 18000, 17000,
+       17000, 16000, 15000, 14000, 13000,
+       12000, 11000, 10000,  9000,  8000,
+        7000,  7000,  6000,  6000,  5000,
+        5000,  5000,  4000,  4000,  4000,
+        3000,  3000,  3000,  2000,  2000,
+        2000,  2000,  1000,  1000,  1000
+    ];
+    const baseDiscretionaryP75 = [
+        6000,  9000, 12000, 16000, 19000,
+       22000, 26000, 30000, 33000, 36000,
+       38000, 40000, 42000, 43000, 44000,
+       46000, 47000, 48000, 49000, 50000,
+       52000, 53000, 54000, 55000, 56000,
+       57000, 58000, 58000, 58000, 57000,
+       56000, 54000, 52000, 50000, 47000,
+       44000, 41000, 38000, 35000, 32000,
+       30000, 29000, 27000, 26000, 24000,
+       23000, 22000, 21000, 20000, 19000,
+       18000, 17000, 16000, 16000, 15000,
+       14000, 14000, 13000, 12000, 12000
+    ];
+
+    // Savings rate as % of take-home pay (can be negative = drawing down)
+    const baseSavingsRateMedian = [
+      -10, -8, -6, -4, -2,   // 21-25
+        0,  2,  4,  5,  6,   // 26-30
+        7,  8,  9, 10, 10,   // 31-35
+       11, 11, 12, 12, 13,   // 36-40
+       13, 13, 14, 14, 14,   // 41-45
+       14, 14, 15, 15, 14,   // 46-50
+       14, 13, 13, 12, 11,   // 51-55
+       10,  9,  8,  7,  6,   // 56-60
+        5,  3,  1, -1, -3,   // 61-65
+       -5, -6, -7, -8, -9,   // 66-70
+       -9,-10,-10,-11,-11,   // 71-75
+      -11,-12,-12,-12,-13    // 76-80
+    ];
+    const baseSavingsRateP25 = [
+      -25,-22,-20,-17,-15,
+      -12, -9, -6, -4, -2,
+        0,  1,  2,  3,  4,
+        4,  5,  5,  6,  6,
+        7,  7,  7,  8,  8,
+        8,  8,  9,  9,  8,
+        8,  7,  7,  6,  5,
+        4,  3,  2,  1,  0,
+       -1, -3, -5, -8,-11,
+      -13,-14,-16,-17,-18,
+      -18,-19,-20,-20,-21,
+      -21,-22,-22,-23,-23
+    ];
+    const baseSavingsRateP75 = [
+        3,  5,  7,  9, 11,
+       13, 15, 17, 18, 19,
+       20, 21, 22, 23, 23,
+       24, 24, 25, 25, 26,
+       26, 27, 27, 28, 28,
+       28, 29, 29, 29, 29,
+       28, 28, 27, 26, 25,
+       23, 21, 19, 17, 15,
+       13, 11,  9,  7,  5,
+        3,  2,  0, -1, -2,
+       -2, -3, -3, -4, -4,
+       -4, -5, -5, -5, -6
+    ];
+
+    // ── Nominal savings amount (annual $, households, ages 21-80) ────────────
+    // Derived from: take-home pay × savings rate at each age
+    // Take-home ≈ gross income × (1 - avg effective tax rate ~28% at median)
+    const baseSavingsAmountMedian = [
+      -3700, -3000, -2200, -1500,  -700,  // 21-25
+          0,  1700,  3400,  4800,  6200,  // 26-30
+       7500,  8700,  9700, 10600, 11100,  // 31-35
+      11600, 12100, 12600, 13100, 13700,  // 36-40
+      14200, 14600, 15200, 15500, 15700,  // 41-45
+      15700, 16000, 16200, 16200, 15700,  // 46-50
+      15200, 14400, 13500, 12500, 11400,  // 51-55
+      10200,  9100,  8000,  6900,  5800,  // 56-60
+       4800,  3400,  1400,  -600, -2600,  // 61-65
+      -4400, -5400, -6100, -6700, -7200,  // 66-70
+      -7400, -7700, -7900, -8100, -8300,  // 71-75
+      -8400, -8600, -8700, -8800, -9000   // 76-80
+    ];
+    const baseSavingsAmountP25 = [
+      -11000, -9000, -7500, -6000, -4500,
+       -3000, -1500,   500,  1800,  3000,
+        4000,  4800,  5400,  5800,  6200,
+        6400,  6700,  6900,  7100,  7300,
+        7500,  7700,  7800,  8000,  8100,
+        8100,  8200,  8300,  8200,  7800,
+        7400,  7000,  6500,  5900,  5300,
+        4600,  3900,  3200,  2500,  1800,
+        1200,   400,  -700, -2000, -3400,
+       -4700, -5600, -6300, -6800, -7300,
+       -7500, -7800, -8000, -8200, -8400,
+       -8500, -8700, -8800, -8900, -9100
+    ];
+    const baseSavingsAmountP75 = [
+        2200,  3400,  4500,  5800,  7000,
+        8300,  9800, 11400, 12700, 13800,
+       14800, 15600, 16300, 16800, 17100,
+       17600, 18000, 18500, 18900, 19400,
+       19900, 20400, 20900, 21300, 21600,
+       21700, 22100, 22200, 22100, 21700,
+       21100, 20300, 19400, 18200, 16800,
+       15200, 13400, 11600,  9800,  8200,
+        6700,  5200,  3500,  1700,   -50,
+       -1800, -2900, -3700, -4400, -5000,
+       -5300, -5600, -5900, -6100, -6300,
+       -6500, -6700, -6800, -7000, -7200
+    ];
 
     // Labels for percentile charts (1..99)
     const percentileLabels = Array.from({ length: 99 }, (_, i) => String(i + 1));
@@ -4135,26 +4957,6 @@
       return { min, max, topValues };
     }
 
-    /**
-     * Chart update strategies - one method per chart for easy iteration.
-     * Each strategy handles its own data scaling, dataset building, and axis computation.
-     * This pattern makes it easy to test, optimize, or redesign individual charts.
-     * 
-     * Usage: chartStrategies['incomeChart'](region, unit);
-     * Or call via updateCharts() which invokes all strategies in sequence.
-     * 
-     * TODO: Extract chart-specific logic from updateCharts() into each strategy.
-     */
-    const chartStrategies = {
-      'incomeChart': (region, unit) => { /* TODO: Extract income chart logic */ },
-      'netWorthChart': (region, unit) => { /* TODO: Extract net worth chart logic */ },
-      'provinceChart': (region, unit) => { /* TODO: Extract province chart logic */ },
-      'compositionChart': (region, unit) => { /* TODO: Extract composition logic */ },
-      'scatterChart': (region, unit) => { /* TODO: Extract scatter logic */ },
-      'genderChart': (region, unit) => { /* TODO: Extract gender chart logic */ },
-      'provinceIncomeChart': (region, unit) => { /* TODO: Extract province income logic */ },
-      'discretionaryChart': (region, unit) => { /* TODO: Extract discretionary income logic */ }
-    };
 
     /**
      * Update all charts according to the selected region. This function scales
@@ -4417,17 +5219,13 @@
       // Wealth Composition chart - assets stacked above zero, debts stacked below, plus net worth line
       (function updateWealthComposition(){
         const useNet = (unit==='households' ? baseNetWorth : baseIndNetWorth).map(v => Math.round(v * netRatio));
-        // Approximate debt curve: peaks near mid-30s, declines after 50
-        const peak = unit==='households' ? 200000 : 120000;
-        const centerAge = 37; const sigma = 10;
-        const debts = ageLabels.map((ageStr,i)=>{
-          const age = parseInt(ageStr,10);
-          const gauss = Math.exp(-0.5 * Math.pow((age - centerAge)/sigma, 2));
-          let val = Math.round(peak * gauss);
-          if (age < 20) val = Math.round(val*0.4);
-          if (age > 70) val = Math.round(val*0.2);
-          return val; // positive magnitude; we'll plot negative
-        });
+        // Use the same debt calculation as the Debt Breakdown chart for consistency
+        const unitScale = (unit === 'households') ? 1 : (1 / EQUIVALENCE_SCALE);
+        const mortgage = baseDebtMortgage.map(v => Math.round(v * netRatio * unitScale));
+        const student  = baseDebtStudentLoan.map(v => Math.round(v * incomeRatio * unitScale));
+        const autoD    = baseDebtAuto.map(v => Math.round(v * incomeRatio * unitScale));
+        const consumer = baseDebtConsumer.map(v => Math.round(v * incomeRatio * unitScale));
+        const debts = mortgage.map((m,i) => m + student[i] + autoD[i] + consumer[i]);
         // Total assets approximated as net worth + debt
         const totalAssets = useNet.map((nw,i)=> Math.max(0, nw + debts[i]));
         // Split assets by shares varying with age (more financial/pension later)
@@ -4485,6 +5283,136 @@
         }
         wealthCompositionChartInstance.update();
       })();
+
+      // ── Housing Cost Burden chart ──
+      if (housingCostChartInstance) {
+        (function updateHousingCost() {
+          const adj = housingCostProvinceAdj[region] ?? 0;
+          const medianData = baseHousingCostPct.map(v => Math.min(75, Math.max(5, v + adj)));
+          const p25Data    = baseHousingCostP25.map(v => Math.min(75, Math.max(5, v + adj)));
+          const p75Data    = baseHousingCostP75.map(v => Math.min(75, Math.max(5, v + adj)));
+          housingCostChartInstance.data.labels = ageLabels;
+          housingCostChartInstance.data.datasets[0].data = p25Data;
+          housingCostChartInstance.data.datasets[1].data = p75Data;
+          housingCostChartInstance.data.datasets[2].data = medianData;
+          const maxVal = Math.max(...p75Data);
+          housingCostChartInstance.options.scales.y.max = Math.min(70, Math.ceil((maxVal + 5) / 5) * 5);
+          housingCostChartInstance.options.scales.y.min = 0;
+          if (housingCostChartInstance.options.scales.x?.ticks) {
+            housingCostChartInstance.options.scales.x.ticks.callback = ageTickFormatter;
+            housingCostChartInstance.options.scales.x.ticks.autoSkip = false;
+            housingCostChartInstance.options.scales.x.ticks.maxRotation = 0;
+          }
+          housingCostChartInstance.update();
+        })();
+      }
+
+      // ── Debt Breakdown chart ──
+      if (debtBreakdownChartInstance) {
+        (function updateDebtBreakdown() {
+          const unitScale = (unit === 'households') ? 1 : (1 / EQUIVALENCE_SCALE);
+          // Mortgage scales with housing market (netWorthRatio); other debt scales with income
+          const mortgage = baseDebtMortgage.map(v => Math.round(v * netRatio * unitScale));
+          const student   = baseDebtStudentLoan.map(v => Math.round(v * incomeRatio * unitScale));
+          const auto      = baseDebtAuto.map(v => Math.round(v * incomeRatio * unitScale));
+          const consumer  = baseDebtConsumer.map(v => Math.round(v * incomeRatio * unitScale));
+          const totalDebt = mortgage.map((m,i) => m + student[i] + auto[i] + consumer[i]);
+          debtBreakdownChartInstance.data.labels = ageLabels;
+          debtBreakdownChartInstance.data.datasets[0].data = mortgage;
+          debtBreakdownChartInstance.data.datasets[1].data = student;
+          debtBreakdownChartInstance.data.datasets[2].data = auto;
+          debtBreakdownChartInstance.data.datasets[3].data = consumer;
+          debtBreakdownChartInstance.data.datasets[4].data = totalDebt;
+          const maxDebt = Math.max(...totalDebt);
+          const debtAxis = computeAxis([maxDebt], 50000);
+          debtBreakdownChartInstance.options.scales.y.min = 0;
+          debtBreakdownChartInstance.options.scales.y.max = debtAxis.max;
+          debtBreakdownChartInstance.options.scales.y.title.text = unit === 'households'
+            ? 'Total Debt ($ - Households)'
+            : 'Total Debt ($ - Individuals)';
+          if (debtBreakdownChartInstance.options.scales.x?.ticks) {
+            debtBreakdownChartInstance.options.scales.x.ticks.callback = ageTickFormatter;
+            debtBreakdownChartInstance.options.scales.x.ticks.autoSkip = false;
+            debtBreakdownChartInstance.options.scales.x.ticks.maxRotation = 0;
+          }
+          debtBreakdownChartInstance.update();
+        })();
+      }
+
+      if (spendingChartInstance) {
+        (function updateSpending() {
+          const scale = incomeRatio * (unit === 'households' ? 1 : (1 / EQUIVALENCE_SCALE));
+          const median = baseSpendingMedian.map(v => Math.round(v * scale));
+          const p25    = baseSpendingP25.map(v => Math.round(v * scale));
+          const p75    = baseSpendingP75.map(v => Math.round(v * scale));
+          spendingChartInstance.data.labels = ageLabels;
+          spendingChartInstance.data.datasets[0].data = p25;
+          spendingChartInstance.data.datasets[1].data = p75;
+          spendingChartInstance.data.datasets[2].data = median;
+          const ax = computeAxis([Math.max(...p75)], 10000);
+          spendingChartInstance.options.scales.y.min = 0;
+          spendingChartInstance.options.scales.y.max = ax.max;
+          spendingChartInstance.options.scales.y.title.text = unit === 'households'
+            ? 'Annual Spending ($ - Households)' : 'Annual Spending ($ - Individuals)';
+          spendingChartInstance.update();
+        })();
+      }
+
+      if (discretionaryChartInstance) {
+        (function updateDiscretionary() {
+          const scale = incomeRatio * (unit === 'households' ? 1 : (1 / EQUIVALENCE_SCALE));
+          const median = baseDiscretionaryMedian.map(v => Math.round(v * scale));
+          const p25    = baseDiscretionaryP25.map(v => Math.round(v * scale));
+          const p75    = baseDiscretionaryP75.map(v => Math.round(v * scale));
+          discretionaryChartInstance.data.labels = ageLabels;
+          discretionaryChartInstance.data.datasets[0].data = p25;
+          discretionaryChartInstance.data.datasets[1].data = p75;
+          discretionaryChartInstance.data.datasets[2].data = median;
+          const minVal = Math.min(...p25);
+          const maxVal = Math.max(...p75);
+          const ax = computeAxis([maxVal], 10000);
+          discretionaryChartInstance.options.scales.y.min = Math.floor((minVal - 5000) / 10000) * 10000;
+          discretionaryChartInstance.options.scales.y.max = ax.max;
+          discretionaryChartInstance.options.scales.y.title.text = unit === 'households'
+            ? 'Discretionary Income ($ - Households)' : 'Discretionary Income ($ - Individuals)';
+          discretionaryChartInstance.update();
+        })();
+      }
+
+      if (savingsRateChartInstance) {
+        (function updateSavingsRate() {
+          // Savings rate is a ratio — no province scaling, but update labels
+          savingsRateChartInstance.data.labels = ageLabels;
+          savingsRateChartInstance.data.datasets[0].data = baseSavingsRateP25.slice();
+          savingsRateChartInstance.data.datasets[1].data = baseSavingsRateP75.slice();
+          savingsRateChartInstance.data.datasets[2].data = baseSavingsRateMedian.slice();
+          const minVal = Math.min(...baseSavingsRateP25);
+          const maxVal = Math.max(...baseSavingsRateP75);
+          savingsRateChartInstance.options.scales.y.min = Math.floor((minVal - 3) / 5) * 5;
+          savingsRateChartInstance.options.scales.y.max = Math.ceil((maxVal + 3) / 5) * 5;
+          savingsRateChartInstance.update();
+        })();
+      }
+
+      if (savingsAmountChartInstance) {
+        (function updateSavingsAmount() {
+          const scale = incomeRatio * (unit === 'households' ? 1 : (1 / EQUIVALENCE_SCALE));
+          const median = baseSavingsAmountMedian.map(v => Math.round(v * scale));
+          const p25    = baseSavingsAmountP25.map(v => Math.round(v * scale));
+          const p75    = baseSavingsAmountP75.map(v => Math.round(v * scale));
+          savingsAmountChartInstance.data.labels = ageLabels;
+          savingsAmountChartInstance.data.datasets[0].data = p25;
+          savingsAmountChartInstance.data.datasets[1].data = p75;
+          savingsAmountChartInstance.data.datasets[2].data = median;
+          const minVal = Math.min(...p25);
+          const maxVal = Math.max(...p75);
+          savingsAmountChartInstance.options.scales.y.min = Math.floor((minVal - 2000) / 5000) * 5000;
+          savingsAmountChartInstance.options.scales.y.max = Math.ceil((maxVal + 2000) / 5000) * 5000;
+          savingsAmountChartInstance.options.scales.y.title.text = unit === 'households'
+            ? 'Annual Savings ($ - Households)' : 'Annual Savings ($ - Individuals)';
+          savingsAmountChartInstance.update();
+        })();
+      }
 
       // Update scatter chart (Income vs Net Worth, Median). X = median total income, Y = median net worth for selected unit.
       const scaledTotal = (unit === 'households'
@@ -4594,49 +5522,46 @@
       // Province bar chart with percentile overlays and user line
       // Rebuild the bar dataset and percentile line datasets for the province chart.
       // Highlight the selected province by changing its bar colour.
-      const barColors = baseProvinceLabels.map(label => label === region ? '#ffa726' : '#66bb6a');
       // Remove any existing user dataset before rebuilding the chart
       const existingDs = provinceChartInstance.data.datasets;
-      let userLine = null;
-      // Extract the bar dataset and existing user line if present
       let barDataset = null;
       existingDs.forEach(ds => {
-        if (ds.type === 'bar' || !ds.type) {
-          barDataset = ds;
-        } else if (ds.label === 'You') {
-          userLine = ds;
-        }
+        if (ds.type === 'bar' || !ds.type) barDataset = ds;
       });
       if (!barDataset) {
-        // Fallback in case of unexpected structure
-        barDataset = { label: 'Median Net Worth', data: baseProvinceValues.slice(), backgroundColor: barColors, type: 'bar' };
+        barDataset = { label: 'Median Net Worth', data: [], backgroundColor: [], type: 'bar' };
       }
-      // Update bar data and colours
-      barDataset.data = baseProvinceValues.slice();
-      barDataset.backgroundColor = barColors;
-      barDataset.borderColor = barColors;
       barDataset.borderWidth = 0;
       barDataset.order = 1;
       barDataset.z = 0;
-      // For province chart we display the median as bars and draw whiskers
-      // representing the 10th and 90th percentiles via a drawing plugin.
       // Choose base values according to unit (households vs individuals).
       const baseProvinceValsForUnit = (unit === 'households')
         ? baseProvinceValues.slice()
         : baseProvinceValues.map(v => Math.round(v / EQUIVALENCE_SCALE));
-      // Update bar dataset data to use unit-aware values
-      barDataset.data = baseProvinceValsForUnit.slice();
+      // Sort provinces by value descending
+      const nwSorted = baseProvinceLabels.map((label, i) => ({
+        label,
+        value: baseProvinceValsForUnit[i],
+        color: label === region ? '#ffa726' : '#66bb6a'
+      })).sort((a, b) => b.value - a.value);
+      const sortedNWLabels = nwSorted.map(x => x.label);
+      const sortedNWValues = nwSorted.map(x => x.value);
+      const sortedNWColors = nwSorted.map(x => x.color);
+      // Update chart labels and bar dataset (splice to mutate in-place — Chart.js won't pick up a replaced reference)
+      provinceChartInstance.data.labels.splice(0, provinceChartInstance.data.labels.length, ...sortedNWLabels);
+      barDataset.data = sortedNWValues;
+      barDataset.backgroundColor = sortedNWColors;
+      barDataset.borderColor = sortedNWColors;
       // Compute whisker values as proportional tails of the median bars
-      const provincePctRatios = { p10: 0.10, p90: 1.80 };
-      const p10Values = baseProvinceValsForUnit.map(v => Math.round(v * provincePctRatios.p10));
-      const p90Values = baseProvinceValsForUnit.map(v => Math.round(v * provincePctRatios.p90));
+      const provincePctRatios = { p25: 0.35, p75: 1.50 };
+      const p10Values = sortedNWValues.map(v => Math.round(v * provincePctRatios.p25));
+      const p90Values = sortedNWValues.map(v => Math.round(v * provincePctRatios.p75));
       // Store whisker values on the chart instance for the provinceWhiskers plugin
-      provinceChartInstance._whiskers = { p10: p10Values, p90: p90Values };
+      provinceChartInstance._whiskers = { p10: p10Values, p90: p90Values, isP25P75: true };
       // Only the median bar dataset is used for drawing; user line will be re-added by addUserMarkers()
       provinceChartInstance.data.datasets = [ barDataset ];
-      // Compute axis bounds including bars, whiskers and user value if present
-      let provinceValsForAxis = baseProvinceValsForUnit.slice();
-      // include whisker values so the y-axis covers the 10th-90th range
+      // Compute axis bounds including bars and whiskers
+      let provinceValsForAxis = sortedNWValues.slice();
       provinceValsForAxis = provinceValsForAxis.concat(p10Values, p90Values);
       const prevProvScale = (provinceChartInstance.options && provinceChartInstance.options.scales && provinceChartInstance.options.scales.y) || {};
       const provinceAxis = computeProvinceDomain(provinceValsForAxis, {
@@ -4648,7 +5573,7 @@
         prevMax: prevProvScale.max,
         maxClampFactor: 2.5
       });
-      console.log('Province domain debug', { metric: 'netWorth', min: provinceAxis.min, max: provinceAxis.max, topValues: provinceAxis.topValues });
+
       provinceChartInstance.options.scales.y.beginAtZero = true;
       provinceChartInstance.options.scales.y.min = 0;
       provinceChartInstance.options.scales.y.max = provinceAxis.max;
@@ -4671,36 +5596,36 @@
         const ratio = incomeRatios[lbl] || 1;
         return Math.round(baseMedianIncome * ratio);
       });
-      // Highlight the selected province in orange
-      const incomeBarColors = baseProvinceLabels.map(lbl => lbl === region ? '#ffa726' : '#42a5f5');
-      // Define constant percentile ratios for income across provinces.  These
-      // values approximate the 10th, 25th, 75th, 90th and 99th percentile as
-      // proportions of the median income, based on 2016 census income
-      // distributions?605841652791315-L220-L244?.
-      // Province income chart: show median bars and store 10th/90th for whiskers
-      const provinceIncomePctRatios = { p10: 0.22, p90: 2.44 };
-      const p10IncomeValues = provinceIncomeBars.map(v => Math.round(v * provinceIncomePctRatios.p10));
-      const p90IncomeValues = provinceIncomeBars.map(v => Math.round(v * provinceIncomePctRatios.p90));
-      // Store whiskers for the income chart and set the median bars
-      provinceIncomeChartInstance._whiskers = { p10: p10IncomeValues, p90: p90IncomeValues };
-      provinceIncomeChartInstance.data.datasets = [ { label: 'Median Income', data: provinceIncomeBars, backgroundColor: incomeBarColors, type: 'bar' } ];
-      // Ensure axis includes whiskers
-      let provinceIncomeVals = provinceIncomeBars.slice();
-      provinceIncomeVals = provinceIncomeVals.concat(p10IncomeValues, p90IncomeValues);
-      const prevIncomeScale = (provinceIncomeChartInstance.options && provinceIncomeChartInstance.options.scales && provinceIncomeChartInstance.options.scales.y) || {};
-      const provinceIncomeAxis = computeProvinceDomain(provinceIncomeVals, {
-        beginAtZero: true,
-        paddingPct: 0.15,
-        minPadding: 2000,
-        fallbackMax: 250000,
-        prevMin: prevIncomeScale.min,
-        prevMax: prevIncomeScale.max,
-        maxClampFactor: 2.5
+      // Sort province income bars by value descending, highlight selected province
+      // Switch whiskers to p25/p75 for tighter, more readable range
+      const provinceIncomePctRatios = { p25: 0.54, p75: 1.64 };
+      const incSorted = baseProvinceLabels.map((lbl, i) => ({
+        label: lbl,
+        value: provinceIncomeBars[i],
+        color: lbl === region ? '#ffa726' : '#42a5f5',
+        spending: provinceSpendingEstimates[baseProvinceLabels.indexOf(lbl)]
+      })).sort((a, b) => b.value - a.value);
+      const sortedIncLabels = incSorted.map(x => x.label);
+      const sortedIncValues = incSorted.map(x => x.value);
+      const sortedIncColors = incSorted.map(x => x.color);
+      const sortedColValues = incSorted.map(x => {
+        // Scale spending by household unit if needed
+        return unit === 'households' ? x.spending : Math.round(x.spending / EQUIVALENCE_SCALE);
       });
-      console.log('Province domain debug', { metric: 'income', min: provinceIncomeAxis.min, max: provinceIncomeAxis.max, topValues: provinceIncomeAxis.topValues });
+      const p25IncomeValues = sortedIncValues.map(v => Math.round(v * provinceIncomePctRatios.p25));
+      const p75IncomeValues = sortedIncValues.map(v => Math.round(v * provinceIncomePctRatios.p75));
+      // Store whiskers (reusing p10/p90 keys in plugin — now represents p25/p75)
+      provinceIncomeChartInstance.data.labels.splice(0, provinceIncomeChartInstance.data.labels.length, ...sortedIncLabels);
+      provinceIncomeChartInstance._whiskers = { p10: p25IncomeValues, p90: p75IncomeValues, isP25P75: true };
+      provinceIncomeChartInstance.data.datasets = [
+        { label: 'Median Income', data: sortedIncValues, backgroundColor: sortedIncColors, type: 'bar', order: 1 },
+        { label: 'Cost of Living', data: sortedColValues, type: 'line', borderColor: 'transparent', backgroundColor: 'transparent', borderWidth: 0, showLine: false, pointRadius: 14, pointHoverRadius: 14, pointStyle: 'line', pointBackgroundColor: 'transparent', pointBorderColor: '#f87171', pointBorderWidth: 3, tension: 0, order: -1, clip: false, z: 10, inlineLabel: false }
+      ];
+      // Axis: cover bars + whiskers + cost of living line, but cap at p75 * 1.1 so the chart isn't blown out
+      const axisMax = Math.ceil(Math.max(...p75IncomeValues, ...sortedColValues) * 1.12 / 10000) * 10000;
       provinceIncomeChartInstance.options.scales.y.beginAtZero = true;
       provinceIncomeChartInstance.options.scales.y.min = 0;
-      provinceIncomeChartInstance.options.scales.y.max = provinceIncomeAxis.max;
+      provinceIncomeChartInstance.options.scales.y.max = axisMax;
       provinceIncomeChartInstance.options.scales.y.title.text = unit === 'households'
         ? 'Median Employment Income ($ - Households)'
         : 'Median Employment Income ($ - Individuals)';
@@ -4753,6 +5678,45 @@
       const scatterIcon = scatterTitleEl.querySelector('.info-icon');
       scatterTitleEl.textContent = `Median Income vs Net Worth by Age (${unitTitle}, ${BASE_YEAR}) - ${suffix}`;
       if (scatterIcon) scatterTitleEl.appendChild(scatterIcon);
+      // Update housing cost title
+      const housingTitleEl = document.getElementById('housingCostTitle');
+      if (housingTitleEl) {
+        const housingIcon = housingTitleEl.querySelector('.info-icon');
+        housingTitleEl.textContent = `Housing Cost Burden by Age (${BASE_YEAR}) - ${suffix}`;
+        if (housingIcon) housingTitleEl.appendChild(housingIcon);
+      }
+      // Update debt breakdown title
+      const debtTitleEl = document.getElementById('debtBreakdownTitle');
+      if (debtTitleEl) {
+        const debtIcon = debtTitleEl.querySelector('.info-icon');
+        debtTitleEl.textContent = `Avg. Debt Breakdown by Age (${unitTitle}, ${BASE_YEAR}) - ${suffix}`;
+        if (debtIcon) debtTitleEl.appendChild(debtIcon);
+      }
+      // Update spending / discretionary / savings rate titles
+      const spendingTitleEl = document.getElementById('spendingTitle');
+      if (spendingTitleEl) {
+        const icon = spendingTitleEl.querySelector('.info-icon');
+        spendingTitleEl.textContent = `Household Spending by Age (${BASE_YEAR}) - ${suffix}`;
+        if (icon) spendingTitleEl.appendChild(icon);
+      }
+      const discTitleEl = document.getElementById('discretionaryTitle');
+      if (discTitleEl) {
+        const icon = discTitleEl.querySelector('.info-icon');
+        discTitleEl.textContent = `Discretionary Income by Age (${BASE_YEAR}) - ${suffix}`;
+        if (icon) discTitleEl.appendChild(icon);
+      }
+      const savRateTitleEl = document.getElementById('savingsRateTitle');
+      if (savRateTitleEl) {
+        const icon = savRateTitleEl.querySelector('.info-icon');
+        savRateTitleEl.textContent = `Savings Rate by Age (${BASE_YEAR}) - ${suffix}`;
+        if (icon) savRateTitleEl.appendChild(icon);
+      }
+      const savAmtTitleEl = document.getElementById('savingsAmountTitle');
+      if (savAmtTitleEl) {
+        const icon = savAmtTitleEl.querySelector('.info-icon');
+        savAmtTitleEl.textContent = `Savings Amount by Age (${BASE_YEAR}) - ${suffix}`;
+        if (icon) savAmtTitleEl.appendChild(icon);
+      }
       // Update percentile charts for current region using region-wide medians
       let regionMedianNetWorth;
       let regionMedianIncome;
@@ -4817,31 +5781,87 @@
         }
         return { points: pts, minX, maxX };
       }
-      const netParams = estimateNormalParams(regionMedianNetWorth, 0.10, 1.80);
-      const incParams = estimateNormalParams(regionMedianIncome, 0.22, 2.44);
-      const netHist = buildNormalHistogram(netParams.mu, netParams.sigma);
-      const incHist = buildNormalHistogram(incParams.mu, incParams.sigma);
+      function buildLognormalHistogram(median, sigma, nBins = 30) {
+        const mu = Math.log(median);
+        const p99 = Math.exp(mu + sigma * 2.3263);
+        const binW = p99 / nBins;
+        const p90  = Math.exp(mu + sigma * 1.2816);
+        const pts  = [];
+        for (let i = 0; i < nBins; i++) {
+          const xMid = (i + 0.5) * binW;
+          const lx   = Math.log(xMid);
+          const z    = (lx - mu) / sigma;
+          const pdf  = Math.exp(-0.5 * z * z) / (xMid * sigma * Math.sqrt(2 * Math.PI));
+          pts.push({ x: xMid, y: Math.round(pdf * binW * 100 * 1000) / 1000 });
+        }
+        return { points: pts, minX: 0, maxX: p99, binW, mu, sigma, p90, median };
+      }
+      function buildNetWorthLognormal(medianHousehold, nBins = 50) {
+        const renterMed = medianHousehold * 0.073;
+        const homeMed   = medianHousehold * 1.31;
+        const renterW   = 0.34, homeW = 0.66;
+        const renterMu  = Math.log(renterMed), renterSig = 0.9;
+        const homeMu    = Math.log(homeMed),   homeSig   = 0.70;
+        // Cap at homeowner p90 for better resolution (p99 tail adds no info)
+        const xMax = Math.exp(homeMu + homeSig * 1.2816);
+        const p90  = xMax;
+        const binW = xMax / nBins;
+        function lnPDF(x, mu, sig) {
+          if (x <= 0) return 0;
+          const lx = Math.log(x), z = (lx - mu) / sig;
+          return Math.exp(-0.5 * z * z) / (x * sig * Math.sqrt(2 * Math.PI));
+        }
+        const pts = [];
+        for (let i = 0; i < nBins; i++) {
+          const xMid = (i + 0.5) * binW;
+          const pdf  = renterW * lnPDF(xMid, renterMu, renterSig)
+                     + homeW   * lnPDF(xMid, homeMu,   homeSig);
+          pts.push({ x: xMid, y: Math.round(pdf * binW * 100 * 1000) / 1000 });
+        }
+        return { points: pts, minX: 0, maxX: xMax, binW,
+                 mu: homeMu, sigma: homeSig, p90, median: medianHousehold };
+      }
+      const netHist = buildNetWorthLognormal(regionMedianNetWorth);
+      const incHist = buildLognormalHistogram(regionMedianIncome, 0.72);
+
+      // Three-tone bar coloring: below p50 = muted, p50–p90 = mid, above p90 = bright
+      function histBarColors(pts, mu, sigma, belowCol, midCol, topCol) {
+        const x90 = mu + 1.2816 * sigma;
+        return pts.map(p => p.x < mu ? belowCol : p.x < x90 ? midCol : topCol);
+      }
+      const netColors = netHist.points.map(p =>
+        p.x < netHist.median ? 'rgba(102,187,106,0.38)'
+        : p.x < netHist.p90  ? 'rgba(102,187,106,0.78)'
+        : 'rgba(134,239,172,1)'
+      );
+      const incColors  = incHist.points.map(p =>
+        p.x < incHist.median ? 'rgba(41,182,246,0.38)'
+        : p.x < incHist.p90  ? 'rgba(41,182,246,0.78)'
+        : 'rgba(125,211,252,1)'
+      );
 
       // Update datasets
       percentileNetWorthChartInstance.data.labels = [];
-      percentileNetWorthChartInstance.data.datasets = [ { label: 'Net Worth Distribution', data: netHist.points, backgroundColor: '#66bb6a' } ];
+      percentileNetWorthChartInstance.data.datasets = [ { label: 'Net Worth Distribution', data: netHist.points, backgroundColor: netColors } ];
       percentileIncomeChartInstance.data.labels = [];
-      percentileIncomeChartInstance.data.datasets = [ { label: 'Income Distribution', data: incHist.points, backgroundColor: '#29b6f6' } ];
+      percentileIncomeChartInstance.data.datasets = [ { label: 'Income Distribution', data: incHist.points, backgroundColor: incColors } ];
       // Axes: X in dollars (linear), Y in percent probability
       percentileNetWorthChartInstance.options.scales = {
-        x: { type: 'linear', position: 'bottom', ticks: { color: '#b0c5e8', callback: (v)=> '$' + Math.round(v/1000).toLocaleString() + 'k', maxTicksLimit: 10 }, grid: { color: 'rgba(255,255,255,0.05)' }, min: netHist.minX, max: netHist.maxX, title: { display: true, text: 'Net Worth ($)', color: '#e0e6ed' } },
+        x: { type: 'linear', position: 'bottom', ticks: { color: '#b0c5e8', callback: (v)=> v >= 1e6 ? '$' + (v/1e6).toFixed(1) + 'M' : '$' + Math.round(v/1000) + 'k', maxTicksLimit: 10 }, grid: { color: 'rgba(255,255,255,0.05)' }, min: 0, max: netHist.maxX, title: { display: true, text: 'Net Worth ($)', color: '#e0e6ed' } },
         y: { min: 0, ticks: { color: '#b0c5e8', callback: (v)=> v + '%' }, grid: { color: 'rgba(255,255,255,0.05)' } }
       };
       percentileIncomeChartInstance.options.scales = {
-        x: { type: 'linear', position: 'bottom', ticks: { color: '#b0c5e8', callback: (v)=> '$' + Math.round(v/1000).toLocaleString() + 'k', maxTicksLimit: 10 }, grid: { color: 'rgba(255,255,255,0.05)' }, min: incHist.minX, max: incHist.maxX, title: { display: true, text: 'Employment Income ($)', color: '#e0e6ed' } },
+        x: { type: 'linear', position: 'bottom', ticks: { color: '#b0c5e8', callback: (v)=> '$' + Math.round(v/1000).toLocaleString() + 'k', maxTicksLimit: 10 }, grid: { color: 'rgba(255,255,255,0.05)' }, min: 0, max: incHist.maxX, title: { display: true, text: 'Employment Income ($)', color: '#e0e6ed' } },
         y: { min: 0, ticks: { color: '#b0c5e8', callback: (v)=> v + '%' }, grid: { color: 'rgba(255,255,255,0.05)' } }
       };
       // Save dist params for tooltips
-      percentileNetWorthChartInstance.options.plugins.distParams = { mu: netParams.mu, sigma: netParams.sigma };
-      percentileIncomeChartInstance.options.plugins.distParams = { mu: incParams.mu, sigma: incParams.sigma };
+      percentileNetWorthChartInstance.options.plugins.distParams = { mu: netHist.mu, sigma: netHist.sigma, isLognormal: true };
+      percentileIncomeChartInstance.options.plugins.distParams = { mu: incHist.mu, sigma: incHist.sigma, isLognormal: true };
+      percentileIncomeChartInstance.options.plugins.p99Cutoff = true;
+      percentileNetWorthChartInstance.options.plugins.p99Cutoff = true;
       // Draw a subtle median line on both distributions
-      percentileNetWorthChartInstance.options.plugins.medianVLine = { xValue: netParams.mu, color: 'rgba(255,255,255,0.6)', dash: [2,2], width: 1, label: 'Median' };
-      percentileIncomeChartInstance.options.plugins.medianVLine = { xValue: incParams.mu, color: 'rgba(255,255,255,0.6)', dash: [2,2], width: 1, label: 'Median' };
+      percentileNetWorthChartInstance.options.plugins.medianVLine = { xValue: netHist.median, color: 'rgba(255,255,255,0.6)', dash: [2,2], width: 1, label: 'Median' };
+      percentileIncomeChartInstance.options.plugins.medianVLine = { xValue: incHist.median, color: 'rgba(255,255,255,0.6)', dash: [2,2], width: 1, label: 'Median' };
       // Cache percentile curves for histogram percentile lookups (align with tiles)
       const netCurve = makePercentileValues(regionMedianNetWorth, netWorthPercentileAnchors);
       const incCurve = makePercentileValues(regionMedianIncome, incomePercentileAnchors);
@@ -4850,10 +5870,18 @@
       // Custom tooltip for histograms (percent at $x) using curve inversion
       const histLabelPctile = (ctx) => {
         const x = ctx.parsed?.x ?? 0;
-        const curve = ctx?.chart?.options?.plugins?.distCurve || [];
-        const idx = curve.length ? findPercentileIndex(x, curve) : 0;
-        const pct = clampPercentile(idx + 1);
-        return `Percentile: ${formatPercentileLabel(pct).replace(' percentile','')} - $${Math.round(x).toLocaleString()}`;
+        const params = ctx?.chart?.options?.plugins?.distParams || {};
+        let pct;
+        if (params.isLognormal && params.mu && params.sigma && x > 0) {
+          const z = (Math.log(x) - params.mu) / (params.sigma * Math.sqrt(2));
+          pct = Math.round(50 * (1 + erf(z)));
+          pct = Math.max(1, Math.min(99, pct));
+        } else {
+          const curve = ctx?.chart?.options?.plugins?.distCurve || [];
+          const idx = curve.length ? findPercentileIndex(x, curve) : 0;
+          pct = clampPercentile(idx + 1);
+        }
+        return `${formatPercentileLabel(pct)} — $${Math.round(x).toLocaleString()}`;
       };
       // Merge tooltip options instead of overwriting to preserve external handler
       percentileNetWorthChartInstance.options.plugins.tooltip = Object.assign({}, percentileNetWorthChartInstance.options.plugins.tooltip || {}, { mode: 'nearest', intersect: false, callbacks: { label: histLabelPctile } });
@@ -4905,7 +5933,7 @@
       // Update province titles - preserve info-icons
       const provinceNetWorthEl = document.getElementById('provinceTitle');
       const provinceNetWorthIcon = provinceNetWorthEl.querySelector('.info-icon');
-      provinceNetWorthEl.textContent = `Projected Median Net Worth by Province (${unitTitle}, ${BASE_YEAR})`;
+      provinceNetWorthEl.textContent = `Median Net Worth by Province (${unitTitle}, ${BASE_YEAR})`;
       if (provinceNetWorthIcon) provinceNetWorthEl.appendChild(provinceNetWorthIcon);
       
       const provinceIncomeEl = document.getElementById('provinceIncomeTitle');
@@ -4966,13 +5994,20 @@ function createChart(canvasId, dataInfo, type = 'line') {
   const minVal = allValues.length ? Math.min(...allValues) : 0;
   const maxVal = allValues.length ? Math.max(...allValues) : 1;
   const pad = (maxVal - minVal) * 0.05;
-  let yMin = Math.floor((minVal - pad) / 1000) * 1000;
-  let yMax = Math.ceil((maxVal + pad) / 1000) * 1000;
-
-  if (dataInfo.step) {
+  const step = dataInfo.step;
+  let yMin, yMax;
+  if (step) {
+    yMin = Math.floor((minVal - pad) / step) * step;
+    yMax = Math.ceil((maxVal + pad) / step) * step;
     const range = yMax - yMin;
-    const remainder = range % dataInfo.step;
-    if (remainder !== 0) yMax += dataInfo.step - remainder;
+    const remainder = range % step;
+    if (remainder !== 0) yMax += step - remainder;
+  } else {
+    // No step — round to a sensible magnitude based on actual data range
+    const range = maxVal - minVal || 1;
+    const magnitude = Math.pow(10, Math.floor(Math.log10(range)));
+    yMin = Math.floor((minVal - pad) / magnitude) * magnitude;
+    yMax = Math.ceil((maxVal + pad) / magnitude) * magnitude;
   }
 
   // stacking only for non-scatter when at least one dataset has .stack
@@ -5252,6 +6287,13 @@ function createChart(canvasId, dataInfo, type = 'line') {
       container.appendChild(panel);
     }
 
+    function erf(x) {
+      const t = 1 / (1 + 0.3275911 * Math.abs(x));
+      const y = 1 - (((((1.061405429*t - 1.453152027)*t) + 1.421413741)*t
+                - 0.284496736)*t + 0.254829592)*t*Math.exp(-x*x);
+      return x >= 0 ? y : -y;
+    }
+
     let chartsInitialized = false;
     function initCharts() {
       if (chartsInitialized) return;
@@ -5447,10 +6489,10 @@ function createChart(canvasId, dataInfo, type = 'line') {
       genderIncomeChartInstance = createChart('genderIncomeChart', {
         labels: ageLabels,
         datasets: [
-          { label: 'Women p10', data: new Array(ageLabels.length).fill(0), borderColor: 'rgba(0,0,0,0)', backgroundColor: 'rgba(171,71,188,0)', borderWidth: 0, fill: false, pointRadius: 0, pointHoverRadius: 0, tension: 0.3, order: 0, tooltip: { enabled: false }, inlineLabel: false, noGradient: true },
-          { label: 'Women p90', data: new Array(ageLabels.length).fill(0), borderColor: 'rgba(0,0,0,0)', backgroundColor: 'rgba(171,71,188,0.10)', borderWidth: 0, fill: '-1', pointRadius: 0, pointHoverRadius: 0, tension: 0.3, order: 0, tooltip: { enabled: false }, inlineLabel: false, noGradient: true },
-          { label: 'Men p10', data: new Array(ageLabels.length).fill(0), borderColor: 'rgba(0,0,0,0)', backgroundColor: 'rgba(41,182,246,0)', borderWidth: 0, fill: false, pointRadius: 0, pointHoverRadius: 0, tension: 0.3, order: 0, tooltip: { enabled: false }, inlineLabel: false, noGradient: true },
-          { label: 'Men p90', data: new Array(ageLabels.length).fill(0), borderColor: 'rgba(0,0,0,0)', backgroundColor: 'rgba(41,182,246,0.10)', borderWidth: 0, fill: '-1', pointRadius: 0, pointHoverRadius: 0, tension: 0.3, order: 0, tooltip: { enabled: false }, inlineLabel: false, noGradient: true },
+          { label: 'Women p10', data: new Array(ageLabels.length).fill(0), borderColor: 'rgba(171,71,188,0.28)', backgroundColor: 'rgba(171,71,188,0)', borderWidth: 1, fill: false, pointRadius: 0, pointHoverRadius: 0, tension: 0.3, order: 0, tooltip: { enabled: false }, inlineLabel: false, noGradient: true },
+          { label: 'Women p90', data: new Array(ageLabels.length).fill(0), borderColor: 'rgba(171,71,188,0.28)', backgroundColor: 'rgba(171,71,188,0.10)', borderWidth: 1, fill: '-1', pointRadius: 0, pointHoverRadius: 0, tension: 0.3, order: 0, tooltip: { enabled: false }, inlineLabel: false, noGradient: true },
+          { label: 'Men p10', data: new Array(ageLabels.length).fill(0), borderColor: 'rgba(41,182,246,0.28)', backgroundColor: 'rgba(41,182,246,0)', borderWidth: 1, fill: false, pointRadius: 0, pointHoverRadius: 0, tension: 0.3, order: 0, tooltip: { enabled: false }, inlineLabel: false, noGradient: true },
+          { label: 'Men p90', data: new Array(ageLabels.length).fill(0), borderColor: 'rgba(41,182,246,0.28)', backgroundColor: 'rgba(41,182,246,0.10)', borderWidth: 1, fill: '-1', pointRadius: 0, pointHoverRadius: 0, tension: 0.3, order: 0, tooltip: { enabled: false }, inlineLabel: false, noGradient: true },
           { label: 'Women (Median)', data: new Array(ageLabels.length).fill(0), color: '#ab47bc', backgroundColor: 'transparent', fill: false, order: 10 },
           { label: 'Men (Median)', data: new Array(ageLabels.length).fill(0), color: '#1e88e5', backgroundColor: 'transparent', fill: false, order: 10 },
           { label: 'You', data: new Array(ageLabels.length).fill(null), showLine: false, borderColor: 'transparent', backgroundColor: '#f43f5e', pointBackgroundColor: '#f43f5e', pointBorderColor: '#f43f5e', pointRadius: 5, pointHoverRadius: 6, tension: 0, order: 20, color: '#f43f5e', labelTextColor: '#f43f5e', inlineLabelColor: '#f43f5e' }
@@ -5461,6 +6503,211 @@ function createChart(canvasId, dataInfo, type = 'line') {
           y: 'Median Employment Income ($ - Individuals / Households)'
         }
       }, 'line');
+
+      // Housing Cost Burden chart — line with P25/P75 band + median
+      housingCostChartInstance = createChart('housingCostChart', {
+        labels: ageLabels,
+        datasets: [
+          {
+            label: '25th Percentile',
+            data: baseHousingCostP25.slice(),
+            borderColor: 'rgba(251,146,60,0.25)',
+            backgroundColor: 'rgba(251,146,60,0.12)',
+            fill: false,
+            pointRadius: 0,
+            tension: 0.35,
+            borderWidth: 1,
+            order: 2
+          },
+          {
+            label: '75th Percentile',
+            data: baseHousingCostP75.slice(),
+            borderColor: 'rgba(251,146,60,0.25)',
+            backgroundColor: 'rgba(251,146,60,0.12)',
+            fill: '-1',
+            pointRadius: 0,
+            tension: 0.35,
+            borderWidth: 1,
+            order: 2,
+            noGradient: true
+          },
+          {
+            label: 'Median',
+            data: baseHousingCostPct.slice(),
+            borderColor: '#fb923c',
+            backgroundColor: 'transparent',
+            fill: false,
+            pointRadius: 0,
+            tension: 0.35,
+            borderWidth: 2.5,
+            order: 1
+          }
+        ],
+        step: null,
+        axisLabels: {
+          x: 'Age (Years)',
+          y: 'Housing Cost (% of Gross Income)'
+        }
+      }, 'line');
+      // Override y-axis to show % instead of $
+      if (housingCostChartInstance?.options?.scales?.y) {
+        housingCostChartInstance.options.scales.y.min = 0;
+        housingCostChartInstance.options.scales.y.max = 65;
+        housingCostChartInstance.options.scales.y.ticks = Object.assign(
+          {}, housingCostChartInstance.options.scales.y.ticks,
+          {
+            callback: function(v) { return v + '%'; },
+            stepSize: 10,
+            maxTicksLimit: 8
+          }
+        );
+      }
+      if (housingCostChartInstance?.options?.scales?.x?.ticks) {
+        housingCostChartInstance.options.scales.x.ticks = Object.assign(
+          {}, housingCostChartInstance.options.scales.x.ticks,
+          { callback: ageTickFormatter, autoSkip: false, maxRotation: 0, minRotation: 0 }
+        );
+      }
+
+      // Debt Breakdown chart — stacked bar + total debt line overlay
+      debtBreakdownChartInstance = createChart('debtBreakdownChart', {
+        labels: ageLabels,
+        datasets: [
+          {
+            label: 'Mortgage / HELOC',
+            data: new Array(ageLabels.length).fill(0),
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59,130,246,0.75)',
+            stack: 'debt',
+            borderWidth: 0
+          },
+          {
+            label: 'Student Loans',
+            data: new Array(ageLabels.length).fill(0),
+            borderColor: '#a855f7',
+            backgroundColor: 'rgba(168,85,247,0.75)',
+            stack: 'debt',
+            borderWidth: 0
+          },
+          {
+            label: 'Auto Loans',
+            data: new Array(ageLabels.length).fill(0),
+            borderColor: '#f59e0b',
+            backgroundColor: 'rgba(245,158,11,0.75)',
+            stack: 'debt',
+            borderWidth: 0
+          },
+          {
+            label: 'Consumer / Credit',
+            data: new Array(ageLabels.length).fill(0),
+            borderColor: '#f87171',
+            backgroundColor: 'rgba(248,113,113,0.75)',
+            stack: 'debt',
+            borderWidth: 0
+          },
+          {
+            label: 'Total Debt',
+            data: new Array(ageLabels.length).fill(0),
+            borderColor: '#ffffff',
+            backgroundColor: 'transparent',
+            type: 'line',
+            pointRadius: 0,
+            borderWidth: 2,
+            fill: false,
+            order: 9999,
+            noGradient: true
+          }
+        ],
+        step: 50000,
+        axisLabels: {
+          x: 'Age (Years)',
+          y: 'Total Debt ($ - Households)'
+        }
+      }, 'bar');
+      if (debtBreakdownChartInstance?.options?.scales?.x) {
+        debtBreakdownChartInstance.options.scales.x.ticks = Object.assign(
+          {}, debtBreakdownChartInstance.options.scales.x.ticks,
+          { callback: ageTickFormatter, autoSkip: false, maxRotation: 0, minRotation: 0 }
+        );
+      }
+
+      // ── Spending by Age ──────────────────────────────────────────────────
+      spendingChartInstance = createChart('spendingChart', {
+        labels: ageLabels,
+        datasets: [
+          { label: '25th Percentile', data: baseSpendingP25.slice(), borderColor: 'rgba(248,113,113,0.25)', backgroundColor: 'rgba(248,113,113,0.10)', fill: false, pointRadius: 0, tension: 0.35, borderWidth: 1, order: 2, noGradient: true },
+          { label: '75th Percentile', data: baseSpendingP75.slice(), borderColor: 'rgba(248,113,113,0.25)', backgroundColor: 'rgba(248,113,113,0.10)', fill: '-1', pointRadius: 0, tension: 0.35, borderWidth: 1, order: 2, noGradient: true },
+          { label: 'Median', data: baseSpendingMedian.slice(), borderColor: '#f87171', backgroundColor: 'transparent', fill: false, pointRadius: 0, tension: 0.35, borderWidth: 2.5, order: 1 }
+        ],
+        step: 10000,
+        axisLabels: { x: 'Age (Years)', y: 'Annual Spending ($ - Households)' }
+      }, 'line');
+      if (spendingChartInstance?.options?.scales?.x?.ticks) {
+        spendingChartInstance.options.scales.x.ticks = Object.assign(
+          {}, spendingChartInstance.options.scales.x.ticks,
+          { callback: ageTickFormatter, autoSkip: false, maxRotation: 0, minRotation: 0 }
+        );
+      }
+
+      // ── Discretionary Income by Age ──────────────────────────────────────
+      discretionaryChartInstance = createChart('discretionaryChart', {
+        labels: ageLabels,
+        datasets: [
+          { label: '25th Percentile', data: baseDiscretionaryP25.slice(), borderColor: 'rgba(96,165,250,0.25)', backgroundColor: 'rgba(96,165,250,0.08)', fill: false, pointRadius: 0, tension: 0.35, borderWidth: 1, order: 2, noGradient: true },
+          { label: '75th Percentile', data: baseDiscretionaryP75.slice(), borderColor: 'rgba(96,165,250,0.25)', backgroundColor: 'rgba(96,165,250,0.08)', fill: '-1', pointRadius: 0, tension: 0.35, borderWidth: 1, order: 2, noGradient: true },
+          { label: 'Median', data: baseDiscretionaryMedian.slice(), borderColor: '#60a5fa', backgroundColor: 'transparent', fill: false, pointRadius: 0, tension: 0.35, borderWidth: 2.5, order: 1 }
+        ],
+        step: 10000,
+        axisLabels: { x: 'Age (Years)', y: 'Discretionary Income ($ - Households)' }
+      }, 'line');
+      if (discretionaryChartInstance?.options?.scales?.x?.ticks) {
+        discretionaryChartInstance.options.scales.x.ticks = Object.assign(
+          {}, discretionaryChartInstance.options.scales.x.ticks,
+          { callback: ageTickFormatter, autoSkip: false, maxRotation: 0, minRotation: 0 }
+        );
+      }
+
+      // ── Savings Rate by Age ──────────────────────────────────────────────
+      savingsRateChartInstance = createChart('savingsRateChart', {
+        labels: ageLabels,
+        datasets: [
+          { label: '25th Percentile', data: baseSavingsRateP25.slice(), borderColor: 'rgba(129,140,248,0.25)', backgroundColor: 'rgba(129,140,248,0.10)', fill: false, pointRadius: 0, tension: 0.35, borderWidth: 1, order: 2, noGradient: true },
+          { label: '75th Percentile', data: baseSavingsRateP75.slice(), borderColor: 'rgba(129,140,248,0.25)', backgroundColor: 'rgba(129,140,248,0.10)', fill: '-1', pointRadius: 0, tension: 0.35, borderWidth: 1, order: 2, noGradient: true },
+          { label: 'Median', data: baseSavingsRateMedian.slice(), borderColor: '#818cf8', backgroundColor: 'transparent', fill: false, pointRadius: 0, tension: 0.35, borderWidth: 2.5, order: 1 }
+        ],
+        step: null,
+        axisLabels: { x: 'Age (Years)', y: 'Savings Rate (% of Take-Home Pay)' }
+      }, 'line');
+      if (savingsRateChartInstance?.options?.scales?.y) {
+        savingsRateChartInstance.options.scales.y.ticks = Object.assign(
+          {}, savingsRateChartInstance.options.scales.y.ticks,
+          { callback: (v) => v + '%', maxTicksLimit: 8 }
+        );
+      }
+      if (savingsRateChartInstance?.options?.scales?.x?.ticks) {
+        savingsRateChartInstance.options.scales.x.ticks = Object.assign(
+          {}, savingsRateChartInstance.options.scales.x.ticks,
+          { callback: ageTickFormatter, autoSkip: false, maxRotation: 0, minRotation: 0 }
+        );
+      }
+
+      // ── Savings Amount by Age ────────────────────────────────────────────
+      savingsAmountChartInstance = createChart('savingsAmountChart', {
+        labels: ageLabels,
+        datasets: [
+          { label: '25th Percentile', data: baseSavingsAmountP25.slice(), borderColor: 'rgba(52,211,153,0.25)', backgroundColor: 'rgba(52,211,153,0.08)', fill: false, pointRadius: 0, tension: 0.35, borderWidth: 1, order: 2, noGradient: true },
+          { label: '75th Percentile', data: baseSavingsAmountP75.slice(), borderColor: 'rgba(52,211,153,0.25)', backgroundColor: 'rgba(52,211,153,0.08)', fill: '-1', pointRadius: 0, tension: 0.35, borderWidth: 1, order: 2, noGradient: true },
+          { label: 'Median', data: baseSavingsAmountMedian.slice(), borderColor: '#34d399', backgroundColor: 'transparent', fill: false, pointRadius: 0, tension: 0.35, borderWidth: 2.5, order: 1 }
+        ],
+        step: 5000,
+        axisLabels: { x: 'Age (Years)', y: 'Annual Savings ($ - Households)' }
+      }, 'line');
+      if (savingsAmountChartInstance?.options?.scales?.x?.ticks) {
+        savingsAmountChartInstance.options.scales.x.ticks = Object.assign(
+          {}, savingsAmountChartInstance.options.scales.x.ticks,
+          { callback: ageTickFormatter, autoSkip: false, maxRotation: 0, minRotation: 0 }
+        );
+      }
 
       // Initialize distribution charts as bar (histogram-like)
       percentileNetWorthChartInstance = createChart('percentileNetWorthChart', {
@@ -5562,9 +6809,13 @@ function createChart(canvasId, dataInfo, type = 'line') {
         if (tooltipEl) tooltipEl.classList.remove('show');
       }
 
-      document.addEventListener('click', (e) => {
-        if (!e.target.closest('canvas')) clearAllChartTooltips();
-      });
+      // Hide tooltip immediately when mouse leaves a canvas
+      document.addEventListener('mouseleave', (e) => {
+        if (e.target.tagName === 'CANVAS') clearAllChartTooltips();
+      }, true);
+
+      // Hide tooltip when clicking anywhere — including info icons
+      document.addEventListener('click', () => clearAllChartTooltips());
 
       let scrollTimeout;
       document.addEventListener('scroll', () => {
@@ -5579,6 +6830,40 @@ function createChart(canvasId, dataInfo, type = 'line') {
       DOM.init();
       setupNav();
       setupInputValidation();
+
+      // Detail panel toggle
+      const detailToggleBtn = document.getElementById('detailToggleBtn');
+      const detailPanel = document.getElementById('detailPanel');
+      if (detailToggleBtn && detailPanel) {
+        detailToggleBtn.addEventListener('click', function() {
+          // Re-hide overflow before closing so animation clips content correctly
+          if (detailPanel.classList.contains('open')) {
+            detailPanel.style.overflow = 'hidden';
+          }
+          const isOpen = detailPanel.classList.toggle('open');
+          detailToggleBtn.classList.toggle('open', isOpen);
+          detailToggleBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+        // Once the open animation finishes, allow tooltips to escape the container
+        detailPanel.addEventListener('transitionend', function(e) {
+          if (e.propertyName === 'max-height') {
+            detailPanel.style.overflow = detailPanel.classList.contains('open') ? 'visible' : 'hidden';
+          }
+        });
+      }
+      // Cash flow period toggle — also updates the inline period tags on each label
+      function setCashFlowPeriod(period) {
+        cashFlowPeriod = period;
+        const tag = period === 'monthly' ? '/ mo' : '/ yr';
+        ['takeHomePeriodTag','spendingPeriodTag','savingsPeriodTag'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = tag;
+        });
+        document.getElementById('periodMonthly')?.classList.toggle('active', period === 'monthly');
+        document.getElementById('periodAnnual')?.classList.toggle('active', period === 'annual');
+      }
+      document.getElementById('periodMonthly')?.addEventListener('click', () => setCashFlowPeriod('monthly'));
+      document.getElementById('periodAnnual')?.addEventListener('click', () => setCashFlowPeriod('annual'));
       const firstSection = document.getElementById('section-income-charts');
       if (firstSection && 'IntersectionObserver' in window) {
         const io = new IntersectionObserver((entries, obs) => {
@@ -5715,6 +7000,11 @@ function createChart(canvasId, dataInfo, type = 'line') {
     // Flags and storage for user input comparison
     let userActive = false;
     let userAgeVal, userIncomeVal, userNetWorthVal;
+    let userHomeVal = null, userMortgageVal = null, userOtherREVal = null;
+    let userRegisteredVal = null, userNonRegVal = null, userPensionVal = null;
+    let userTakeHomeVal = null, userSpendingVal = null, userSavingsAmtVal = null;
+    let userNonMortgageDebtVal = null;
+    let cashFlowPeriod = 'monthly';
 
     function validateNumericInput(value, min, max, fieldName) {
       const num = parseFloat(value);
@@ -5744,7 +7034,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
         if (showValid) {
           inputEl.classList.add('is-valid');
           feedbackEl.classList.add('is-valid');
-          feedbackEl.textContent = 'Looks good';
+          feedbackEl.textContent = '';
         }
         return;
       }
@@ -5855,6 +7145,25 @@ function createChart(canvasId, dataInfo, type = 'line') {
       userAgeVal = clampedAge;
       userIncomeVal = core.income;
       userNetWorthVal = core.netWorth;
+
+      // Optional detail fields
+      function parseOptional(el) {
+        if (!el || el.value.trim() === '') return null;
+        const v = parseFloat(el.value);
+        return isNaN(v) ? null : v;
+      }
+      userHomeVal = parseOptional(DOM.userHomeVal);
+      userMortgageVal = parseOptional(DOM.userMortgage);
+      userOtherREVal = parseOptional(DOM.userOtherRE);
+      userRegisteredVal = parseOptional(DOM.userRegistered);
+      userNonRegVal = parseOptional(DOM.userNonReg);
+      userPensionVal = parseOptional(DOM.userPension);
+      const multiplier = cashFlowPeriod === 'monthly' ? 12 : 1;
+      userTakeHomeVal = parseOptional(DOM.userTakeHome) !== null ? parseOptional(DOM.userTakeHome) * multiplier : null;
+      userSpendingVal = parseOptional(DOM.userSpending) !== null ? parseOptional(DOM.userSpending) * multiplier : null;
+      userSavingsAmtVal = parseOptional(DOM.userSavingsAmt) !== null ? parseOptional(DOM.userSavingsAmt) * multiplier : null;
+      userNonMortgageDebtVal = parseOptional(DOM.userNonMortgageDebt);
+
       // After storing the user values, rescale all charts to include the new marker and redraw
       const region = DOM.provinceSelect ? DOM.provinceSelect.value : 'Canada';
       updateCharts(region);
@@ -5879,6 +7188,23 @@ function createChart(canvasId, dataInfo, type = 'line') {
       addUserLineToBarChart(provinceIncomeChartInstance, userIncomeVal, 'You');
       // Add a red "You" point to the scatter chart (income vs net worth)
       addUserPointToScatter(scatterChartInstance, userIncomeVal, userNetWorthVal, 'You');
+      // Cash flow charts — only plot if the relevant optional fields were entered
+      if (userSpendingVal !== null) {
+        addUserMarkerToChart(spendingChartInstance, userSpendingVal, index, 'You');
+      }
+      if (userTakeHomeVal !== null && userSpendingVal !== null) {
+        addUserMarkerToChart(discretionaryChartInstance, userTakeHomeVal - userSpendingVal, index, 'You');
+      }
+      if (userSavingsAmtVal !== null && userTakeHomeVal !== null && userTakeHomeVal > 0) {
+        addUserMarkerToChart(savingsRateChartInstance, Math.round((userSavingsAmtVal / userTakeHomeVal) * 1000) / 10, index, 'You');
+      }
+      if (userSavingsAmtVal !== null) {
+        addUserMarkerToChart(savingsAmountChartInstance, userSavingsAmtVal, index, 'You');
+      }
+      if (userMortgageVal !== null || userNonMortgageDebtVal !== null) {
+        const totalDebt = (userMortgageVal || 0) + (userNonMortgageDebtVal || 0);
+        addUserMarkerToChart(debtBreakdownChartInstance, totalDebt, index, 'You');
+      }
       // Update vertical dashed user percentile lines on percentile charts
       try {
         const region = DOM.provinceSelect ? DOM.provinceSelect.value : 'Canada';
@@ -5983,6 +7309,11 @@ function createChart(canvasId, dataInfo, type = 'line') {
       if (chart === incomeChartInstance || chart === compositionChartInstance) {
         axis.min = 0;
       }
+      // Savings rate chart: clamp to ±150% to prevent outlier base-data values from blowing the scale
+      if (chart === savingsRateChartInstance) {
+        axis.min = Math.max(axis.min, -150);
+        axis.max = Math.min(axis.max, 150);
+      }
       chart.options.scales.y.min = axis.min;
       chart.options.scales.y.max = axis.max;
       chart.update();
@@ -6029,9 +7360,11 @@ function createChart(canvasId, dataInfo, type = 'line') {
      */
     function resetUserData() {
       userActive = false;
-      userAgeVal = null;
-      userIncomeVal = null;
-      userNetWorthVal = null;
+      userAgeVal = null; userIncomeVal = null; userNetWorthVal = null;
+      userHomeVal = null; userMortgageVal = null; userOtherREVal = null;
+      userRegisteredVal = null; userNonRegVal = null; userPensionVal = null;
+      userTakeHomeVal = null; userSpendingVal = null; userSavingsAmtVal = null;
+      userNonMortgageDebtVal = null;
       // Reset input fields
       const ageEl = DOM.userAge;
       const incEl = DOM.userIncome;
@@ -6039,6 +7372,11 @@ function createChart(canvasId, dataInfo, type = 'line') {
       if (ageEl) ageEl.value = '';
       if (incEl) incEl.value = '';
       if (nwEl) nwEl.value = '';
+      // Clear detail fields
+      [DOM.userHomeVal, DOM.userMortgage, DOM.userOtherRE, DOM.userRegistered, DOM.userNonReg,
+       DOM.userPension, DOM.userTakeHome, DOM.userSpending, DOM.userSavingsAmt,
+       DOM.userNonMortgageDebt
+      ].forEach(el => { if (el) el.value = ''; });
       // Reset dropdowns to defaults
       const provEl = DOM.provinceSelect;
       const unitEl = DOM.unitSelect;
@@ -6063,6 +7401,11 @@ function createChart(canvasId, dataInfo, type = 'line') {
       removeUserDataset(provinceChartInstance, 'You');
       removeUserDataset(provinceIncomeChartInstance, 'You');
       removeUserDataset(scatterChartInstance, 'You');
+      removeUserDataset(spendingChartInstance, 'You');
+      removeUserDataset(discretionaryChartInstance, 'You');
+      removeUserDataset(savingsRateChartInstance, 'You');
+      removeUserDataset(savingsAmountChartInstance, 'You');
+      removeUserDataset(debtBreakdownChartInstance, 'You');
       // Clear percentile chart vertical lines
       if (percentileNetWorthChartInstance?.options?.plugins) {
         percentileNetWorthChartInstance.options.plugins.userVLine = { index: null, xValue: null };
@@ -6308,7 +7651,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
       const netPct = clampPercentile(computePercentileFromThresholds(userNetWorthVal, netThresh));
       const unitLabel = (unit==='households') ? `${region} households` : `${region} individuals`;
       const subtitle = `for ${region} - age ${age}`;
-      tilesWrap.style.display = 'flex';
+      tilesWrap.style.display = 'grid';
       setTile('incomePctTile', formatPercentileLabel(incomePct), `among ${unitLabel} - age ${age}`);
       setTile('netPctTile', formatPercentileLabel(netPct), `among ${unitLabel} - age ${age}`);
       setTile('medianIncomeTile', incPcts ? formatCurrency(incPcts.p50) : '-', subtitle);
@@ -6319,7 +7662,99 @@ function createChart(canvasId, dataInfo, type = 'line') {
           ? incomePct
           : null;
       updateUsingThisDataEmphasis(chosenPct);
-      // Savings rate and DTI tiles removed
+
+      // ── Detail tiles (shown only when optional cash-flow fields are filled) ──
+      const detailTileIds = ['spendingTile','discretionaryTile','discPctTile','savingsRateTile','savingsAmountTile','effectiveTaxRateTile','savingsRatePctTile','debtTile'];
+      detailTileIds.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+
+      const incScale = incomeRatios[region] || 1;
+
+      // Spending tile
+      if (userSpendingVal !== null) {
+        const medSpend  = Math.round(baseSpendingMedian[idx] * incScale);
+        const p25Spend  = Math.round(baseSpendingP25[idx]    * incScale);
+        const p75Spend  = Math.round(baseSpendingP75[idx]    * incScale);
+        const spendPct  = clampPercentile(computePercentileFromThresholds(userSpendingVal, [{p:25,v:p25Spend},{p:50,v:medSpend},{p:75,v:p75Spend}]));
+        const spendEl   = document.getElementById('spendingTile');
+        if (spendEl) spendEl.style.display = 'block';
+        setTile('spendingTile', formatCurrency(userSpendingVal), `${formatPercentileLabel(spendPct)} — median ${formatCurrency(medSpend)}`);
+      }
+
+      // Discretionary income tile
+      if (userTakeHomeVal !== null && userSpendingVal !== null) {
+        const userDisc = userTakeHomeVal - userSpendingVal;
+        const medDisc  = Math.round(baseDiscretionaryMedian[idx] * incScale);
+        const p25Disc  = Math.round(baseDiscretionaryP25[idx]    * incScale);
+        const p75Disc  = Math.round(baseDiscretionaryP75[idx]    * incScale);
+        const discPct  = clampPercentile(computePercentileFromThresholds(userDisc, [{p:25,v:p25Disc},{p:50,v:medDisc},{p:75,v:p75Disc}]));
+        const discEl   = document.getElementById('discretionaryTile');
+        if (discEl) discEl.style.display = 'block';
+        setTile('discretionaryTile', formatCurrency(userDisc), `${formatPercentileLabel(discPct)} — median ${formatCurrency(medDisc)}`);
+        const discPctEl = document.getElementById('discPctTile');
+        if (discPctEl) discPctEl.style.display = 'block';
+        setTile('discPctTile', formatPercentileLabel(discPct), `among ${unitLabel} — age ${age}`);
+      }
+
+      // Effective tax rate tile
+      if (userIncomeVal !== null && userIncomeVal > 0 && userTakeHomeVal !== null) {
+        const effTaxRate = ((userIncomeVal - userTakeHomeVal) / userIncomeVal * 100).toFixed(1) + '%';
+        const effTaxEl = document.getElementById('effectiveTaxRateTile');
+        if (effTaxEl) effTaxEl.style.display = 'block';
+        setTile('effectiveTaxRateTile', effTaxRate, 'income tax + CPP + EI');
+      }
+
+      // Savings rate tile
+      if (userSavingsAmtVal !== null && userTakeHomeVal !== null && userTakeHomeVal > 0) {
+        const userRate = Math.round((userSavingsAmtVal / userTakeHomeVal) * 1000) / 10;
+        const medRate  = baseSavingsRateMedian[idx];
+        const p25Rate  = baseSavingsRateP25[idx];
+        const p75Rate  = baseSavingsRateP75[idx];
+        const ratePct  = clampPercentile(computePercentileFromThresholds(userRate, [{p:25,v:p25Rate},{p:50,v:medRate},{p:75,v:p75Rate}]));
+        const rateEl   = document.getElementById('savingsRateTile');
+        if (rateEl) rateEl.style.display = 'block';
+        setTile('savingsRateTile', `${userRate}%`, `${formatPercentileLabel(ratePct)} — median ${medRate}%`);
+        const savRatePctEl = document.getElementById('savingsRatePctTile');
+        if (savRatePctEl) savRatePctEl.style.display = 'block';
+        setTile('savingsRatePctTile', `${userRate}%`, 'of take-home pay');
+      }
+
+      // Savings amount tile
+      if (userSavingsAmtVal !== null) {
+        const medSavAmt  = Math.round(baseSavingsAmountMedian[idx] * incScale);
+        const p25SavAmt  = Math.round(baseSavingsAmountP25[idx]    * incScale);
+        const p75SavAmt  = Math.round(baseSavingsAmountP75[idx]    * incScale);
+        const savAmtPct  = clampPercentile(computePercentileFromThresholds(userSavingsAmtVal, [{p:25,v:p25SavAmt},{p:50,v:medSavAmt},{p:75,v:p75SavAmt}]));
+        const savAmtEl   = document.getElementById('savingsAmountTile');
+        if (savAmtEl) savAmtEl.style.display = 'block';
+        setTile('savingsAmountTile', formatCurrency(userSavingsAmtVal), `${formatPercentileLabel(savAmtPct)} — median ${formatCurrency(medSavAmt)}`);
+      }
+
+      // Debt percentile tile
+      if (userMortgageVal !== null || userNonMortgageDebtVal !== null) {
+        const userTotalDebt = (userMortgageVal || 0) + (userNonMortgageDebtVal || 0);
+        const netRatio  = netWorthRatios[region] || 1;
+        const unitScale = (unit === 'households') ? 1 : (1 / EQUIVALENCE_SCALE);
+        const avgDebt = Math.round((
+          baseDebtMortgage[idx]    * netRatio +
+          baseDebtStudentLoan[idx] * incScale +
+          baseDebtAuto[idx]        * incScale +
+          baseDebtConsumer[idx]    * incScale
+        ) * unitScale);
+        let debtPct;
+        if (userTotalDebt <= 0) {
+          debtPct = 5;
+        } else if (avgDebt > 0) {
+          const mu = Math.log(avgDebt) - 0.5;
+          const z  = (Math.log(userTotalDebt) - mu) / Math.sqrt(2);
+          debtPct  = Math.round(50 * (1 + erf(z)));
+          debtPct  = Math.max(1, Math.min(99, debtPct));
+        } else {
+          debtPct = 50;
+        }
+        const debtEl = document.getElementById('debtTile');
+        if (debtEl) debtEl.style.display = 'block';
+        setTile('debtTile', formatPercentileLabel(debtPct), `of your age group have less debt`);
+      }
     }
     // Override with compact footer layout (PNG + Sources inline)
     function addDownloadFooters() {
@@ -6840,30 +8275,50 @@ function createChart(canvasId, dataInfo, type = 'line') {
         
     function updateTooltipPosition(icon) {
       if (!icon) return;
-      
-      // Remove all positioning classes
       icon.classList.remove('tooltip-below', 'tooltip-left');
-      
+
       const rect = icon.getBoundingClientRect();
       const tooltip = icon.querySelector('.info-tooltip');
       if (!tooltip) return;
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-      const gap = 10;
-      const tooltipWidth = tooltip.offsetWidth || 240;
-      const tooltipHeight = tooltip.offsetHeight || 120;
-      const spaceRight = viewportWidth - rect.right;
-      const spaceLeft = rect.left;
+      tooltip.style.marginLeft = '';
+
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const gap = 12;
+      // offsetWidth returns 0 on visibility:hidden elements in some browsers —
+      // fall back to a safe estimate so the space checks don't misfire.
+      const tooltipW = tooltip.offsetWidth > 20 ? tooltip.offsetWidth : 260;
+      const tooltipH = tooltip.offsetHeight > 20 ? tooltip.offsetHeight : 150;
+      const spaceRight = vw - rect.right;
+      const spaceLeft  = rect.left;
+      const spaceBelow = vh - rect.bottom;
       const spaceAbove = rect.top;
-      const spaceBelow = viewportHeight - rect.bottom;
-      
-      // Flip to left if not enough room on the right
-      if (spaceRight < tooltipWidth + gap && spaceLeft >= tooltipWidth + gap) {
-        icon.classList.add('tooltip-left');
+
+      if (spaceRight < tooltipW + gap) {
+        if (spaceLeft >= tooltipW + gap) {
+          icon.classList.add('tooltip-left');
+        } else {
+          // Not enough room on either side — show below
+          icon.classList.add('tooltip-below');
+        }
       }
-      // If vertical space is tight, show below
-      if (spaceAbove < tooltipHeight + gap && spaceBelow >= tooltipHeight + gap) {
+      // Prefer below when vertical space above is cramped
+      if (!icon.classList.contains('tooltip-below') &&
+          spaceAbove < tooltipH + gap && spaceBelow >= tooltipH + gap) {
         icon.classList.add('tooltip-below');
+      }
+
+      // After the class is applied, nudge tooltip-below horizontally if it still clips
+      if (icon.classList.contains('tooltip-below')) {
+        requestAnimationFrame(() => {
+          const r = tooltip.getBoundingClientRect();
+          const margin = 8;
+          if (r.left < margin) {
+            tooltip.style.marginLeft = (margin - r.left) + 'px';
+          } else if (r.right > vw - margin) {
+            tooltip.style.marginLeft = -(r.right - vw + margin) + 'px';
+          }
+        });
       }
     }
         

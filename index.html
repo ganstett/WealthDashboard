@@ -570,6 +570,87 @@
     .reference-block.reference-tools-card .reference-title { margin-bottom: 4px; }
     .reference-block.reference-tools-card .tools-body p { margin: 0 0 6px; }
     .reference-block.reference-tools-card a { color: #6aa3f4; }
+    .wealthsimple-section { margin: 16px 0 0; }
+    .wealthsimple-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 0;
+      padding: clamp(18px, 2.5vw, 24px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+      box-sizing: border-box;
+    }
+    .wealthsimple-card .ws-card-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 22px;
+    }
+    .wealthsimple-card .ws-copy { max-width: 700px; }
+    .wealthsimple-card .ws-heading {
+      display: flex;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .wealthsimple-card .reference-title {
+      margin: 0;
+      color: #e2e8f0;
+      font-size: 1.02rem;
+    }
+    .wealthsimple-card .ws-description {
+      margin: 0;
+      max-width: 68ch;
+      color: #c7d6e5;
+      font-size: 0.86rem;
+      line-height: 1.55;
+    }
+    .wealthsimple-card .ws-actions {
+      flex: 0 0 min(310px, 36%);
+      text-align: left;
+    }
+    .wealthsimple-card .ws-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: auto;
+      box-sizing: border-box;
+      padding: 10px 14px;
+      border: 1px solid rgba(45, 212, 191, 0.36);
+      border-radius: 10px;
+      background: rgba(45, 212, 191, 0.08);
+      color: #9fe8dc;
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: none;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+    .wealthsimple-card .ws-cta:hover,
+    .wealthsimple-card .ws-cta:focus-visible {
+      transform: none;
+      background: rgba(45, 212, 191, 0.14);
+      box-shadow: none;
+    }
+    .wealthsimple-card .ws-disclosure {
+      margin: 8px 0 0;
+      max-width: 46ch;
+      color: rgba(203, 213, 225, 0.78);
+      font-size: 0.69rem;
+      font-weight: 400;
+      line-height: 1.4;
+    }
+    .wealthsimple-card .ws-disclosure strong { color: #dbe7f3; }
+    @media (max-width: 700px) {
+      .wealthsimple-card { padding: 20px; }
+      .wealthsimple-card .ws-card-content { align-items: stretch; flex-direction: column; gap: 18px; }
+      .wealthsimple-card .ws-actions { flex-basis: auto; width: 100%; }
+      .wealthsimple-card .ws-description { font-size: 0.82rem; }
+    }
     .contact-card {
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
@@ -1753,8 +1834,8 @@
         right:0;
       }
       .chart-container {
-        min-height: 300px !important;
-        aspect-ratio: 1.12 / 1 !important;
+        min-height: 330px !important;
+        aspect-ratio: 1 / 1 !important;
       }
       .chart-footer-row .source-box summary { min-height:36px; display:flex; align-items:center; }
     }
@@ -2237,7 +2318,7 @@
 </div>
 </div><div class="chart-card">
 <h3 id="percentileNetWorthTitle">Net Worth Distribution (Histogram, <span data-current-year=""></span>)
-          <span class="info-icon chart-info-icon" data-year-aria-label="Chart info: Net worth distribution histogram ({YEAR})." data-year-attr="aria-label" role="button" tabindex="0"><svg aria-hidden="true" focusable="false" height="16" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" fill="none" r="9" stroke="#00bfa5" stroke-width="1.4"></circle><text fill="#00bfa5" font-size="10" font-weight="bold" text-anchor="middle" x="12" y="15">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows an estimated smooth distribution of net worth in <span data-current-year=""></span> for the selected province and household/individual view.</div><div><strong>Sources</strong></div><ul><li>Statistics Canada - Survey of Financial Security (2023)</li><li>Statistics Canada - household balance-sheet / distributional wealth data</li></ul><div><strong>Methods</strong></div><ul><li><strong>The histogram bins are modeled, not directly published.</strong> The chart uses a smooth right-skewed wealth distribution calibrated to the dashboard's wealth benchmarks.</li><li>The model allows a modest negative-net-worth tail and a long positive tail. Negative bins use a red gradient; non-negative bins share the age chart’s green percentile palette, from light to dark as net worth increases. A solid $0 reference line separates negative and non-negative net worth.</li><li>The displayed median is fixed to the 50th percentile of the same modeled curve used to build the histogram.</li><li>The visible right tail is capped before the most extreme wealth values so the useful portion of the distribution remains readable.</li><li>Individual-view wealth remains an equivalized/model-derived estimate because official SFS wealth is household/family based.</li></ul></span></span>
+          <span class="info-icon chart-info-icon" data-year-aria-label="Chart info: Net worth distribution histogram ({YEAR})." data-year-attr="aria-label" role="button" tabindex="0"><svg aria-hidden="true" focusable="false" height="16" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" fill="none" r="9" stroke="#00bfa5" stroke-width="1.4"></circle><text fill="#00bfa5" font-size="10" font-weight="bold" text-anchor="middle" x="12" y="15">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows an estimated smooth distribution of net worth in <span data-current-year=""></span> for the selected province and household/individual view.</div><div><strong>Sources</strong></div><ul><li>Statistics Canada - Survey of Financial Security (2023)</li><li>Statistics Canada - household balance-sheet / distributional wealth data</li></ul><div><strong>Methods</strong></div><ul><li><strong>The histogram bins are modeled, not directly published.</strong> The chart uses a smooth right-skewed wealth distribution calibrated to the dashboard's wealth benchmarks.</li><li>The model allows a modest negative-net-worth tail and a long positive tail. Negative bins use a red gradient; non-negative bins share the age chart’s green percentile palette, from light to dark as net worth increases. A dashed $0 reference line separates negative and non-negative net worth.</li><li>The displayed median is fixed to the 50th percentile of the same modeled curve used to build the histogram.</li><li>The visible right tail is capped before the most extreme wealth values so the useful portion of the distribution remains readable.</li><li>Individual-view wealth remains an equivalized/model-derived estimate because official SFS wealth is household/family based.</li></ul></span></span>
 </h3>
 <div class="chart-container">
 <div class="chart-loading">
@@ -2248,23 +2329,23 @@
 </div>
 </div></div>
 </section>
-<section class="mobile-collapsible-section" id="section-deep-dives" style="margin-top:16px;"><div class="chart-section-header"><div class="chart-section-heading"><div class="chart-section-title">Income &amp; wealth comparisons</div><div class="chart-section-subtitle">Composition, provinces, gender, and income-versus-wealth context.</div></div><button aria-expanded="true" class="mobile-section-toggle" type="button">Hide charts</button></div>
+<section class="mobile-collapsible-section" id="section-deep-dives" style="margin-top:16px;"><div class="chart-section-header"><div class="chart-section-heading"><div class="chart-section-title">Income &amp; wealth comparisons</div><div class="chart-section-subtitle">Composition, provinces, gender, and financial-asset context.</div></div><button aria-expanded="true" class="mobile-section-toggle" type="button">Hide charts</button></div>
 <div class="charts-grid">
 <!-- Income Distribution (Histogram) -->
 <!-- Net Worth Distribution (Histogram) -->
-<!-- Median Income by Province (current-year) -->
+<!-- Median Employment Income by Province (current-year) -->
 <!-- Projected Median Net Worth by Province (current-year) -->
 <!-- Income Percentile by Gender -->
-<!-- Income vs Net Worth Scatter Plot (current-year) -->
+<!-- Financial Assets by Age (current-year) -->
 <!-- Housing Cost Burden by Age -->
 <!-- Debt Breakdown by Age -->
 <!-- Spending by Age -->
 <!-- Discretionary Income by Age -->
 <!-- Savings Rate by Age -->
-<!-- Savings Amount by Age -->
+<!-- TFSA Balance by Age -->
 <div class="chart-card">
 <h3 id="compositionTitle">Median Income Composition by Age (Households, <span data-current-year=""></span>)
-          <span aria-label="Chart info: Income composition by age." class="info-icon chart-info-icon" role="button" tabindex="0"><svg aria-hidden="true" focusable="false" height="16" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" fill="none" r="9" stroke="#00bfa5" stroke-width="1.4"></circle><text fill="#00bfa5" font-size="10" font-weight="bold" text-anchor="middle" x="12" y="15">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows how employment income, investment income, pensions, and transfers contribute to estimated total income at each age.</div><div><strong>Sources</strong></div><ul><li>Statistics Canada - Canadian Income Survey</li><li>Statistics Canada - Survey of Household Spending</li><li>Statistics Canada / CRA - pension and transfer income benchmarks</li></ul><div><strong>Methods</strong></div><ul><li><strong>Single-year component shares are modeled estimates.</strong> Published income-source patterns by age are used as calibration points rather than copied as exact annual-age observations.</li><li>Employment, investment, pension, and transfer shares are smoothed across age to create a continuous lifecycle profile.</li><li>Total income follows the same province and household/individual scaling used elsewhere on the dashboard.</li></ul></span></span>
+          <span aria-label="Chart info: Income composition by age." class="info-icon chart-info-icon" role="button" tabindex="0"><svg aria-hidden="true" focusable="false" height="16" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" fill="none" r="9" stroke="#00bfa5" stroke-width="1.4"></circle><text fill="#00bfa5" font-size="10" font-weight="bold" text-anchor="middle" x="12" y="15">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows how employment income, investment income, pensions, and transfers contribute to estimated total income at each age.</div><div><strong>Components</strong></div><ul><li><strong>Employment:</strong> wages, salaries, commissions, and net self-employment income.</li><li><strong>Investment:</strong> reported interest, dividends, and other taxable investment income; it does not represent investment-account balances or unrealized gains.</li><li><strong>Pension:</strong> employer and private pension income plus registered retirement withdrawals such as RRSP/RRIF income.</li><li><strong>Government transfers:</strong> CPP/QPP, OAS/GIS, EI, child and family benefits, social assistance, and other government payments.</li></ul><div><strong>Sources</strong></div><ul><li>Statistics Canada - Canadian Income Survey</li><li>Statistics Canada - Survey of Household Spending</li><li>Statistics Canada / CRA - pension and transfer income benchmarks</li></ul><div><strong>Methods</strong></div><ul><li><strong>Single-year component shares are modeled estimates.</strong> Published income-source patterns by age are used as calibration points rather than copied as exact annual-age observations.</li><li>Employment, investment, pension, and transfer shares are smoothed across age to create a continuous lifecycle profile.</li><li>The four components reconcile to the modeled total income at each age.</li><li>Total income follows the same province and household/individual scaling used elsewhere on the dashboard.</li></ul></span></span>
 </h3>
 <div class="chart-container">
 <div class="chart-loading">
@@ -2275,7 +2356,7 @@
 </div>
 </div><div class="chart-card">
 <h3 id="wealthCompositionTitle">Average Wealth Composition by Age (Households, <span data-current-year=""></span>)
-          <span aria-label="Chart info: Wealth composition by age." class="info-icon chart-info-icon" role="button" tabindex="0"><svg aria-hidden="true" focusable="false" height="16" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" fill="none" r="9" stroke="#00bfa5" stroke-width="1.4"></circle><text fill="#00bfa5" font-size="10" font-weight="bold" text-anchor="middle" x="12" y="15">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows a modeled lifecycle breakdown of average real estate, financial assets, employer pension assets, debt, and resulting net position by age.</div><div><strong>Sources</strong></div><ul><li>Statistics Canada - Survey of Financial Security</li><li>Statistics Canada - distributional household wealth / balance-sheet data</li><li>CMHC - mortgage and housing-market statistics</li></ul><div><strong>Methods</strong></div><ul><li><strong>Single-year composition values are modeled estimates.</strong> Statistics Canada DHEA/SFS age-group asset and liability patterns are used to calibrate smooth age profiles.</li><li>Real estate, financial assets, pensions, and debt are smoothed across age; they should be read as representative benchmarks rather than directly observed values for each exact age.</li><li>Province and household/individual selections use the same scaling framework as the main wealth chart.</li><li>The white line is the resulting average asset-minus-liability net position. It is not the median net-worth series shown in the main benchmark chart.</li></ul></span></span>
+          <span aria-label="Chart info: Wealth composition by age." class="info-icon chart-info-icon" role="button" tabindex="0"><svg aria-hidden="true" focusable="false" height="16" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" fill="none" r="9" stroke="#00bfa5" stroke-width="1.4"></circle><text fill="#00bfa5" font-size="10" font-weight="bold" text-anchor="middle" x="12" y="15">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows a modeled lifecycle breakdown of average real estate, financial assets, employer pension assets, debt, and resulting net position by age.</div><div><strong>Components</strong></div><ul><li><strong>Real estate:</strong> gross market value of principal residences and other real estate before subtracting mortgages.</li><li><strong>Financial assets:</strong> cash and deposits, TFSAs, RRSPs/LIRAs, and non-registered investments; employer pension-plan entitlements are shown separately.</li><li><strong>Employer pensions:</strong> estimated present value of workplace defined-benefit and defined-contribution pension entitlements; CPP/QPP and OAS are not included.</li><li><strong>Debt:</strong> mortgages, lines of credit, credit cards, vehicle and student loans, and other outstanding household liabilities. Debt is plotted below zero.</li><li><strong>Net position:</strong> real estate plus financial assets plus employer pensions, minus debt.</li></ul><div><strong>Sources</strong></div><ul><li>Statistics Canada - Survey of Financial Security</li><li>Statistics Canada - distributional household wealth / balance-sheet data</li><li>CMHC - mortgage and housing-market statistics</li></ul><div><strong>Methods</strong></div><ul><li><strong>Single-year composition values are modeled estimates.</strong> Statistics Canada DHEA/SFS age-group asset and liability patterns are used to calibrate smooth age profiles.</li><li>Real estate, financial assets, pensions, and debt are smoothed across age; they should be read as representative benchmarks rather than directly observed values for each exact age.</li><li>Province and household/individual selections use the same scaling framework as the main wealth chart.</li><li>The white line is the resulting average asset-minus-liability net position. It is not the median net-worth series shown in the main benchmark chart.</li></ul></span></span>
 </h3>
 <div class="chart-container">
 <div class="chart-loading">
@@ -2285,8 +2366,8 @@
 <canvas class="chart-canvas" id="wealthCompositionChart" style="display:none;"></canvas>
 </div>
 </div><div class="chart-card">
-<h3 id="provinceIncomeTitle">Median Income by Province (<span data-current-year=""></span>)
-          <span class="info-icon chart-info-icon" data-year-aria-label="Chart info: Provincial income benchmark ({YEAR})." data-year-attr="aria-label" role="button" tabindex="0"><svg aria-hidden="true" focusable="false" height="16" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" fill="none" r="9" stroke="#00bfa5" stroke-width="1.4"></circle><text fill="#00bfa5" font-size="10" font-weight="bold" text-anchor="middle" x="12" y="15">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows a provincial income benchmark for <span data-current-year=""></span>. The measure changes with the selected unit so the chart uses an observed source appropriate to that unit.</div><div><strong>Sources</strong></div><ul><li>Individuals: Statistics Canada T1 tax-filer median wages, salaries and commissions (2023)</li><li>Households: Statistics Canada Canadian Income Survey median after-tax income of families and unattached individuals (2024)</li><li>Statistics Canada Survey of Household Spending, 2023 public-use microdata file (62M0004X; released June 2026) for estimated median spending</li></ul><div><strong>Methods</strong></div><ul><li>Individual values are bridged to 2027 using the dashboard wage-growth assumption.</li><li>Household values use the latest CIS provincial after-tax-income benchmark and a modest nominal bridge to 2027. They are not created by multiplying individual income by a household-size factor.</li><li>Whiskers remain modeled distribution ranges rather than directly observed province-specific percentiles.</li><li>The red marker is estimated median household spending: the survey-weighted median of total current consumption (TC001), calculated separately for each province from the 2023 SHS public-use microdata using household weights (WEIGHTD). All households are included; values are projected to 2027 at 2% per year.</li><li>This is a dashboard calculation from anonymized microdata, not an official published Statistics Canada median. Current consumption excludes income taxes, pension contributions, personal insurance payments and gifts.</li><li>SHS combines recalled expenses with annualized short diary periods. These estimates describe median annualized survey spending and may differ from median actual full-year budgets.</li><li>Spending covers households; CIS income covers economic families and unattached individuals. Their medians do not describe the same household or a typical budget surplus. The spending marker appears only in Household view and is not a cost-of-living index.</li></ul></span></span>
+<h3 id="provinceIncomeTitle">Median Employment Income by Province (<span data-current-year=""></span>)
+          <span class="info-icon chart-info-icon" data-year-aria-label="Chart info: Provincial employment-income benchmark ({YEAR})." data-year-attr="aria-label" role="button" tabindex="0"><svg aria-hidden="true" focusable="false" height="16" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" fill="none" r="9" stroke="#00bfa5" stroke-width="1.4"></circle><text fill="#00bfa5" font-size="10" font-weight="bold" text-anchor="middle" x="12" y="15">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows estimated median employment income by province for <span data-current-year=""></span>, before income tax and excluding non-employment income.</div><div><strong>Sources</strong></div><ul><li>Statistics Canada T1 tax-filer median wages, salaries and commissions (2023)</li><li>Statistics Canada Survey of Employment, Payrolls and Hours for the wage-growth bridge</li><li>Statistics Canada Survey of Household Spending, 2023 public-use microdata file (62M0004X; released June 2026) for estimated median spending</li></ul><div><strong>Methods</strong></div><ul><li>Individual provincial values are bridged to 2027 using the dashboard wage-growth assumption.</li><li>Household values are modeled combined employment income using the dashboard's 1.85 household multiplier. They are not directly published provincial household medians.</li><li>Whiskers remain modeled distribution ranges rather than directly observed province-specific percentiles.</li><li>The red marker is estimated median household spending: the survey-weighted median of total current consumption (TC001), calculated separately for each province from the 2023 SHS public-use microdata using household weights (WEIGHTD). All households are included; values are projected to 2027 at 2% per year.</li><li>This is a dashboard calculation from anonymized microdata, not an official published Statistics Canada median. Current consumption excludes income taxes, pension contributions, personal insurance payments and gifts.</li><li>Employment income is before tax while spending is after-tax expenditure; the two medians do not describe the same household or a typical budget surplus. The spending marker appears only in Household view and is not a cost-of-living index.</li></ul></span></span>
 </h3>
 <div class="chart-container">
 <div class="chart-loading">
@@ -2296,7 +2377,7 @@
 <canvas class="chart-canvas" id="provinceIncomeChart" style="display:none;"></canvas>
 </div>
 </div><div class="chart-card">
-<h3 id="provinceTitle">Median Net Worth by Province (<span data-current-year=""></span>)
+<h3 id="provinceTitle">Estimated Median Net Worth by Province (<span data-current-year=""></span>)
           <span class="info-icon chart-info-icon" data-year-aria-label="Chart info: Projected {YEAR} median net worth by province with modeled ranges." data-year-attr="aria-label" role="button" tabindex="0"><svg aria-hidden="true" focusable="false" height="16" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" fill="none" r="9" stroke="#00bfa5" stroke-width="1.4"></circle><text fill="#00bfa5" font-size="10" font-weight="bold" text-anchor="middle" x="12" y="15">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows estimated median net worth by province in <span data-current-year=""></span>, with modeled 25th-to-75th-percentile whiskers.</div><div><strong>Sources</strong></div><ul><li>Statistics Canada - Survey of Financial Security (2023 provincial family medians)</li><li>Statistics Canada - household balance-sheet / distributional wealth data</li></ul><div><strong>Methods</strong></div><ul><li>2023 SFS provincial medians are the observed anchors and are carried forward with one common 2023-to-2027 wealth bridge.</li><li>Household view is the primary published SFS basis. Individual view is explicitly an equivalized/model-derived benchmark and is not a published individual SFS median.</li><li>The percentile whiskers are modeled from national wealth-distribution relationships and should not be read as observed provincial quartiles.</li></ul></span></span>
 </h3>
 <div class="chart-container">
@@ -2318,15 +2399,15 @@
 <canvas class="chart-canvas" id="genderIncomeChart" style="display:none;"></canvas>
 </div>
 </div><div class="chart-card">
-<h3 id="scatterTitle">Median Income vs Net Worth by Age (Households, <span data-current-year=""></span>) - Canada
-          <span aria-label="Chart info: Income and net worth relationship by age." class="info-icon chart-info-icon" role="button" tabindex="0"><svg aria-hidden="true" focusable="false" height="16" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" fill="none" r="9" stroke="#00bfa5" stroke-width="1.4"></circle><text fill="#00bfa5" font-size="10" font-weight="bold" text-anchor="middle" x="12" y="15">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows how estimated median income at each exact age relates to estimated median net worth at the same age.</div><div><strong>Sources</strong></div><ul><li>Statistics Canada - Canadian Income Survey / tax-filer income data</li><li>Statistics Canada - Survey of Financial Security</li></ul><div><strong>Methods</strong></div><ul><li>Each point combines the dashboard's modeled single-year median income and modeled single-year median net worth for the same age.</li><li>No new independent data are created by this chart; it is a derived visualization of the two primary benchmark series.</li><li>The same province, household/individual, interpolation, and <span data-current-year=""></span> estimation methods used in the underlying charts apply here.</li></ul></span></span>
+<h3 id="financialAssetsTitle">Financial Assets by Age (Households, <span data-current-year=""></span>) - Canada
+          <span aria-label="Chart info: Financial assets by age." class="info-icon chart-info-icon" role="button" tabindex="0"><svg aria-hidden="true" focusable="false" height="16" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" fill="none" r="9" stroke="#00bfa5" stroke-width="1.4"></circle><text fill="#00bfa5" font-size="10" font-weight="bold" text-anchor="middle" x="12" y="15">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows modeled median financial assets by exact age, split into cash and deposits, TFSAs, RRSPs/LIRAs, and non-registered investments.</div><div><strong>Sources</strong></div><ul><li>Statistics Canada - Survey of Financial Security, Table 11-10-0016-01</li><li>Statistics Canada - distributional household wealth / balance-sheet data</li><li>Canada Revenue Agency - TFSA Statistics by age</li></ul><div><strong>Methods</strong></div><ul><li><strong>Values are modeled estimates, not directly observed balances for every single age.</strong> The total is calibrated from the dashboard's age-based financial-asset profile and median-to-average wealth relationship.</li><li>Component shares are modeled from published financial-asset relationships by age and CRA TFSA balance patterns. The components should be read as a representative breakdown, not independently published medians.</li><li>The white line shows total financial assets. Province and household/individual selections use the same wealth-scaling framework as the other wealth charts.</li><li>Financial assets include cash and deposits, TFSAs, RRSPs/LIRAs and non-registered investments. They exclude housing, other real estate, vehicles, business equity, and employer pension-plan assets.</li></ul></span></span>
 </h3>
 <div class="chart-container">
 <div class="chart-loading">
 <div class="spinner"></div>
 <span>Loading chart...</span>
 </div>
-<canvas class="chart-canvas" id="scatterChart" style="display:none;"></canvas>
+<canvas class="chart-canvas" id="financialAssetsChart" style="display:none;"></canvas>
 </div>
 </div></div>
 </section><section class="mobile-collapsible-section" id="section-cashflow-charts" style="margin-top:16px;"><div class="chart-section-header"><div class="chart-section-heading"><div class="chart-section-title">Spending, debt &amp; savings</div><div class="chart-section-subtitle">Housing costs, debt, spending, discretionary income, and savings.</div></div><button aria-expanded="true" class="mobile-section-toggle" type="button">Hide charts</button></div><div class="charts-grid"><div class="chart-card">
@@ -2376,12 +2457,12 @@
 <canvas class="chart-canvas" id="savingsRateChart" style="display:none;"></canvas>
 </div>
 </div><div class="chart-card">
-<h3 id="savingsAmountTitle">Savings Amount by Age (<span data-current-year=""></span>)
-          <span aria-label="Chart info: Annual savings in dollars by age." class="info-icon chart-info-icon" role="button" tabindex="0"><svg aria-hidden="true" focusable="false" height="16" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" fill="none" r="9" stroke="#00bfa5" stroke-width="1.4"></circle><text fill="#00bfa5" font-size="10" font-weight="bold" text-anchor="middle" x="12" y="15">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows the modeled dollar amount saved per year at each exact age. Negative values represent modeled net drawdown.</div><div><strong>Sources</strong></div><ul><li>Statistics Canada - household saving / spending benchmarks</li><li>CRA - tax, CPP, and EI parameters used in the take-home estimate</li></ul><div><strong>Methods</strong></div><ul><li><strong>This is a derived modeled series.</strong> Savings amount = estimated take-home pay × modeled savings rate.</li><li>Take-home pay is derived from the dashboard's gross-income curve and tax/CPP/EI assumptions.</li><li>The 25th to 75th percentile range is modeled from the same underlying savings-rate framework.</li><li>Province values scale with the income framework; the <span data-current-year=""></span> values are estimates rather than directly observed single-age figures.</li></ul></span></span>
+<h3 id="tfsaBalanceTitle">TFSA Balance by Age (Individuals, <span data-current-year=""></span>) - Canada
+          <span aria-label="Chart info: Estimated average and median TFSA balances by age with maximum cumulative contributions." class="info-icon chart-info-icon" role="button" tabindex="0"><svg aria-hidden="true" focusable="false" height="16" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" fill="none" r="9" stroke="#00bfa5" stroke-width="1.4"></circle><text fill="#00bfa5" font-size="10" font-weight="bold" text-anchor="middle" x="12" y="15">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Compares estimated average and median TFSA balances among TFSA holders with the maximum cumulative contributions available at each age.</div><div><strong>Sources</strong></div><ul><li>Canada Revenue Agency - TFSA Statistics, 2024 tax year, Table 3A</li><li>Statistics Canada - Survey of Financial Security, 2023, Table 11-10-0016-01</li><li>CRA annual TFSA dollar-limit rules</li></ul><div><strong>Methods</strong></div><ul><li>CRA's observed 2024 average individual balances for five-year age groups are interpolated into a smooth single-year age curve and carried to 2027 using a 5% annual nominal investment-growth assumption.</li><li>The estimated individual median uses Statistics Canada's age-group median-to-average TFSA relationships to adjust the CRA individual averages.</li><li>The white dashed line is maximum cumulative contributions based on the annual limits available since the person turned 18. The projected 2027 annual limit is $7,500; the lifetime maximum is $116,500 for someone eligible every year since 2009.</li><li>Contribution room is not an account-balance ceiling: investment growth can cause a TFSA balance to exceed the white line.</li><li>Average and median balances describe TFSA holders, not every eligible Canadian.</li></ul></span></span>
 </h3>
 <div class="chart-container">
 <div class="chart-loading"><div class="spinner"></div><span>Loading chart...</span></div>
-<canvas class="chart-canvas" id="savingsAmountChart" style="display:none;"></canvas>
+<canvas class="chart-canvas" id="tfsaBalanceChart" style="display:none;"></canvas>
 </div>
 </div></div></section>
 </div>
@@ -2448,6 +2529,24 @@
     </div>
   </div>
 </section>
+<section class="wealthsimple-section" aria-labelledby="wealthsimple-heading">
+<div class="content-width">
+<div class="wealthsimple-card">
+<div class="ws-card-content">
+<div class="ws-copy">
+<div class="ws-heading">
+<div class="reference-title" id="wealthsimple-heading">Looking to start investing?</div>
+</div>
+<p class="ws-description">Wealthsimple is a platform I recommend for Canadians who want a straightforward place to start investing. Eligible new clients who use this referral link can receive a $25 bonus, subject to Wealthsimple’s terms.</p>
+</div>
+<div class="ws-actions">
+<a class="ws-cta" href="https://www.wealthsimple.com/invite/BYILFA" rel="noopener noreferrer sponsored" target="_blank" aria-label="Learn more about Wealthsimple in a new tab">Learn more at Wealthsimple <span aria-hidden="true">→</span></a>
+<p class="ws-disclosure"><strong>Referral disclosure:</strong> You may receive a $25 bonus, and I may also receive a referral bonus, if you open an eligible Wealthsimple account using this link. Offer eligibility and terms are set by Wealthsimple.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
 <section class="references-section" id="sources-links">
 <div class="content-width">
 <h2 style="margin:0 0 12px; color:#bfe0ff;">References</h2>
@@ -2478,6 +2577,7 @@
 <div class="reference-title">Canada Revenue Agency (CRA)</div>
 <div class="reference-links">
 <a href="https://www.canada.ca/en/revenue-agency/services/tax/statistics/income-statistics-gst-hst-statistics/t1-final-statistics.html" target="_blank">T1 Final Statistics - Income Percentiles</a>
+<a href="https://www.canada.ca/en/revenue-agency/programs/about-canada-revenue-agency-cra/income-statistics-gst-hst-statistics/tax-free-savings-account-statistics/tax-free-savings-account-statistics-2024-tax-year.html" target="_blank" rel="noopener noreferrer">TFSA Statistics, 2024 Tax Year — Balance by Age (Table 3A)</a>
 <a href="https://www.canada.ca/en/revenue-agency/services/forms-publications/publications/t4130.html" target="_blank">CRA Pension &amp; Benefit Amounts</a>
 </div>
 </div>
@@ -2491,13 +2591,6 @@
 <div class="reference-title">CMHC - Housing &amp; Debt Statistics</div>
 <div class="reference-links">
 <a href="https://www.cmhc-schl.gc.ca/en/professionals/housing-markets-data-and-research/data-tables" target="_blank">Mortgage Debt &amp; Household Credit Indicators</a>
-</div>
-</div>
-<div class="reference-block reference-tools-card">
-<div class="reference-title">Tools mentioned</div>
-<div class="tools-body">
-<p><a href="https://www.wealthsimple.com/invite/BYILFA" rel="noopener noreferrer" target="_blank">Wealthsimple</a></p>
-<p>This site references common Canadian investing platforms such as Wealthsimple. If you choose to use it, you can get a signup bonus with this link.</p>
 </div>
 </div>
 </div>
@@ -2752,6 +2845,61 @@
       element.style.top = top + 'px';
     }
 
+    // Histogram tooltips scrub the underlying 1st-99th percentile curve rather
+    // than jumping between the wider visual bars. This keeps the bars readable
+    // while allowing the tooltip to advance in one-percentile increments.
+    function renderHistogramPercentileTooltip(chart, pointer) {
+      if (!chart || !pointer || !chart.chartArea || !chart.scales?.x) return false;
+      const curve = chart.options?.plugins?.distCurve;
+      if (!Array.isArray(curve) || !curve.length) return false;
+      const rawX = chart.scales.x.getValueForPixel(pointer.x);
+      const percentile = Math.max(1, Math.min(99, Math.round(percentileFromExactCurve(rawX, curve))));
+      const pctIndex = percentile - 1;
+      const value = Number(curve[pctIndex] ?? 0);
+      const isNetWorth = chart.canvas?.id === 'percentileNetWorthChart';
+      const label = isNetWorth ? 'Net Worth Distribution' : 'Income Distribution';
+      const color = isNetWorth
+        ? (value < 0 ? '#f87171' : '#34d399')
+        : '#42a5f5';
+      let tooltipEl = document.body.querySelector('.chartjs-tooltip');
+      if (!tooltipEl) {
+        tooltipEl = document.createElement('div');
+        tooltipEl.className = 'chartjs-tooltip';
+        tooltipEl.style.position = 'fixed';
+        tooltipEl.style.pointerEvents = 'none';
+        document.body.appendChild(tooltipEl);
+      }
+      tooltipEl.innerHTML = `<div class="tt-body"><div class="tt-row highlight"><div class="tt-swatch" style="background:${color};"></div><div><div class="tt-label">${label}</div><div class="tt-value">${fmtDollar(value)} - ${formatPercentileLabel(percentile)}</div></div></div></div>`;
+      positionChartTooltip(tooltipEl, chart, { caretX: pointer.x, caretY: pointer.y });
+      tooltipEl.classList.add('show');
+      return true;
+    }
+
+    const histogramPercentileScrubber = {
+      id: 'histogramPercentileScrubber',
+      afterEvent(chart, args) {
+        const id = chart?.canvas?.id;
+        if (id !== 'percentileNetWorthChart' && id !== 'percentileIncomeChart') return;
+        const event = args?.event;
+        const area = chart?.chartArea;
+        const tooltipEl = document.querySelector('.chartjs-tooltip');
+        if (!event || !area || event.type === 'mouseout') {
+          chart.$histogramPointer = null;
+          if (tooltipEl) tooltipEl.classList.remove('show');
+          return;
+        }
+        const inside = event.x >= area.left && event.x <= area.right && event.y >= area.top && event.y <= area.bottom;
+        if (!inside) {
+          chart.$histogramPointer = null;
+          if (tooltipEl) tooltipEl.classList.remove('show');
+          return;
+        }
+        chart.$histogramPointer = { x: event.x, y: event.y };
+        renderHistogramPercentileTooltip(chart, chart.$histogramPointer);
+      }
+    };
+    Chart.register(histogramPercentileScrubber);
+
     function externalTooltipHandler(context) {
       try {
         const { chart, tooltip } = context;
@@ -2766,13 +2914,18 @@
           root.appendChild(tooltipEl);
         }
 
+        const isHistogram = chart?.canvas?.id === 'percentileNetWorthChart' || chart?.canvas?.id === 'percentileIncomeChart';
+        if (isHistogram && chart.$histogramPointer) {
+          renderHistogramPercentileTooltip(chart, chart.$histogramPointer);
+          return;
+        }
+
         // Hide if no tooltip
         if (!tooltip || tooltip.opacity === 0) {
           tooltipEl.classList.remove('show');
           return;
         }
 
-        const isHistogram = chart?.canvas?.id === 'percentileNetWorthChart' || chart?.canvas?.id === 'percentileIncomeChart';
         const isProvinceWhisker = chart && ['provinceChart','provinceIncomeChart'].includes(chart.canvas.id);
 
         // Special-case histogram charts: show value + percentile, suppress y-value
@@ -2875,8 +3028,8 @@
             const medianBar = chart.data.datasets.find(ds => ds.type === 'bar') || chart.data.datasets[0];
             const medianVal = medianBar?.data?.[idx] ?? dp.parsed?.y ?? dp.raw ?? '';
             const isIncomeProvince = chart.canvas.id === 'provinceIncomeChart';
-            const metricLabel = isIncomeProvince ? 'Income' : 'Net Worth';
-            const medianLabel = isIncomeProvince ? 'Median Income' : 'Median Net Worth';
+            const metricLabel = isIncomeProvince ? 'Employment Income' : 'Net Worth';
+            const medianLabel = isIncomeProvince ? 'Median Employment Income' : 'Median Net Worth';
             // Use fixed semantic colors regardless of which dataset the tooltip hit
             const barColor    = isIncomeProvince ? '#42a5f5' : '#66bb6a';
             const whiskerColor = 'rgba(200,210,220,0.7)';
@@ -3504,13 +3657,18 @@
       applyQuintileMonotone(baseIncomeP20, baseIncomeP40, baseIncomeP50, baseIncomeP60, baseIncomeP80);
       baseIncome = baseIncomeP50.slice();
     })();
-    // Shared age tick labels for composition charts to reduce clutter
+    // Five-year age marks fit horizontally on normal phones. Very narrow phones
+    // use decade marks so labels remain readable without turning them sideways.
     const AGE_TICK_LABELS = new Set(['21','25','30','35','40','45','50','55','60','65','70','75','80']);
+    const NARROW_AGE_TICK_LABELS = new Set(['21','30','40','50','60','70','80']);
     function ageTickFormatter(value, index) {
       const lbl = (this && typeof this.getLabelForValue === 'function')
         ? this.getLabelForValue(value)
         : (Array.isArray(ageLabels) ? ageLabels[index] : value);
-      return AGE_TICK_LABELS.has(String(lbl)) ? lbl : '';
+      const allowed = window.matchMedia('(max-width: 360px)').matches
+        ? NARROW_AGE_TICK_LABELS
+        : AGE_TICK_LABELS;
+      return allowed.has(String(lbl)) ? lbl : '';
     }
     // Young-adult net-worth model (ages 18-34). Statistics Canada publishes the
     // broad under-35 SFS group, not exact single-year medians. These anchors are
@@ -4288,7 +4446,7 @@
     let provinceChartInstance;
     let compositionChartInstance;
     let provinceIncomeChartInstance;
-    let scatterChartInstance;
+    let financialAssetsChartInstance;
     let percentileNetWorthChartInstance;
     let percentileIncomeChartInstance;
     let wealthCompositionChartInstance;
@@ -4298,7 +4456,7 @@
     let spendingChartInstance;
     let discretionaryChartInstance;
     let savingsRateChartInstance;
-    let savingsAmountChartInstance;
+    let tfsaBalanceChartInstance;
 
     // Initialize metric registry and register available metrics.  Each metric
     // encapsulates the base median values and percentile arrays for a
@@ -4631,6 +4789,55 @@
        -6500, -6700, -6800, -7000, -7200
     ];
 
+    // ── TFSA fair-market value by age (individual TFSA holders) ─────────────
+    // Observed anchors: CRA TFSA Statistics, 2024 tax year, Table 3A.
+    // CRA publishes averages by five-year age group, not medians by exact age.
+    // The dashboard interpolates between age-group midpoints and carries the
+    // balances to 2027 using a transparent 5% nominal annual growth assumption.
+    const TFSA_SOURCE_YEAR = 2024;
+    const TFSA_ANNUAL_GROWTH = 0.05;
+    const TFSA_AGE_ANCHORS = [22, 27, 32, 37, 42, 47, 52, 57, 62, 67, 72, 77, 80];
+    const TFSA_AVG_BALANCE_2024 = [8652, 13967, 18475, 21561, 24061, 28084, 35235, 43519, 52381, 59344, 64972, 71094, 76305];
+    const TFSA_GROWTH_TO_YEAR = Math.pow(TFSA_ANNUAL_GROWTH + 1, BASE_YEAR - TFSA_SOURCE_YEAR);
+    function interpolateTFSAAnchors(age, ages, values) {
+      if (age <= ages[0]) return values[0];
+      if (age >= ages[ages.length - 1]) return values[values.length - 1];
+      for (let i = 0; i < ages.length - 1; i++) {
+        const a0 = ages[i];
+        const a1 = ages[i + 1];
+        if (age >= a0 && age <= a1) {
+          const t = (age - a0) / (a1 - a0);
+          return values[i] + (values[i + 1] - values[i]) * t;
+        }
+      }
+      return values[values.length - 1];
+    }
+    const baseTFSAAvgBalance = ageLabels.map(age => Math.round(interpolateTFSAAnchors(Number(age), TFSA_AGE_ANCHORS, TFSA_AVG_BALANCE_2024) * TFSA_GROWTH_TO_YEAR));
+
+    // SFS 2023 median-to-average ratios for TFSA-holding family units by age.
+    // These ratios calibrate an estimated median around CRA's individual-holder averages.
+    const TFSA_MEDIAN_RATIO_AGES = [27.5, 39.5, 49.5, 59.5, 72.5];
+    const TFSA_MEDIAN_TO_AVG_RATIO = [10000/28000, 12000/32300, 15000/40500, 39100/60400, 52100/71600];
+    const baseTFSAMedianBalance = ageLabels.map((age, i) => Math.round(
+      baseTFSAAvgBalance[i] * interpolateTFSAAnchors(Number(age), TFSA_MEDIAN_RATIO_AGES, TFSA_MEDIAN_TO_AVG_RATIO)
+    ));
+
+    // Annual TFSA dollar limits, with 2027 projected at $7,500 pending CRA confirmation.
+    const TFSA_ANNUAL_LIMITS = Object.freeze({
+      2009:5000, 2010:5000, 2011:5000, 2012:5000,
+      2013:5500, 2014:5500, 2015:10000,
+      2016:5500, 2017:5500, 2018:5500,
+      2019:6000, 2020:6000, 2021:6000, 2022:6000,
+      2023:6500, 2024:7000, 2025:7000, 2026:7000, 2027:7500
+    });
+    function tfsaMaximumContributionsAtAge(age) {
+      const firstEligibleYear = Math.max(2009, BASE_YEAR - age + 18);
+      let total = 0;
+      for (let year = firstEligibleYear; year <= BASE_YEAR; year++) total += TFSA_ANNUAL_LIMITS[year] || 0;
+      return total;
+    }
+    const baseTFSAMaxContributions = ageLabels.map(age => tfsaMaximumContributionsAtAge(Number(age)));
+
     // Labels for percentile charts (1..99)
     const percentileLabels = Array.from({ length: 99 }, (_, i) => String(i + 1));
 
@@ -4925,7 +5132,7 @@
       id: 'inlineLineLabels',
       afterDatasetsDraw(chart) {
         const { ctx, data, chartArea } = chart || {};
-        if (!ctx || !chartArea || !data?.datasets?.length || isMobileChart()) return;
+        if (!ctx || !chartArea || !data?.datasets?.length || (isMobileChart() && !['tfsaBalanceChart', 'financialAssetsChart', 'wealthCompositionChart'].includes(chart.canvas?.id))) return;
         const fontSize = 11;
         const fontFamily = 'system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
         const middleLabels = ['incomeChart', 'genderIncomeChart'].includes(chart.canvas?.id);
@@ -5013,6 +5220,82 @@
 
     Chart.register(wealthDashboardWatermark);
     Chart.register(inlineLineLabels);
+
+    // Directly label stacked composition components so these charts remain
+    // understandable without adding legends.
+    const stackedComponentLabels = {
+      id: 'stackedComponentLabels',
+      afterDatasetsDraw(chart) {
+        if (!chart?.chartArea) return;
+        const chartConfig = {
+          financialAssetsChart: { stacks: ['financialAssets'], anchorAge: 65 },
+          compositionChart: { stacks: ['income'], anchorAge: 65 },
+          wealthCompositionChart: { stacks: ['assets', 'debts'], anchorAge: 65 }
+        }[chart.canvas?.id];
+        if (!chartConfig) return;
+        const { ctx, chartArea } = chart;
+        const componentDatasets = chart.data.datasets
+          .map((dataset, index) => ({ dataset, index }))
+          .filter(item => chartConfig.stacks.includes(item.dataset.stack) && item.dataset.inlineLabel !== false);
+        if (!componentDatasets.length) return;
+        const anchorIndex = Math.max(0, Math.min(ageLabels.length - 1, chartConfig.anchorAge - AGE_START));
+        const fontSize = isMobileChart() ? 9 : 10;
+        const gap = fontSize + 5;
+        const labels = [];
+        componentDatasets.forEach(({ dataset, index }) => {
+          const bar = chart.getDatasetMeta(index)?.data?.[anchorIndex];
+          if (!bar) return;
+          const props = typeof bar.getProps === 'function'
+            ? bar.getProps(['x', 'y', 'base'], true)
+            : bar;
+          if (![props.x, props.y, props.base].every(Number.isFinite)) return;
+          labels.push({
+            text: dataset.directLabel || dataset.label,
+            color: readableInlineLabelColor(dataset.backgroundColor),
+            pointX: props.x,
+            desiredY: (props.y + props.base) / 2
+          });
+        });
+        if (!labels.length) return;
+        labels.sort((a, b) => a.desiredY - b.desiredY);
+        const top = chartArea.top + fontSize;
+        const bottom = chartArea.bottom - fontSize;
+        labels.forEach((label, index) => {
+          label.y = Math.max(top, Math.min(bottom, label.desiredY));
+          if (index) label.y = Math.max(label.y, labels[index - 1].y + gap);
+        });
+        if (labels[labels.length - 1].y > bottom) {
+          labels[labels.length - 1].y = bottom;
+          for (let index = labels.length - 2; index >= 0; index--) {
+            labels[index].y = Math.min(labels[index].y, labels[index + 1].y - gap);
+          }
+        }
+        ctx.save();
+        ctx.font = `${fontSize}px system-ui, -apple-system, "Segoe UI", sans-serif`;
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        const labelX = chartArea.right - 5;
+        labels.forEach(label => {
+          const textWidth = ctx.measureText(label.text).width;
+          const connectorEnd = labelX - textWidth - 5;
+          ctx.beginPath();
+          ctx.moveTo(label.pointX + 3, label.desiredY);
+          ctx.lineTo(connectorEnd, label.y);
+          ctx.strokeStyle = label.color;
+          ctx.globalAlpha = 0.5;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+          ctx.fillStyle = label.color;
+          ctx.strokeStyle = 'rgba(11, 26, 51, .92)';
+          ctx.lineWidth = 3;
+          ctx.strokeText(label.text, labelX, label.y);
+          ctx.fillText(label.text, labelX, label.y);
+        });
+        ctx.restore();
+      }
+    };
+    Chart.register(stackedComponentLabels);
 
     // Keep any "You" dataset on top and add a subtle red glow to its line
     const youTopGlowPlugin = {
@@ -5357,10 +5640,6 @@
         'Newfoundland & Labrador':45371,'Prince Edward Island':43851,'Nova Scotia':48195,'New Brunswick':47197,
         'Quebec':53651,'Ontario':54627,'Manitoba':48558,'Saskatchewan':52041,'Alberta':57474,'British Columbia':55920
       }),
-      householdAfterTaxIncome2027: Object.freeze({
-        'Newfoundland & Labrador':72162,'Prince Edward Island':69934,'Nova Scotia':68130,'New Brunswick':69085,
-        'Quebec':73011,'Ontario':84366,'Manitoba':76407,'Saskatchewan':80121,'Alberta':90521,'British Columbia':80440
-      }),
       householdNetWorth2027: Object.freeze({
         'Newfoundland & Labrador':397705,'Prince Edward Island':476769,'Nova Scotia':422867,'New Brunswick':341299,
         'Quebec':442424,'Ontario':793740,'Manitoba':460670,'Saskatchewan':470568,'Alberta':545100,'British Columbia':922413
@@ -5388,6 +5667,11 @@
         'Quebec':70730,'Ontario':88732,'Manitoba':74468,'Saskatchewan':75602,'Alberta':95455,'British Columbia':89471
       })
     });
+    const WD_PROVINCE_HOUSEHOLD_EMPLOYMENT_INCOME = Object.freeze(Object.fromEntries(
+      WD_PROVINCES.map(province => [province, Math.round(
+        WD_PROVINCE_MODEL.individualEmploymentIncome2027[province] * INCOME_HOUSEHOLD_SCALE
+      )])
+    ));
     const WD_PROVINCE_MEDIAN_SPENDING = Object.freeze(Object.fromEntries(
       WD_PROVINCES.map(province => [province, Math.round(
         WD_PROVINCE_MODEL.householdMedianSpending2023[province] *
@@ -5480,8 +5764,8 @@
 
     // Province anchors: official 2023 SFS wealth and T1 median wages, one common bridge.
     wdReplace(baseProvinceValues, WD_PROVINCES.map(p => WD_PROVINCE_MODEL.householdNetWorth2027[p]));
-    // Kept for legacy callers; household provincial income now comes from a separate official family-income series.
-    wdReplace(baseProvinceIncomeValues, WD_PROVINCES.map(p => WD_PROVINCE_MODEL.householdAfterTaxIncome2027[p]));
+    // Keep legacy callers aligned with the provincial household employment-income chart.
+    wdReplace(baseProvinceIncomeValues, WD_PROVINCES.map(p => WD_PROVINCE_HOUSEHOLD_EMPLOYMENT_INCOME[p]));
     Object.assign(incomeRatios, {"Newfoundland & Labrador": 0.8394543546694648, "Prince Edward Island": 0.8113326337880378, "Nova Scotia": 0.891710388247639, "New Brunswick": 0.8732423924449108, "Quebec": 0.9926547743966422, "Ontario": 1.0107030430220356, "Manitoba": 0.8984260230849948, "Saskatchewan": 0.9628541448058762, "Alberta": 1.0633788037775447, "British Columbia": 1.0346274921301155, "Canada": 1});
     Object.assign(netWorthRatios, {"Newfoundland & Labrador": 0.6417163748316337, "Prince Edward Island": 0.7692899749855686, "Nova Scotia": 0.6823167211852992, "New Brunswick": 0.5507023282663075, "Quebec": 0.7138733884933616, "Ontario": 1.2807388878198962, "Manitoba": 0.7433134500673465, "Saskatchewan": 0.7592842024244757, "Alberta": 0.8795458918606889, "British Columbia": 1.4883586684625745, "Canada": 1});
 
@@ -5524,6 +5808,42 @@
       debt: [67424,77311,88953,102089,116464,131820,147900,164444,181196,197899,214295,230126,245135,259063,271655,282651,291795,298829,303496,305933,308316,310916,313612,316282,318809,321069,322943,324312,325054,324343,318287,307243,292324,274647,255325,235472,216204,198634,183876,172439,161398,150261,139101,127989,116997,106198,95661,85460,75667,66353,57590,49451,42006,35328,29488,24560,20613,17721,15956,15387]
     });
 
+    // Modeled median financial assets. Start from the DHEA/SFS average
+    // financial-asset profile, then apply the dashboard's age-specific
+    // median-to-average wealth relationship. Component shares are smooth
+    // lifecycle estimates and always reconcile to the modeled total.
+    const WD_FINANCIAL_SHARE_AGES = Object.freeze([21, 30, 40, 50, 60, 70, 80]);
+    const WD_FINANCIAL_SHARES = Object.freeze({
+      cash: Object.freeze([0.40, 0.28, 0.20, 0.16, 0.17, 0.22, 0.30]),
+      tfsa: Object.freeze([0.08, 0.12, 0.16, 0.18, 0.21, 0.24, 0.25]),
+      registered: Object.freeze([0.05, 0.18, 0.32, 0.40, 0.42, 0.36, 0.28])
+    });
+    function financialAssetSharesAtAge(age) {
+      const cash = interpolateTFSAAnchors(age, WD_FINANCIAL_SHARE_AGES, WD_FINANCIAL_SHARES.cash);
+      const tfsa = interpolateTFSAAnchors(age, WD_FINANCIAL_SHARE_AGES, WD_FINANCIAL_SHARES.tfsa);
+      const registered = interpolateTFSAAnchors(age, WD_FINANCIAL_SHARE_AGES, WD_FINANCIAL_SHARES.registered);
+      const nonRegistered = Math.max(0, 1 - cash - tfsa - registered);
+      return { cash, tfsa, registered, nonRegistered };
+    }
+    const baseFinancialAssetsTotal = ageLabels.map((age, index) => {
+      const averageNetPosition = wdWealthComponents.realEstate[index] +
+        wdWealthComponents.financial[index] + wdWealthComponents.pension[index] -
+        wdWealthComponents.debt[index];
+      const medianToAverage = Math.max(0.08, Math.min(0.85,
+        baseNetWorth[index] / Math.max(1, averageNetPosition)
+      ));
+      return Math.round(wdWealthComponents.financial[index] * medianToAverage);
+    });
+    const baseFinancialAssetsCash = ageLabels.map((age, index) =>
+      Math.round(baseFinancialAssetsTotal[index] * financialAssetSharesAtAge(Number(age)).cash));
+    const baseFinancialAssetsTFSA = ageLabels.map((age, index) =>
+      Math.round(baseFinancialAssetsTotal[index] * financialAssetSharesAtAge(Number(age)).tfsa));
+    const baseFinancialAssetsRegistered = ageLabels.map((age, index) =>
+      Math.round(baseFinancialAssetsTotal[index] * financialAssetSharesAtAge(Number(age)).registered));
+    const baseFinancialAssetsNonRegistered = ageLabels.map((age, index) =>
+      baseFinancialAssetsTotal[index] - baseFinancialAssetsCash[index] -
+      baseFinancialAssetsTFSA[index] - baseFinancialAssetsRegistered[index]);
+
     // Savings is explicitly modeled. Dollar saving and discretionary income are derived,
     // not independently hand-authored.
     wdReplace(baseSavingsRateMedian, [-4.0,-3.7,-3.2,-2.6,-2.0,-1.2,-0.1,1.1,2.1,3.0,3.7,4.3,4.9,5.5,6.0,6.5,6.9,7.3,7.7,8.0,8.3,8.6,8.9,9.1,9.4,9.6,9.7,9.9,10.0,10.0,10.0,9.9,9.8,9.6,9.4,9.2,8.9,8.6,8.3,8.0,7.5,6.8,5.9,5.0,4.0,2.9,1.6,0.2,-1.0,-2.0,-2.8,-3.6,-4.4,-5.1,-5.8,-6.4,-6.9,-7.4,-7.7,-8.0]);
@@ -5545,9 +5865,9 @@
       if (WD_PROVINCES.length !== 10) fail('province count');
       if (WD_PROVINCES.join('|') !== expected) fail('province labels mutated');
       if (!(WD_PROVINCE_MODEL.individualEmploymentIncome2027['Alberta'] > WD_PROVINCE_MODEL.individualEmploymentIncome2027['Ontario'])) fail('Alberta individual wage ranking');
-      if (!(WD_PROVINCE_MODEL.householdAfterTaxIncome2027['Alberta'] > WD_PROVINCE_MODEL.householdAfterTaxIncome2027['Ontario'])) fail('Alberta household income ranking');
+      if (!(WD_PROVINCE_HOUSEHOLD_EMPLOYMENT_INCOME['Alberta'] > WD_PROVINCE_HOUSEHOLD_EMPLOYMENT_INCOME['Ontario'])) fail('Alberta household employment-income ranking');
       if (!(WD_PROVINCE_MODEL.householdNetWorth2027['British Columbia'] > WD_PROVINCE_MODEL.householdNetWorth2027['Ontario'])) fail('BC net worth ranking');
-      const series = [baseIncome,baseTotalIncome,baseNetWorth,baseSpendingMedian,baseHousingCostPct,baseSavingsRateMedian,baseDebtMortgage,baseDebtStudentLoan,baseDebtAuto,baseDebtConsumer];
+      const series = [baseIncome,baseTotalIncome,baseNetWorth,baseSpendingMedian,baseHousingCostPct,baseSavingsRateMedian,baseDebtMortgage,baseDebtStudentLoan,baseDebtAuto,baseDebtConsumer,baseFinancialAssetsTotal,baseFinancialAssetsCash,baseFinancialAssetsTFSA,baseFinancialAssetsRegistered,baseFinancialAssetsNonRegistered];
       if (series.some(a=>!Array.isArray(a)||a.length!==ageLabels.length)) fail('age-series length mismatch');
       for (let i=0;i<ageLabels.length;i++) {
         if (!(baseTotalIncomeP10[i] <= baseTotalIncomeP25[i] && baseTotalIncomeP25[i] <= baseTotalIncome[i] && baseTotalIncome[i] <= baseTotalIncomeP75[i] && baseTotalIncomeP75[i] <= baseTotalIncomeP90[i] && baseTotalIncomeP90[i] <= baseTotalIncomeP99[i])) fail('income percentile ordering age '+ageLabels[i]);
@@ -5555,6 +5875,10 @@
         if (baseHousingCostPct[i] < 0 || baseHousingCostPct[i] > 60) fail('housing burden range age '+ageLabels[i]);
         if (baseSpendingMedian[i] < 0) fail('negative spending age '+ageLabels[i]);
         if (i>0 && baseIncome[i] < 0) fail('negative employment income age '+ageLabels[i]);
+        const financialParts = baseFinancialAssetsCash[i] + baseFinancialAssetsTFSA[i] +
+          baseFinancialAssetsRegistered[i] + baseFinancialAssetsNonRegistered[i];
+        if (financialParts !== baseFinancialAssetsTotal[i]) fail('financial-assets reconciliation age '+ageLabels[i]);
+        if ([baseFinancialAssetsTotal[i],baseFinancialAssetsCash[i],baseFinancialAssetsTFSA[i],baseFinancialAssetsRegistered[i],baseFinancialAssetsNonRegistered[i]].some(v => v < 0)) fail('negative financial assets age '+ageLabels[i]);
       }
       for (let i=51;i<ageLabels.length;i++) {
         if (baseDebtMortgage[i] > baseDebtMortgage[i-1]) fail('older mortgage debt reversal age '+ageLabels[i]);
@@ -5727,12 +6051,17 @@
         const empShare = wdIncomeShares.employment[i];
         const invShare = wdIncomeShares.investment[i];
         const penShare = wdIncomeShares.pension[i];
-        const transShare = wdIncomeShares.transfer[i];
         const totalVal = scaledTotalIncome[i];
-        empData.push(Math.round(totalVal * empShare));
-        invData.push(Math.round(totalVal * invShare));
-        penData.push(Math.round(totalVal * penShare));
-        transData.push(Math.round(totalVal * transShare));
+        const employmentValue = Math.round(totalVal * empShare);
+        const investmentValue = Math.round(totalVal * invShare);
+        const pensionValue = Math.round(totalVal * penShare);
+        // Use transfers as the rounding residual so the four displayed
+        // components reconcile exactly to modeled total income.
+        const transferValue = totalVal - employmentValue - investmentValue - pensionValue;
+        empData.push(employmentValue);
+        invData.push(investmentValue);
+        penData.push(pensionValue);
+        transData.push(transferValue);
       }
       // Update the composition chart datasets with the computed component values
       if (compositionChartInstance) {
@@ -5966,131 +6295,46 @@
         })();
       }
 
-      if (savingsAmountChartInstance) {
-        (function updateSavingsAmount() {
-          const hhScale = unit === 'households' ? 1 : (1 / EQUIVALENCE_SCALE);
-          const incomeScale = (incomeRatios[region] || 1) * hhScale;
-          const median = wdTakeHomeHousehold.map((th,i) => Math.round(th * incomeScale * baseSavingsRateMedian[i] / 100));
-          const p25 = wdTakeHomeHousehold.map((th,i) => Math.round(th * incomeScale * baseSavingsRateP25[i] / 100));
-          const p75 = wdTakeHomeHousehold.map((th,i) => Math.round(th * incomeScale * baseSavingsRateP75[i] / 100));
-          savingsAmountChartInstance.data.labels = ageLabels;
-          savingsAmountChartInstance.data.datasets[0].data = p25;
-          savingsAmountChartInstance.data.datasets[1].data = p75;
-          savingsAmountChartInstance.data.datasets[2].data = median;
-          const minVal = Math.min(...p25);
-          const maxVal = Math.max(...p75);
-          savingsAmountChartInstance.options.scales.y.min = Math.floor((minVal - 2000) / 5000) * 5000;
-          savingsAmountChartInstance.options.scales.y.max = Math.ceil((maxVal + 2000) / 5000) * 5000;
-          savingsAmountChartInstance.options.scales.y.title.text = unit === 'households'
-            ? 'Annual Savings ($ - Households)' : 'Annual Savings ($ - Individuals)';
-          savingsAmountChartInstance.update();
-        })();
+      if (tfsaBalanceChartInstance) {
+        tfsaBalanceChartInstance.data.labels = ageLabels;
+        tfsaBalanceChartInstance.data.datasets[0].data = baseTFSAAvgBalance.slice();
+        tfsaBalanceChartInstance.data.datasets[1].data = baseTFSAMedianBalance.slice();
+        tfsaBalanceChartInstance.data.datasets[2].data = baseTFSAMaxContributions.slice();
+        tfsaBalanceChartInstance.update();
       }
 
-      // Update scatter chart (Income vs Net Worth, Median). X = median total income, Y = median net worth for selected unit.
-      const scaledTotal = (unit === 'households'
-        ? baseTotalIncome.map(v => Math.round(v * incomeRatio * INCOME_HOUSEHOLD_SCALE))
-        : baseTotalIncome.map(v => Math.round(v * incomeRatio)));
-      const scaledNetForScatter = (unit === 'households'
-        ? baseNetWorth.map(v => Math.round(v * netRatio))
-        : baseIndNetWorth.map(v => Math.round(v * netRatio)));
-      const scatterData = [];
-      for (let i = 0; i < ageLabels.length; i++) {
-        scatterData.push({ x: scaledTotal[i], y: scaledNetForScatter[i] });
-      }
-      // Base dataset is median
-      scatterChartInstance.data.datasets[0].label = 'Median';
-      scatterChartInstance.data.datasets[0].data = scatterData;
-      // Add faint percentile overlays when selected (p10, p25, p75, p90, p99)
-      const pToArray = (pKey) => {
-        const incMap = { p10: baseTotalIncomeP10, p25: baseTotalIncomeP25, p50: baseTotalIncome, p75: baseTotalIncomeP75, p90: baseTotalIncomeP90, p99: baseTotalIncomeP99 };
-        const netMapH = { p10: baseNetWorthP10, p25: baseNetWorthP25, p50: baseNetWorth, p75: baseNetWorthP75, p90: baseNetWorthP90, p99: baseNetWorthP99 };
-        const netMapI = { p10: baseIndNetWorthP10, p25: baseIndNetWorthP25, p50: baseIndNetWorth, p75: baseIndNetWorthP75, p90: baseIndNetWorthP90, p99: baseIndNetWorthP99 };
-        const incArr = (incMap[pKey] || baseTotalIncome).map(v => Math.round(v * incomeRatio * (unit === 'households' ? INCOME_HOUSEHOLD_SCALE : 1)));
-        const netArr = ((unit === 'households' ? netMapH[pKey] : netMapI[pKey]) || (unit==='households'?baseNetWorth:baseIndNetWorth)).map(v => Math.round(v * netRatio));
-        return { incArr, netArr };
-      };
-      // Remove any previous percentile overlay datasets (keep index 0 for median and any 'You' dataset)
-      scatterChartInstance.data.datasets = scatterChartInstance.data.datasets.filter((ds, i) => i === 0 || ds.label === 'You');
-      const faintGreen = 'rgba(102,187,106,0.14)';
-      const faintBlue = 'rgba(41,182,246,0.14)';
-      // No percentile overlays on the scatter chart - keep only the median (and 'You' marker if present)
-      // Colour code the scatter points by age.  We map age from blue to red across the
-      // entire age range using an HSL colour gradient.  Each point is given a
-      // corresponding colour so that younger ages appear blue and older ages fade to red.
-      const scatterColors = ageLabels.map((lbl, idx) => {
-        // Compute a colour gradient from blue to red.  We slightly raise the
-        // lightness to improve visibility against the dark background.
-        const t = idx / (ageLabels.length - 1);
-        const hue = 240 - 240 * t; // 240 (blue) to 0 (red)
-        // Use higher lightness (60%) for better contrast and keep saturation at 70%
-        return `hsl(${hue}, 70%, 60%)`;
-      });
-      scatterChartInstance.data.datasets[0].pointBackgroundColor = scatterColors;
-      scatterChartInstance.data.datasets[0].pointBorderColor = scatterColors;
-      scatterChartInstance.data.datasets[0].backgroundColor = scatterColors;
-      // Compute separate axis bounds for scatter chart (x and y). x step 5000, y step 200000.
-      // Include median scatter points and percentile overlay datasets when computing axis bounds.
-      const allScatterX = [];
-      const allScatterY = [];
-      scatterChartInstance.data.datasets.forEach(ds => {
-        (ds.data || []).forEach(pt => {
-          if (pt && typeof pt === 'object') {
-            if (typeof pt.x === 'number' && !isNaN(pt.x)) allScatterX.push(pt.x);
-            if (typeof pt.y === 'number' && !isNaN(pt.y)) allScatterY.push(pt.y);
-          } else if (typeof pt === 'number' && !isNaN(pt)) {
-            allScatterY.push(pt);
-          }
-        });
-      });
-      const xAxis = computeAxis(allScatterX.length ? allScatterX : scatterData.map(pt => pt.x), 5000);
-      const yAxis = computeAxis(allScatterY.length ? allScatterY : scatterData.map(pt => pt.y), 200000);
-      scatterChartInstance.options.scales = {
-        x: {
-          type: 'linear',
-          position: 'bottom',
-          min: Math.max(0, xAxis.min),
-          max: xAxis.max,
-          ticks: {
-            color: '#b0c5e8',
-            callback: function(value) {
-              const rounded = Math.round(value / 1000) * 1000;
-              return '$' + rounded.toLocaleString();
-            },
-            stepSize: 5000,
-            maxTicksLimit: 10
-          },
-          grid: { color: 'rgba(255,255,255,0.05)' },
-          title: {
-            display: true,
-            text: unit === 'households'
-              ? 'Employment Income ($ - Households)'
-              : 'Employment Income ($ - Individuals)',
-            color: '#e0e6ed'
-          }
-        },
-        y: {
-          min: yAxis.min,
-          max: yAxis.max,
-          title: {
-            display: true,
-            text: unit === 'households'
-              ? 'Net Worth ($ - Households)'
-              : 'Net Worth ($ - Individuals)',
-            color: '#e0e6ed'
-          },
-          ticks: {
-            color: '#b0c5e8',
-            callback: function(value) {
-              const rounded = Math.round(value / 1000) * 1000;
-              return '$' + rounded.toLocaleString();
-            },
-            stepSize: 200000
-          },
-          grid: { color: 'rgba(255,255,255,0.05)' }
+      // Financial Assets by Age: modeled median total with a reconciled
+      // breakdown. Housing and employer pension-plan assets are excluded.
+      if (financialAssetsChartInstance) {
+        const financialUnitScale = unit === 'households' ? 1 : (1 / EQUIVALENCE_SCALE);
+        const financialScale = netRatio * financialUnitScale;
+        const cash = baseFinancialAssetsCash.map(v => Math.round(v * financialScale));
+        const tfsa = baseFinancialAssetsTFSA.map(v => Math.round(v * financialScale));
+        const registered = baseFinancialAssetsRegistered.map(v => Math.round(v * financialScale));
+        const nonRegistered = baseFinancialAssetsNonRegistered.map(v => Math.round(v * financialScale));
+        const total = cash.map((value, index) => value + tfsa[index] + registered[index] + nonRegistered[index]);
+        financialAssetsChartInstance.data.labels = ageLabels;
+        financialAssetsChartInstance.data.datasets[0].data = cash;
+        financialAssetsChartInstance.data.datasets[1].data = tfsa;
+        financialAssetsChartInstance.data.datasets[2].data = registered;
+        financialAssetsChartInstance.data.datasets[3].data = nonRegistered;
+        financialAssetsChartInstance.data.datasets[4].data = total;
+        financialAssetsChartInstance.options.scales.x.stacked = true;
+        financialAssetsChartInstance.options.scales.y.stacked = true;
+        financialAssetsChartInstance.options.scales.y.min = 0;
+        const financialAxis = computeAxis(total, 100000);
+        financialAssetsChartInstance.options.scales.y.max = Math.max(100000, financialAxis.max);
+        financialAssetsChartInstance.options.scales.y.title.text = unit === 'households'
+          ? 'Financial Assets ($ - Households)'
+          : 'Financial Assets ($ - Individuals)';
+        if (financialAssetsChartInstance.options.scales.x?.ticks) {
+          financialAssetsChartInstance.options.scales.x.ticks.callback = ageTickFormatter;
+          financialAssetsChartInstance.options.scales.x.ticks.autoSkip = false;
+          financialAssetsChartInstance.options.scales.x.ticks.maxRotation = 0;
+          financialAssetsChartInstance.options.scales.x.ticks.minRotation = 0;
         }
-      };
-      scatterChartInstance.update();
+        financialAssetsChartInstance.update();
+      }
 
       // Province bar chart with percentile overlays and user line
       // Rebuild the bar dataset and percentile line datasets for the province chart.
@@ -6166,7 +6410,7 @@
       const incSorted = WD_PROVINCES.map(lbl => ({
         label: lbl,
         value: unit === 'households'
-          ? WD_PROVINCE_MODEL.householdAfterTaxIncome2027[lbl]
+          ? WD_PROVINCE_HOUSEHOLD_EMPLOYMENT_INCOME[lbl]
           : WD_PROVINCE_MODEL.individualEmploymentIncome2027[lbl],
         color: lbl === region ? '#ffa726' : '#42a5f5',
         spending: WD_PROVINCE_MEDIAN_SPENDING[lbl]
@@ -6181,7 +6425,7 @@
       provinceIncomeChartInstance.data.labels.splice(0, provinceIncomeChartInstance.data.labels.length, ...sortedIncLabels);
       provinceIncomeChartInstance._whiskers = { p10: p25IncomeValues, p90: p75IncomeValues, isP25P75: true };
       provinceIncomeChartInstance.data.datasets = [
-        { label: 'Median Income', data: sortedIncValues, backgroundColor: sortedIncColors, type: 'bar', order: 1 },
+        { label: 'Median Employment Income', data: sortedIncValues, backgroundColor: sortedIncColors, type: 'bar', order: 1 },
         { label: 'Estimated Median Household Spending', data: sortedColValues, type: 'line', borderColor: 'transparent', backgroundColor: 'transparent', borderWidth: 0, showLine: false, pointRadius: 14, pointHoverRadius: 14, pointStyle: 'line', pointBackgroundColor: 'transparent', pointBorderColor: '#f87171', pointBorderWidth: 3, tension: 0, order: -1, clip: false, z: 10, inlineLabel: false }
       ];
       // Axis: cover bars + whiskers + household spending marker, but cap at p75 * 1.1 so the chart isn't blown out
@@ -6191,7 +6435,7 @@
       provinceIncomeChartInstance.options.scales.y.min = 0;
       provinceIncomeChartInstance.options.scales.y.max = axisMax;
       provinceIncomeChartInstance.options.scales.y.title.text = unit === 'households'
-        ? 'Median After-Tax Income ($ - Households)'
+        ? 'Median Employment Income ($ - Households)'
         : 'Median Employment Income ($ - Individuals)';
       if (provinceIncomeChartInstance.options.scales.y.ticks) {
         provinceIncomeChartInstance.options.scales.y.ticks.display = true;
@@ -6237,11 +6481,13 @@
         if (genderIcon) genderTitleEl.appendChild(genderIcon);
       }
       
-      // Update scatter title - preserve info-icon
-      const scatterTitleEl = document.getElementById('scatterTitle');
-      const scatterIcon = scatterTitleEl.querySelector('.info-icon');
-      scatterTitleEl.textContent = `Median Income vs Net Worth by Age (${unitTitle}, ${BASE_YEAR}) - ${suffix}`;
-      if (scatterIcon) scatterTitleEl.appendChild(scatterIcon);
+      // Update financial-assets title - preserve info-icon
+      const financialAssetsTitleEl = document.getElementById('financialAssetsTitle');
+      if (financialAssetsTitleEl) {
+        const financialAssetsIcon = financialAssetsTitleEl.querySelector('.info-icon');
+        financialAssetsTitleEl.textContent = `Financial Assets by Age (${unitTitle}, ${BASE_YEAR}) - ${suffix}`;
+        if (financialAssetsIcon) financialAssetsTitleEl.appendChild(financialAssetsIcon);
+      }
       // Update housing cost title
       const housingTitleEl = document.getElementById('housingCostTitle');
       if (housingTitleEl) {
@@ -6275,11 +6521,11 @@
         savRateTitleEl.textContent = `Savings Rate by Age (${BASE_YEAR}) - ${suffix}`;
         if (icon) savRateTitleEl.appendChild(icon);
       }
-      const savAmtTitleEl = document.getElementById('savingsAmountTitle');
-      if (savAmtTitleEl) {
-        const icon = savAmtTitleEl.querySelector('.info-icon');
-        savAmtTitleEl.textContent = `Savings Amount by Age (${BASE_YEAR}) - ${suffix}`;
-        if (icon) savAmtTitleEl.appendChild(icon);
+      const tfsaTitleEl = document.getElementById('tfsaBalanceTitle');
+      if (tfsaTitleEl) {
+        const icon = tfsaTitleEl.querySelector('.info-icon');
+        tfsaTitleEl.textContent = `TFSA Balance by Age (Individuals, ${BASE_YEAR}) - Canada`;
+        if (icon) tfsaTitleEl.appendChild(icon);
       }
       // Update percentile charts for current region using region-wide medians
       let regionMedianNetWorth;
@@ -6349,11 +6595,12 @@
         }
         return { points: pts, minX, maxX };
       }
-      function buildLognormalHistogram(median, sigma, nBins = 30) {
+      function buildLognormalHistogram(median, sigma, nBins = 100) {
         const mu = Math.log(median);
         const p99 = Math.exp(mu + sigma * 2.3263);
         const binW = p99 / nBins;
         const p90  = Math.exp(mu + sigma * 1.2816);
+        const quantile = pct => Math.exp(mu + sigma * normInv(Math.max(0.0001, Math.min(0.9999, pct / 100))));
         const pts  = [];
         for (let i = 0; i < nBins; i++) {
           const xMid = (i + 0.5) * binW;
@@ -6362,9 +6609,10 @@
           const pdf  = Math.exp(-0.5 * z * z) / (xMid * sigma * Math.sqrt(2 * Math.PI));
           pts.push({ x: xMid, y: Math.round(pdf * binW * 100 * 1000) / 1000 });
         }
-        return { points: pts, minX: 0, maxX: p99, binW, mu, sigma, p90, median };
+        const curve = Array.from({ length: 99 }, (_, i) => quantile(i + 1));
+        return { points: pts, minX: 0, maxX: p99, binW, mu, sigma, p90, median, curve, quantile };
       }
-      function buildNetWorthQuantileHistogram(medianHousehold, nBins = 58) {
+      function buildNetWorthQuantileHistogram(medianHousehold, nBins = 100) {
         // Smooth shifted-lognormal approximation for household wealth.
         // It preserves the selected-region median, allows a modest negative
         // lower tail, and produces one broad peak with a long right tail.
@@ -6387,8 +6635,8 @@
         // Show the useful body of the distribution. Extremely indebted and
         // ultra-wealthy tails remain represented by the percentile model but
         // are clipped from the chart so they do not distort the visual scale.
-        const minX = q(0.025);
-        const maxX = q(0.98);
+        const minX = q(0.01);
+        const maxX = q(0.99);
         const binW = (maxX - minX) / nBins;
         const points = [];
         for (let i = 0; i < nBins; i++) {
@@ -6417,8 +6665,8 @@
           percentileOf: cdfPct
         };
       }
-      const netHist = buildNetWorthQuantileHistogram(regionMedianNetWorth);
-      const incHist = buildLognormalHistogram(regionMedianIncome, 0.72);
+      const netHist = buildNetWorthQuantileHistogram(regionMedianNetWorth, 100);
+      const incHist = buildLognormalHistogram(regionMedianIncome, 0.72, 100);
 
       // Three-tone bar coloring: below p50 = muted, p50–p90 = mid, above p90 = bright
       function histBarColors(pts, mu, sigma, belowCol, midCol, topCol) {
@@ -6432,9 +6680,9 @@
 
       // Update datasets
       percentileNetWorthChartInstance.data.labels = [];
-      percentileNetWorthChartInstance.data.datasets = [ { label: 'Net Worth Distribution', data: netHist.points, backgroundColor: netColors } ];
+      percentileNetWorthChartInstance.data.datasets = [ { label: 'Net Worth Distribution', data: netHist.points, backgroundColor: netColors, barPercentage: 0.98, categoryPercentage: 1, borderWidth: 0 } ];
       percentileIncomeChartInstance.data.labels = [];
-      percentileIncomeChartInstance.data.datasets = [ { label: 'Income Distribution', data: incHist.points, backgroundColor: incColors } ];
+      percentileIncomeChartInstance.data.datasets = [ { label: 'Income Distribution', data: incHist.points, backgroundColor: incColors, barPercentage: 0.98, categoryPercentage: 1, borderWidth: 0 } ];
       // Axes: X in dollars (linear), Y in percent probability
       percentileNetWorthChartInstance.options.scales = {
         x: { type: 'linear', position: 'bottom', ticks: { color: '#b0c5e8', callback: (v)=> v >= 1e6 ? '$' + (v/1e6).toFixed(1) + 'M' : '$' + Math.round(v/1000) + 'k', maxTicksLimit: 10 }, grid: { color: 'rgba(255,255,255,0.05)' }, min: netHist.minX, max: netHist.maxX, title: { display: true, text: 'Net Worth ($)', color: '#e0e6ed' } },
@@ -6451,16 +6699,16 @@
       percentileNetWorthChartInstance.options.plugins.p99Cutoff = true;
       // Draw a subtle median line on both distributions
       percentileNetWorthChartInstance.options.plugins.medianVLine = { lines: [
-        { xValue: 0, color: '#cbd5e1', dash: [], width: 1.5, label: '$0' },
+        { xValue: 0, color: '#cbd5e1', dash: [7,5], width: 1.5, label: '$0' },
         { xValue: netHist.median, color: 'rgba(255,255,255,0.6)', dash: [2,2], width: 1, label: 'Median' }
       ] };
       percentileIncomeChartInstance.options.plugins.medianVLine = { xValue: incHist.median, color: 'rgba(255,255,255,0.6)', dash: [2,2], width: 1, label: 'Median' };
       // Cache percentile curves for histogram percentile lookups (align with tiles)
-      const distAgeIdx = userActive && Number.isFinite(userAgeVal)
-        ? Math.max(0, Math.min(ageLabels.length - 1, Math.round(userAgeVal) - AGE_START))
-        : Math.max(0, Math.min(ageLabels.length - 1, 40 - AGE_START));
-      const netCurve = netWorthPercentileCurveFor(distAgeIdx, region, unit);
-      const incCurve = incomePercentileCurveFor(distAgeIdx, region, unit);
+      // Keep histogram bars, annotations and tooltips on the same modeled
+      // distribution. The previous age-based lookup collapsed nearly every
+      // negative net-worth value below its positive first-percentile anchor.
+      const netCurve = netHist.curve;
+      const incCurve = incHist.curve;
       percentileNetWorthChartInstance.options.plugins.distCurve = netCurve;
       percentileIncomeChartInstance.options.plugins.distCurve = incCurve;
       // Custom tooltip for histograms (percent at $x) using curve inversion
@@ -6530,14 +6778,14 @@
       const provinceNetWorthEl = document.getElementById('provinceTitle');
       const provinceNetWorthIcon = provinceNetWorthEl.querySelector('.info-icon');
       provinceNetWorthEl.textContent = unit === 'households'
-        ? `Median Net Worth by Province (Households, ${BASE_YEAR})`
+        ? `Estimated Median Net Worth by Province (Households, ${BASE_YEAR})`
         : `Equivalized Net Worth by Province (Individuals, ${BASE_YEAR})`;
       if (provinceNetWorthIcon) provinceNetWorthEl.appendChild(provinceNetWorthIcon);
       
       const provinceIncomeEl = document.getElementById('provinceIncomeTitle');
       const provinceIncomeIcon = provinceIncomeEl.querySelector('.info-icon');
       provinceIncomeEl.textContent = unit === 'households'
-        ? `Median After-Tax Income by Province (Households, ${BASE_YEAR})`
+        ? `Median Employment Income by Province (Households, ${BASE_YEAR})`
         : `Median Employment Income by Province (Individuals, ${BASE_YEAR})`;
       if (provinceIncomeIcon) provinceIncomeEl.appendChild(provinceIncomeIcon);
       // If the user has entered comparison data, replot the markers after updating the charts.
@@ -6655,6 +6903,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
       borderDash: ds.borderDash || undefined,
       order: ds.order ?? 1,
       showLine: ds.showLine,
+      directLabel: ds.directLabel,
       inlineLabel: ds.inlineLabel,
       inlineLabelColor: ds.inlineLabelColor,
       tooltip: ds.tooltip,
@@ -6664,12 +6913,23 @@ function createChart(canvasId, dataInfo, type = 'line') {
 
   // X ticks
   const labels = dataInfo.labels || [];
+  const isAgeAxis = labels.length === ageLabels.length &&
+    labels[0] === ageLabels[0] && labels[labels.length - 1] === ageLabels[ageLabels.length - 1];
   const xTickOptions = {
     color: '#b0c5e8',
     font: { size: tickFontSize },
     callback: function(value, index) { return labels[index]; }
   };
-  if (type === 'bar') {
+  if (isAgeAxis) {
+    // Configure age ticks before the first render. Applying this after chart
+    // construction leaves Chart.js with its initial six auto-skipped ticks.
+    xTickOptions.callback = ageTickFormatter;
+    xTickOptions.autoSkip = false;
+    xTickOptions.maxRotation = 0;
+    xTickOptions.minRotation = 0;
+    xTickOptions.font = { size: isMobile ? 9 : tickFontSize };
+    xTickOptions.padding = isMobile ? 3 : 4;
+  } else if (type === 'bar') {
     const provinceAbbrev = {
       'Newfoundland & Labrador': 'NL', 'Prince Edward Island': 'PEI',
       'Nova Scotia': 'NS', 'New Brunswick': 'NB', 'Quebec': 'QC',
@@ -6701,7 +6961,11 @@ function createChart(canvasId, dataInfo, type = 'line') {
       x: {
         stacked: isStacked,
         ticks: xTickOptions,
-        grid: { color: 'rgba(255,255,255,0.05)' }
+        grid: {
+          color: isAgeAxis
+            ? (context => context.tick && context.tick.label ? 'rgba(255,255,255,0.05)' : 'transparent')
+            : 'rgba(255,255,255,0.05)'
+        }
       },
       y: {
         stacked: isStacked,
@@ -6948,6 +7212,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
         datasets: [
           {
             label: 'Employment Income',
+            directLabel: 'Employment',
             data: baseTotalIncome.map(() => 0),
             borderColor: '#42a5f5',
             backgroundColor: 'rgba(66,165,245,0.75)',
@@ -6956,6 +7221,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
           },
           {
             label: 'Investment Income',
+            directLabel: 'Investment',
             data: baseTotalIncome.map(() => 0),
             borderColor: '#66bb6a',
             backgroundColor: 'rgba(102,187,106,0.75)',
@@ -6964,6 +7230,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
           },
           {
             label: 'Pension Income',
+            directLabel: 'Pension',
             data: baseTotalIncome.map(() => 0),
             borderColor: '#ffa726',
             backgroundColor: 'rgba(255,167,38,0.75)',
@@ -6972,6 +7239,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
           },
           {
             label: 'Government Transfers',
+            directLabel: 'Transfers',
             data: baseTotalIncome.map(() => 0),
             borderColor: '#ab47bc',
             backgroundColor: 'rgba(171,71,188,0.75)',
@@ -7008,32 +7276,23 @@ function createChart(canvasId, dataInfo, type = 'line') {
           y: 'Net Worth ($ - Households / Individuals)'
         }
       }, 'line');
-      // Build the scatter chart for income vs net worth.  This uses the median total income
-      // as the x-value and the median net worth (households) as the y-value for each age.
-      scatterChartInstance = createChart('scatterChart', {
+      // Financial assets by age: stacked components with a directly labelled
+      // total line. The datasets are populated in updateCharts().
+      financialAssetsChartInstance = createChart('financialAssetsChart', {
         labels: ageLabels,
         datasets: [
-          {
-            label: 'Income vs Net Worth',
-            data: [],
-            borderColor: '#66bb6a',
-            backgroundColor: '#66bb6a',
-            pointBackgroundColor: '#66bb6a',
-            pointBorderColor: '#66bb6a',
-            // Increase the base point size to improve visibility.  A larger
-            // point radius and hover radius make scatter points easier to see.
-            pointRadius: 5,
-            pointHoverRadius: 6,
-            showLine: false
-          }
+          { label: 'Cash & Deposits', directLabel: 'Cash', data: new Array(ageLabels.length).fill(0), backgroundColor: 'rgba(103,232,249,0.72)', borderColor: '#67e8f9', borderWidth: 0, stack: 'financialAssets', order: 1 },
+          { label: 'TFSA', directLabel: 'TFSA', data: new Array(ageLabels.length).fill(0), backgroundColor: 'rgba(45,212,191,0.72)', borderColor: '#2dd4bf', borderWidth: 0, stack: 'financialAssets', order: 1 },
+          { label: 'RRSP / LIRA', directLabel: 'RRSP/LIRA', data: new Array(ageLabels.length).fill(0), backgroundColor: 'rgba(96,165,250,0.72)', borderColor: '#60a5fa', borderWidth: 0, stack: 'financialAssets', order: 1 },
+          { label: 'Non-Registered Investments', directLabel: 'Non-registered', data: new Array(ageLabels.length).fill(0), backgroundColor: 'rgba(167,139,250,0.72)', borderColor: '#a78bfa', borderWidth: 0, stack: 'financialAssets', order: 1 },
+          { label: 'Total Financial Assets', data: new Array(ageLabels.length).fill(0), type: 'line', borderColor: '#ffffff', backgroundColor: 'transparent', pointRadius: 0, pointHoverRadius: 4, borderWidth: 2.4, tension: 0.3, fill: false, order: 9999, z: 99, noGradient: true }
         ],
-        // We will update the step sizes dynamically in updateCharts
-        step: null,
+        step: 100000,
         axisLabels: {
-          x: 'Median Total Income ($ - Households / Individuals)',
-          y: 'Median Net Worth ($ - Households / Individuals)'
+          x: 'Age (Years)',
+          y: 'Financial Assets ($ - Households / Individuals)'
         }
-      }, 'scatter');
+      }, 'bar');
       // The province chart remains the same; median provincial values are used as bars.
       // Build the province bar chart. Use a default color for all bars; the
       // selected province will be highlighted via updateCharts().
@@ -7053,7 +7312,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
       // via updateCharts() when selected from the percentile selector.
       provinceIncomeChartInstance = createChart('provinceIncomeChart', {
         labels: baseProvinceLabels.slice(),
-        datasets: [ { label: 'Median Income', data: baseProvinceIncomeValues, backgroundColor: '#42a5f5' } ],
+        datasets: [ { label: 'Median Employment Income', data: baseProvinceIncomeValues, backgroundColor: '#42a5f5' } ],
         step: 5000,
         axisLabels: {
           x: 'Province',
@@ -7065,10 +7324,10 @@ function createChart(canvasId, dataInfo, type = 'line') {
       wealthCompositionChartInstance = createChart('wealthCompositionChart', {
         labels: ageLabels,
         datasets: [
-          { label: 'Real Estate', data: new Array(ageLabels.length).fill(0), borderColor: '#66bb6a', backgroundColor: 'rgba(102,187,106,0.55)', fill: true, stack: 'assets' },
-          { label: 'Financial Assets', data: new Array(ageLabels.length).fill(0), borderColor: '#29b6f6', backgroundColor: 'rgba(41,182,246,0.55)', fill: true, stack: 'assets' },
-          { label: 'Pensions', data: new Array(ageLabels.length).fill(0), borderColor: '#ab47bc', backgroundColor: 'rgba(171,71,188,0.55)', fill: true, stack: 'assets' },
-          { label: 'Debts', data: new Array(ageLabels.length).fill(0), borderColor: '#ffa726', backgroundColor: 'rgba(255,167,38,0.55)', fill: true, stack: 'debts' },
+          { label: 'Real Estate', directLabel: 'Real estate', data: new Array(ageLabels.length).fill(0), borderColor: '#66bb6a', backgroundColor: 'rgba(102,187,106,0.55)', fill: true, stack: 'assets' },
+          { label: 'Financial Assets', directLabel: 'Financial assets', data: new Array(ageLabels.length).fill(0), borderColor: '#29b6f6', backgroundColor: 'rgba(41,182,246,0.55)', fill: true, stack: 'assets' },
+          { label: 'Pensions', directLabel: 'Employer pensions', data: new Array(ageLabels.length).fill(0), borderColor: '#ab47bc', backgroundColor: 'rgba(171,71,188,0.55)', fill: true, stack: 'assets' },
+          { label: 'Debts', directLabel: 'Debt', data: new Array(ageLabels.length).fill(0), borderColor: '#ffa726', backgroundColor: 'rgba(255,167,38,0.55)', fill: true, stack: 'debts' },
           { label: 'Net Position', data: new Array(ageLabels.length).fill(0), borderColor: '#ffffff', backgroundColor: 'transparent', color: '#ffffff', type: 'line', pointRadius: 0, borderWidth: 2, fill: false, order: 9999, z: 99 }
         ],
         step: 200000,
@@ -7292,20 +7551,20 @@ function createChart(canvasId, dataInfo, type = 'line') {
         );
       }
 
-      // ── Savings Amount by Age ────────────────────────────────────────────
-      savingsAmountChartInstance = createChart('savingsAmountChart', {
+      // ── TFSA Balance by Age ──────────────────────────────────────────────
+      tfsaBalanceChartInstance = createChart('tfsaBalanceChart', {
         labels: ageLabels,
         datasets: [
-          { label: '25th Percentile', data: baseSavingsAmountP25.slice(), borderColor: 'rgba(52,211,153,0.25)', backgroundColor: 'rgba(52,211,153,0.08)', fill: false, pointRadius: 0, tension: 0.35, borderWidth: 1, order: 2, noGradient: true },
-          { label: '75th Percentile', data: baseSavingsAmountP75.slice(), borderColor: 'rgba(52,211,153,0.25)', backgroundColor: 'rgba(52,211,153,0.08)', fill: '-1', pointRadius: 0, tension: 0.35, borderWidth: 1, order: 2, noGradient: true },
-          { label: 'Median', data: baseSavingsAmountMedian.slice(), borderColor: '#34d399', backgroundColor: 'transparent', fill: false, pointRadius: 0, tension: 0.35, borderWidth: 2.5, order: 1 }
+          { label: 'Average', data: baseTFSAAvgBalance.slice(), borderColor: '#2dd4bf', backgroundColor: 'transparent', fill: false, pointRadius: 0, tension: 0.3, borderWidth: 2.8, order: 1, noGradient: true },
+          { label: 'Median', data: baseTFSAMedianBalance.slice(), borderColor: '#7dd3fc', backgroundColor: 'transparent', fill: false, pointRadius: 0, tension: 0.3, borderWidth: 2.2, borderDash: [7,5], order: 2, noGradient: true },
+          { label: 'Max Contributions', data: baseTFSAMaxContributions.slice(), borderColor: 'rgba(248,250,252,0.9)', backgroundColor: 'transparent', fill: false, pointRadius: 0, tension: 0, borderWidth: 2, borderDash: [10,6], order: 3, noGradient: true }
         ],
-        step: 5000,
-        axisLabels: { x: 'Age (Years)', y: 'Annual Savings ($ - Households)' }
+        step: 20000,
+        axisLabels: { x: 'Age (Years)', y: 'TFSA Balance / Contributions ($)' }
       }, 'line');
-      if (savingsAmountChartInstance?.options?.scales?.x?.ticks) {
-        savingsAmountChartInstance.options.scales.x.ticks = Object.assign(
-          {}, savingsAmountChartInstance.options.scales.x.ticks,
+      if (tfsaBalanceChartInstance?.options?.scales?.x?.ticks) {
+        tfsaBalanceChartInstance.options.scales.x.ticks = Object.assign(
+          {}, tfsaBalanceChartInstance.options.scales.x.ticks,
           { callback: ageTickFormatter, autoSkip: false, maxRotation: 0, minRotation: 0 }
         );
       }
@@ -7605,7 +7864,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
     let userActive = false;
     let userAgeVal, userIncomeVal, userNetWorthVal;
     let userHomeVal = null, userMortgageVal = null, userOtherREVal = null;
-    let userRegisteredVal = null, userNonRegVal = null, userPensionVal = null;
+    let userRegisteredVal = null, userNonRegVal = null, userPensionVal = null, userCashVal = null;
     let userTakeHomeVal = null, userSpendingVal = null, userSavingsAmtVal = null;
     let userNonMortgageDebtVal = null, userOtherMortgageVal = null;
     let cashFlowPeriod = 'monthly';
@@ -7846,6 +8105,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
       userRegisteredVal = parseOptional(DOM.userRegistered);
       userNonRegVal = parseOptional(DOM.userNonReg);
       userPensionVal = parseOptional(DOM.userPension);
+      userCashVal = parseOptional(document.getElementById('userCash'));
       const multiplier = cashFlowPeriod === 'monthly' ? 12 : 1;
       userTakeHomeVal = parseOptional(DOM.userTakeHome) !== null ? parseOptional(DOM.userTakeHome) * multiplier : null;
       userSpendingVal = parseOptional(DOM.userSpending) !== null ? parseOptional(DOM.userSpending) * multiplier : null;
@@ -7876,8 +8136,12 @@ function createChart(canvasId, dataInfo, type = 'line') {
       addUserLineToBarChart(provinceChartInstance, userNetWorthVal, 'You');
       // Add a horizontal line on the provincial income chart for the user's income
       addUserLineToBarChart(provinceIncomeChartInstance, userIncomeVal, 'You');
-      // Add a red "You" point to the scatter chart (income vs net worth)
-      addUserPointToScatter(scatterChartInstance, userIncomeVal, userNetWorthVal, 'You');
+      // Plot detailed financial assets when at least one relevant field was entered.
+      const financialDetails = [userRegisteredVal, userNonRegVal, userCashVal];
+      if (financialDetails.some(Number.isFinite)) {
+        const userFinancialAssets = financialDetails.reduce((sum, value) => sum + (Number.isFinite(value) ? value : 0), 0);
+        addUserMarkerToChart(financialAssetsChartInstance, userFinancialAssets, index, 'You');
+      }
       // Cash flow charts — only plot if the relevant optional fields were entered
       if (userSpendingVal !== null) {
         addUserMarkerToChart(spendingChartInstance, userSpendingVal, index, 'You');
@@ -7887,9 +8151,6 @@ function createChart(canvasId, dataInfo, type = 'line') {
       }
       if (userSavingsAmtVal !== null && userTakeHomeVal !== null && userTakeHomeVal > 0) {
         addUserMarkerToChart(savingsRateChartInstance, Math.round((userSavingsAmtVal / userTakeHomeVal) * 1000) / 10, index, 'You');
-      }
-      if (userSavingsAmtVal !== null) {
-        addUserMarkerToChart(savingsAmountChartInstance, userSavingsAmtVal, index, 'You');
       }
       if (userMortgageVal !== null || userOtherMortgageVal !== null || userNonMortgageDebtVal !== null) {
         const totalDebt = (userMortgageVal || 0) + (userOtherMortgageVal || 0) + (userNonMortgageDebtVal || 0);
@@ -7994,9 +8255,9 @@ function createChart(canvasId, dataInfo, type = 'line') {
       allVals.push(value);
       // Compute new axis bounds
       let axis = computeAxis(allVals, step);
-      // For income charts (employment and total), clamp minimum at zero
-      // Clamp the y-axis minimum at zero for income charts (employment and composition)
-      if (chart === incomeChartInstance || chart === compositionChartInstance) {
+      // These measures cannot fall below zero, even when a user marker expands
+      // the displayed range.
+      if (chart === incomeChartInstance || chart === compositionChartInstance || chart === financialAssetsChartInstance) {
         axis.min = 0;
       }
       // Savings rate chart: clamp to ±150% to prevent outlier base-data values from blowing the scale
@@ -8053,7 +8314,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
       userActive = false;
       userAgeVal = null; userIncomeVal = null; userNetWorthVal = null;
       userHomeVal = null; userMortgageVal = null; userOtherREVal = null;
-      userRegisteredVal = null; userNonRegVal = null; userPensionVal = null;
+      userRegisteredVal = null; userNonRegVal = null; userPensionVal = null; userCashVal = null;
       userTakeHomeVal = null; userSpendingVal = null; userSavingsAmtVal = null;
       userNonMortgageDebtVal = null; userOtherMortgageVal = null;
       // Reset input fields
@@ -8093,11 +8354,10 @@ function createChart(canvasId, dataInfo, type = 'line') {
       removeUserDataset(wealthCompositionChartInstance, 'You');
       removeUserDataset(provinceChartInstance, 'You');
       removeUserDataset(provinceIncomeChartInstance, 'You');
-      removeUserDataset(scatterChartInstance, 'You');
+      removeUserDataset(financialAssetsChartInstance, 'You');
       removeUserDataset(spendingChartInstance, 'You');
       removeUserDataset(discretionaryChartInstance, 'You');
       removeUserDataset(savingsRateChartInstance, 'You');
-      removeUserDataset(savingsAmountChartInstance, 'You');
       removeUserDataset(debtBreakdownChartInstance, 'You');
       // Clear percentile chart vertical lines
       if (percentileNetWorthChartInstance?.options?.plugins) {
@@ -8707,7 +8967,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
         get income() { return incomeChartInstance; },
         get netWorth() { return netWorthChartInstance; },
         get province() { return provinceChartInstance; },
-        get scatter() { return scatterChartInstance; },
+        get financialAssets() { return financialAssetsChartInstance; },
         get composition() { return compositionChartInstance; },
         get gender() { return genderChartInstance; },
         get provinceIncome() { return provinceIncomeChartInstance; }
@@ -8797,60 +9057,6 @@ function createChart(canvasId, dataInfo, type = 'line') {
         if (projSection) projSection.style.display = 'block';
       }
     });
-
-    /**
-     * Add or update the user's point on the scatter chart (income vs net worth).
-     * Ensures the axes include the user's point and draws it prominently in red.
-     * @param {Chart} chart The scatter chart instance
-     * @param {number} incomeX The user's income (x value)
-     * @param {number} netWorthY The user's net worth (y value)
-     * @param {string} label Dataset label (e.g., 'You')
-     */
-    function addUserPointToScatter(chart, incomeX, netWorthY, label) {
-      if (!chart) return;
-      const userDsIndex = chart.data.datasets.findIndex(ds => ds.label === label);
-      const userDs = {
-        label: label,
-        type: 'scatter',
-        data: [ { x: incomeX, y: netWorthY } ],
-        borderColor: '#ef5350',
-        backgroundColor: '#ef5350',
-        pointStyle: 'circle',
-        pointBackgroundColor: '#ef5350',
-        pointBorderColor: '#ef5350',
-        pointRadius: 6,
-        pointHoverRadius: 7,
-        showLine: false,
-        order: 9999,
-        clip: false,
-        color: '#ef5350',
-        labelTextColor: '#ef5350',
-        inlineLabelColor: '#ef5350',
-        showLine: true
-      };
-      if (userDsIndex >= 0) {
-        chart.data.datasets[userDsIndex] = Object.assign(chart.data.datasets[userDsIndex], userDs);
-      } else {
-        chart.data.datasets.push(userDs);
-      }
-
-      // Recompute axes to include the user's point alongside the base series
-      const baseData = (chart.data.datasets[0] && Array.isArray(chart.data.datasets[0].data)) ? chart.data.datasets[0].data : [];
-      const xVals = baseData.map(p => p.x);
-      const yVals = baseData.map(p => p.y);
-      xVals.push(incomeX);
-      yVals.push(netWorthY);
-      const xAxis = computeAxis(xVals, 5000);
-      const yAxis = computeAxis(yVals, 200000);
-      if (!chart.options.scales) chart.options.scales = {};
-      if (!chart.options.scales.x) chart.options.scales.x = { type: 'linear', position: 'bottom' };
-      if (!chart.options.scales.y) chart.options.scales.y = {};
-      chart.options.scales.x.min = Math.max(0, xAxis.min);
-      chart.options.scales.x.max = xAxis.max;
-      chart.options.scales.y.min = yAxis.min;
-      chart.options.scales.y.max = yAxis.max;
-      chart.update();
-    }
 
     /* Capture a snapshot of the small summary tiles + projection area and download as PNG */
     async function captureSnapshot() {

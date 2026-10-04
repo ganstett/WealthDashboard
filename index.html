@@ -1933,6 +1933,24 @@
     .info-dialog-body { min-height: 0; overflow-y: auto; padding: 16px; font-size: 14px; line-height: 1.65; overflow-wrap: anywhere; overscroll-behavior: contain; }
     .info-dialog-body strong { color: #fff; }
     body.info-dialog-open { overflow: hidden; }
+
+    /* Mobile chart reading: one page gutter, a wider plot and compact chrome. */
+    @media (max-width: 768px) {
+      .container { padding-left: 0; padding-right: 0; }
+      .content-width { padding-left: 10px; padding-right: 10px; }
+      .chart-card { padding: 12px 8px 10px !important; }
+      .chart-card h3 { font-size: 14px !important; line-height: 1.3; margin-bottom: 8px; }
+      .chart-container {
+        height: clamp(300px, 88vw, 400px);
+        min-height: 0 !important;
+        aspect-ratio: auto !important;
+      }
+      .mobile-chart-jump { margin: 10px 0; gap: 6px; }
+      .mobile-chart-jump a { padding: 8px 10px; font-size: 12px; }
+      .chartjs-tooltip { padding: 8px 10px; border-radius: 10px; }
+      .chartjs-tooltip .tt-row { gap: 7px; padding: 3px 0; }
+      .chartjs-tooltip .tt-row.highlight { padding: 5px 7px; }
+    }
   </style>
 </head>
 <body>
@@ -2422,8 +2440,8 @@
 <canvas class="chart-canvas" id="housingCostChart" style="display:none;"></canvas>
 </div>
 </div><div class="chart-card">
-<h3 id="debtBreakdownTitle">Avg. Debt Breakdown by Age (Households, <span data-current-year=""></span>)
-          <span aria-label="Chart info: Household debt breakdown by type and age." class="info-icon chart-info-icon" role="button" tabindex="0"><svg aria-hidden="true" focusable="false" height="16" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" fill="none" r="9" stroke="#00bfa5" stroke-width="1.4"></circle><text fill="#00bfa5" font-size="10" font-weight="bold" text-anchor="middle" x="12" y="15">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows a modeled breakdown of average household debt by type at each exact age.</div><div><strong>Sources</strong></div><ul><li>Statistics Canada - Survey of Financial Security (2023)</li><li>CMHC - residential mortgage statistics</li><li>Statistics Canada - household balance-sheet data</li></ul><div><strong>Methods</strong></div><ul><li><strong>Single-year debt values are modeled estimates.</strong> Published age-group debt patterns are smoothed to create annual-age curves for mortgage, student, auto, and other consumer debt.</li><li>Averages include households with zero balances, so the chart represents population-wide exposure rather than the balance only among debt holders.</li><li>Mortgage debt is scaled more heavily with provincial housing/wealth conditions; other debt categories use income-related provincial scaling.</li><li>The <span data-current-year=""></span> values are estimates carried forward from the latest observed source data.</li></ul></span></span>
+<h3 id="debtBreakdownTitle">Median Debt Breakdown by Age (Households with Debt, <span data-current-year=""></span>)
+          <span aria-label="Chart info: Median household debt breakdown by type and age." class="info-icon chart-info-icon" role="button" tabindex="0"><svg aria-hidden="true" focusable="false" height="16" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" fill="none" r="9" stroke="#00bfa5" stroke-width="1.4"></circle><text fill="#00bfa5" font-size="10" font-weight="bold" text-anchor="middle" x="12" y="15">i</text></svg><span class="info-tooltip"><div><strong>Description</strong></div><div>Shows a modeled median total-debt benchmark for debt-holding households at each exact age, split into four debt categories.</div><div><strong>Components</strong></div><ul><li><strong>Mortgage / HELOC:</strong> mortgages on principal residences and other real estate, plus home-equity lines of credit.</li><li><strong>Student loans:</strong> outstanding government and private education loans.</li><li><strong>Auto loans:</strong> outstanding vehicle financing and lease-related debt.</li><li><strong>Consumer / credit:</strong> credit-card balances, unsecured lines of credit, instalment loans, deferred-payment plans, and other non-mortgage debt.</li></ul><div><strong>Sources</strong></div><ul><li>Statistics Canada - Survey of Financial Security, 2023, Table 11-10-0016-01</li><li>CMHC - residential mortgage statistics</li><li>Statistics Canada - household balance-sheet data</li></ul><div><strong>Methods</strong></div><ul><li><strong>Single-year values are modeled estimates.</strong> Official 2023 age-group median-to-average total-debt relationships are applied to the dashboard’s smooth exact-age average-debt profile.</li><li>The category mix follows the published average debt structure because category-specific medians cannot be added together and are often zero when fewer than half of families hold that debt type.</li><li>The four components reconcile exactly to modeled median total debt at every age.</li><li>This is the median among households with debt, not the median across all households including those with no debt. The distinction is stated in the title because fewer than half of families aged 65 and older report debt.</li><li>Mortgage debt is scaled more heavily with provincial housing/wealth conditions; other categories use income-related provincial scaling.</li><li>The <span data-current-year=""></span> values are estimates carried forward from the latest observed source data.</li></ul></span></span>
 </h3>
 <div class="chart-container">
 <div class="chart-loading">
@@ -2737,6 +2755,84 @@
       return window.matchMedia('(max-width: 768px)').matches;
     }
 
+    function compactChartDollar(value) {
+      const number = Number(value);
+      const magnitude = Math.abs(number);
+      const sign = number < 0 ? '-' : '';
+      if (magnitude >= 1e6) return sign + '$' + +(magnitude / 1e6).toFixed(1) + 'M';
+      if (magnitude >= 1000) return sign + '$' + +(magnitude / 1000).toFixed(0) + 'k';
+      return sign + '$' + Math.round(magnitude);
+    }
+
+    // Keep mobile styling in a layout hook: region changes replace some scale
+    // options, and a phone can rotate after the charts have been initialized.
+    const responsiveChartLayout = {
+      id: 'responsiveChartLayout',
+      beforeLayout(chart) {
+        const mobile = isMobileChart();
+        const histogram = ['percentileIncomeChart', 'percentileNetWorthChart'].includes(chart.canvas?.id);
+        chart.options.layout.padding = mobile
+          ? { top: 6, right: 3, bottom: 2, left: 0 }
+          : { top: 6, right: 8, bottom: 8, left: 8 };
+        Object.values(chart.scales).forEach(scale => {
+          const opts = scale.options;
+          const ticks = opts.ticks;
+          const ageAxis = scale.axis === 'x' && chart.data.labels?.length === 60 &&
+            Number(chart.data.labels[0]) === 21 && Number(chart.data.labels[59]) === 80;
+          ticks.font = { ...ticks.font, size: mobile ? (ageAxis ? 9.5 : 10) : 12 };
+          ticks.padding = mobile ? 3 : 4;
+          if (opts.title?.text) {
+            // Units remain on the ticks; population and measure remain in the
+            // card heading. Do not spend a second column on a repeated title.
+            opts.title.display = !mobile || scale.axis === 'x';
+            opts.title.font = { ...opts.title.font, size: mobile ? 10 : 12 };
+            opts.title.padding = { top: mobile ? 5 : 6, bottom: 2 };
+          }
+          if (scale.axis === 'y' && String(opts.title?.text).includes('$')) {
+            ticks.callback = function(value) {
+              return isMobileChart() ? compactChartDollar(value) : '$' + (Math.round(value / 1000) * 1000).toLocaleString();
+            };
+          }
+          if (histogram && scale.axis === 'x') {
+            opts.offset = false;
+            opts.grid.offset = false;
+            ticks.callback = compactChartDollar;
+            ticks.font = { ...ticks.font, size: mobile ? 10 : 12 };
+            ticks.autoSkip = false;
+            ticks.maxTicksLimit = mobile ? 5 : 10;
+            ticks.minRotation = 0;
+            ticks.maxRotation = 0;
+          }
+        });
+      },
+      afterBuildTicks(chart, { scale }) {
+        if (!isMobileChart() || scale.type !== 'linear') return;
+        const histogramX = scale.axis === 'x' && ['percentileIncomeChart', 'percentileNetWorthChart'].includes(chart.canvas?.id);
+        if (scale.axis !== 'y' && !histogramX) return;
+        const { min, max } = scale;
+        const range = max - min;
+        if (!(range > 0)) return;
+        const rawStep = range / (histogramX ? 4 : 5);
+        const power = Math.pow(10, Math.floor(Math.log10(rawStep)));
+        const factors = [1, 2, 2.5, 5, 10];
+        const factor = histogramX
+          ? factors.reduce((best, value) => Math.abs(value * power - rawStep) < Math.abs(best * power - rawStep) ? value : best)
+          : factors.find(value => value * power >= rawStep) || 10;
+        const step = factor * power;
+        const values = [];
+        for (let value = Math.ceil(min / step) * step; value <= max + step * 1e-8; value += step) {
+          values.push(Number(value.toPrecision(10)));
+        }
+        // Histogram endpoints describe the shown dollar range. Exclude nearby
+        // interior ticks so the endpoint labels never collide on small phones.
+        const selected = histogramX
+          ? [min, ...values.filter(value => value - min >= range * .11 && max - value >= range * .11), max]
+          : values;
+        if (selected.length >= 2) scale.ticks = selected.map(value => ({ value }));
+      }
+    };
+    Chart.register(responsiveChartLayout);
+
     // Plugin to draw box-and-whisker style whiskers for the province chart.
     const provinceWhiskersPlugin = {
       id: 'provinceWhiskers',
@@ -2877,6 +2973,14 @@
 
     const histogramPercentileScrubber = {
       id: 'histogramPercentileScrubber',
+      beforeEvent(chart, args) {
+        // Chart.js replays the last pointer event during an update. A dismissed
+        // tooltip must stay dismissed after scrolling, resizing or rotating.
+        if (args.replay && chart.$tooltipDismissed) return false;
+        const nativeType = args.event?.native?.type || args.event?.type || '';
+        if (chart.$suppressTouchTooltip && nativeType.startsWith('touch')) return false;
+        if (!args.replay) chart.$tooltipDismissed = false;
+      },
       afterEvent(chart, args) {
         const id = chart?.canvas?.id;
         if (id !== 'percentileNetWorthChart' && id !== 'percentileIncomeChart') return;
@@ -2903,6 +3007,10 @@
     function externalTooltipHandler(context) {
       try {
         const { chart, tooltip } = context;
+        if (chart.$tooltipDismissed) {
+          document.querySelector('.chartjs-tooltip')?.classList.remove('show');
+          return;
+        }
         // Attach tooltip to document.body to avoid clipping inside canvas containers
         const root = document.body;
         let tooltipEl = root.querySelector('.chartjs-tooltip');
@@ -3402,7 +3510,7 @@
           });
           if (userActive && userIncome) vals.push(userIncome);
           const axis = computeAxis(vals, 5000);
-          incomeChartInstance.options.scales.y.min = Math.min(0, axis.min);
+          incomeChartInstance.options.scales.y.min = 0;
           incomeChartInstance.options.scales.y.max = axis.max;
           incomeChartInstance.options.scales.y.title.text = unit === 'households'
             ? 'Employment Income ($ - Households)'
@@ -4914,7 +5022,7 @@
       }
       const clampedX = Math.min(Math.max(xPixel, chartArea.left + 6), chartArea.right - 6);
       ctx.setLineDash([]);
-      ctx.font = '12px sans-serif';
+      ctx.font = (isMobileChart() ? '10px' : '12px') + ' sans-serif';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
       const paddingX = 6;
@@ -4922,7 +5030,7 @@
       const textMetrics = ctx.measureText(text);
       const textWidth = textMetrics.width;
       const textHeight = (textMetrics.actualBoundingBoxAscent || 8) + (textMetrics.actualBoundingBoxDescent || 4);
-      const rectX = clampedX + 4;
+      const rectX = Math.max(chartArea.left + 2, Math.min(clampedX + 4, chartArea.right - textWidth - paddingX * 2 - 2));
       const rectY = y - textHeight / 2 - paddingY;
       const rectH = textHeight + paddingY * 2;
       const rectW = textWidth + paddingX * 2;
@@ -5014,15 +5122,16 @@
       afterDraw(chart) {
         const { ctx, chartArea, legend } = chart;
         if (!ctx || !chartArea) return;
-        const padding = 8;
+        const mobile = isMobileChart();
+        const padding = mobile ? 5 : 8;
         const textBold = 'WEALTH';
         const textRest = 'DASHBOARD.CA';
-        const fontBase = '12px "Segoe UI", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+        const fontBase = (mobile ? '9px' : '12px') + ' "Segoe UI", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
         const fontBold = '700 ' + fontBase;
         const fontNormal = '400 ' + fontBase;
         ctx.save();
         ctx.font = fontBold;
-        ctx.fillStyle = 'rgba(255,255,255,0.55)';
+        ctx.fillStyle = mobile ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.55)';
         ctx.textAlign = 'left';
         ctx.textBaseline = 'middle';
         const metricsBold = ctx.measureText(textBold);
@@ -5033,7 +5142,8 @@
           (metricsBold.actualBoundingBoxAscent || 8) + (metricsBold.actualBoundingBoxDescent || 3),
           (metricsRest.actualBoundingBoxAscent || 8) + (metricsRest.actualBoundingBoxDescent || 3)
         );
-        let x = chartArea.right - padding - textW;
+        const mobileAgeChart = mobile && Number(chart.data.labels?.[0]) === 21;
+        let x = mobileAgeChart ? chartArea.left + padding : chartArea.right - padding - textW;
         let y = chartArea.top + padding + textH / 2;
 
         const legendBox = legend && legend.width && legend.height ? {
@@ -5132,8 +5242,9 @@
       id: 'inlineLineLabels',
       afterDatasetsDraw(chart) {
         const { ctx, data, chartArea } = chart || {};
-        if (!ctx || !chartArea || !data?.datasets?.length || (isMobileChart() && !['tfsaBalanceChart', 'financialAssetsChart', 'wealthCompositionChart'].includes(chart.canvas?.id))) return;
-        const fontSize = 11;
+        if (!ctx || !chartArea || !data?.datasets?.length) return;
+        const mobile = isMobileChart();
+        const fontSize = mobile ? 10 : 11;
         const fontFamily = 'system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
         const middleLabels = ['incomeChart', 'genderIncomeChart'].includes(chart.canvas?.id);
         let anchorIndex = null;
@@ -5152,7 +5263,7 @@
         ctx.save();
         ctx.font = `${fontSize}px ${fontFamily}`;
         data.datasets.forEach((ds, datasetIndex) => {
-          if (String(ds.label || '').toLowerCase() === 'you' || ds.inlineLabel === false) return;
+          if (String(ds.label || '').toLowerCase() === 'you' || ds.inlineLabel === false || ds.stack) return;
           const meta = chart.getDatasetMeta(datasetIndex);
           if (!meta || meta.hidden || !(meta.type === 'line' || ds.type === 'line' || ds.showLine === true)) return;
           const points = meta.data || [];
@@ -5170,7 +5281,8 @@
             }
           }
           if (!point || !ds.label) return;
-          const text = ds.label === 'Median (50th percentile)' ? 'Median' : ds.label;
+          const text = ds.label === 'Median (50th percentile)' || (mobile && /^Median(?:\s|\()/.test(ds.label))
+            ? 'Median' : mobile ? ds.label.replace(/ Percentile/i, '') : ds.label;
           const border = Array.isArray(ds.borderColor) ? ds.borderColor[0] : ds.borderColor;
           const background = Array.isArray(ds.backgroundColor) ? ds.backgroundColor[0] : ds.backgroundColor;
           const color = readableInlineLabelColor(ds.inlineLabelColor || (typeof border === 'string' && border) || (typeof background === 'string' && background) || '#e0e6ed');
@@ -5211,6 +5323,7 @@
           ctx.fillStyle = label.color;
           ctx.strokeStyle = 'rgba(11, 26, 51, .9)';
           ctx.lineWidth = 3;
+          ctx.lineJoin = 'round';
           ctx.strokeText(label.text, x, label.y);
           ctx.fillText(label.text, x, label.y);
         });
@@ -5230,7 +5343,8 @@
         const chartConfig = {
           financialAssetsChart: { stacks: ['financialAssets'], anchorAge: 65 },
           compositionChart: { stacks: ['income'], anchorAge: 65 },
-          wealthCompositionChart: { stacks: ['assets', 'debts'], anchorAge: 65 }
+          wealthCompositionChart: { stacks: ['assets', 'debts'], anchorAge: 65 },
+          debtBreakdownChart: { stacks: ['debt'], anchorAge: 40 }
         }[chart.canvas?.id];
         if (!chartConfig) return;
         const { ctx, chartArea } = chart;
@@ -5790,6 +5904,21 @@
     wdReplace(baseDebtAuto, [12348,12665,12999,13348,13713,14258,14827,15420,16036,16677,17342,18030,18743,19479,20240,20732,21231,21738,22251,22788,23440,24184,24973,25763,26509,27169,27700,28060,28207,28120,27681,27135,26497,25786,25016,24204,23365,22514,21662,20810,19876,18857,17760,16597,15374,11911,10950,9933,8865,7751,6595,6000,5400,4800,4200,3600,3000,2500,2000,1600]);
     wdReplace(baseDebtConsumer, [13075,13411,13763,14133,14519,15584,16701,17873,19100,20383,21724,23126,24587,26110,27696,28834,30009,31219,32465,33774,35287,36972,38767,40604,42415,44125,45659,46938,47879,48429,48625,48617,48426,48073,47580,46969,46262,45484,44662,43787,42689,41339,39749,37924,35874,35733,32849,29799,26596,23253,19784,18100,16400,14800,13200,11600,10000,8500,7000,5500]);
 
+    // Convert the exact-age average-debt profile to a modeled median among
+    // debt-holding families. Ratios are calibrated to Statistics Canada SFS
+    // 2023 age-group median/average total-debt benchmarks and interpolated
+    // smoothly between age-group midpoints.
+    const WD_DEBT_RATIO_AGES = Object.freeze([27.5, 39.5, 49.5, 59.5, 72.5]);
+    const WD_DEBT_MEDIAN_TO_AVERAGE = Object.freeze([
+      80000 / 186600,
+      190000 / 287200,
+      160800 / 273000,
+      88000 / 199400,
+      28000 / 91400
+    ]);
+    const baseDebtMedianRatio = ageLabels.map(age =>
+      interpolateTFSAAnchors(Number(age), WD_DEBT_RATIO_AGES, WD_DEBT_MEDIAN_TO_AVERAGE));
+
     // Modeled income-source shares, separately calibrated by age.
     const wdIncomeShares = Object.freeze({
       employment: [0.88,0.8839447604881873,0.8877349154315194,0.8913701746550267,0.8948510262884872,0.8981786498264094,0.9013548313715365,0.90438188208218,0.9072625605985349,0.91,0.9124426463243992,0.9144606767842394,0.916091367485854,0.9173733950870666,0.9183464497472772,0.9190509011425525,0.9195275213964759,0.9198172672098285,0.9199611222494157,0.92,0.9198440077996101,0.9194009953785993,0.9187084520417853,0.9178038379530916,0.9167244968771686,0.91550759392486,0.9141900781028827,0.9128086693906555,0.9113998700584737,0.91,0.906290057141214,0.8982655826909804,0.8864383061324698,0.8713221352572171,0.8534302190014293,0.8332726234684772,0.8113546218940535,0.788175591360694,0.7642285041832271,0.74,0.7116291217198052,0.6763440755759133,0.6362541928532232,0.5934506678757986,0.55,0.5008732140122912,0.4443368909242481,0.3873724055561901,0.33694383304762465,0.3,0.2723846922806191,0.24562697080979884,0.22020152694273365,0.1965868090493733,0.17526451942138643,0.15671881012990868,0.14143517498233296,0.12989903682172663,0.12259403230774897,0.12000000000000004],
@@ -5867,7 +5996,7 @@
       if (!(WD_PROVINCE_MODEL.individualEmploymentIncome2027['Alberta'] > WD_PROVINCE_MODEL.individualEmploymentIncome2027['Ontario'])) fail('Alberta individual wage ranking');
       if (!(WD_PROVINCE_HOUSEHOLD_EMPLOYMENT_INCOME['Alberta'] > WD_PROVINCE_HOUSEHOLD_EMPLOYMENT_INCOME['Ontario'])) fail('Alberta household employment-income ranking');
       if (!(WD_PROVINCE_MODEL.householdNetWorth2027['British Columbia'] > WD_PROVINCE_MODEL.householdNetWorth2027['Ontario'])) fail('BC net worth ranking');
-      const series = [baseIncome,baseTotalIncome,baseNetWorth,baseSpendingMedian,baseHousingCostPct,baseSavingsRateMedian,baseDebtMortgage,baseDebtStudentLoan,baseDebtAuto,baseDebtConsumer,baseFinancialAssetsTotal,baseFinancialAssetsCash,baseFinancialAssetsTFSA,baseFinancialAssetsRegistered,baseFinancialAssetsNonRegistered];
+      const series = [baseIncome,baseTotalIncome,baseNetWorth,baseSpendingMedian,baseHousingCostPct,baseSavingsRateMedian,baseDebtMortgage,baseDebtStudentLoan,baseDebtAuto,baseDebtConsumer,baseDebtMedianRatio,baseFinancialAssetsTotal,baseFinancialAssetsCash,baseFinancialAssetsTFSA,baseFinancialAssetsRegistered,baseFinancialAssetsNonRegistered];
       if (series.some(a=>!Array.isArray(a)||a.length!==ageLabels.length)) fail('age-series length mismatch');
       for (let i=0;i<ageLabels.length;i++) {
         if (!(baseTotalIncomeP10[i] <= baseTotalIncomeP25[i] && baseTotalIncomeP25[i] <= baseTotalIncome[i] && baseTotalIncome[i] <= baseTotalIncomeP75[i] && baseTotalIncomeP75[i] <= baseTotalIncomeP90[i] && baseTotalIncomeP90[i] <= baseTotalIncomeP99[i])) fail('income percentile ordering age '+ageLabels[i]);
@@ -5875,6 +6004,7 @@
         if (baseHousingCostPct[i] < 0 || baseHousingCostPct[i] > 60) fail('housing burden range age '+ageLabels[i]);
         if (baseSpendingMedian[i] < 0) fail('negative spending age '+ageLabels[i]);
         if (i>0 && baseIncome[i] < 0) fail('negative employment income age '+ageLabels[i]);
+        if (!(baseDebtMedianRatio[i] > 0 && baseDebtMedianRatio[i] < 1)) fail('debt median ratio range age '+ageLabels[i]);
         const financialParts = baseFinancialAssetsCash[i] + baseFinancialAssetsTFSA[i] +
           baseFinancialAssetsRegistered[i] + baseFinancialAssetsNonRegistered[i];
         if (financialParts !== baseFinancialAssetsTotal[i]) fail('financial-assets reconciliation age '+ageLabels[i]);
@@ -6211,11 +6341,24 @@
         (function updateDebtBreakdown() {
           const unitScale = (unit === 'households') ? 1 : (1 / EQUIVALENCE_SCALE);
           // Mortgage scales with housing market (netWorthRatio); other debt scales with income
-          const mortgage = baseDebtMortgage.map(v => Math.round(v * netRatio * unitScale));
-          const student   = baseDebtStudentLoan.map(v => Math.round(v * incomeRatio * unitScale));
-          const auto      = baseDebtAuto.map(v => Math.round(v * incomeRatio * unitScale));
-          const consumer  = baseDebtConsumer.map(v => Math.round(v * incomeRatio * unitScale));
-          const totalDebt = mortgage.map((m,i) => m + student[i] + auto[i] + consumer[i]);
+          const averageMortgage = baseDebtMortgage.map(v => Math.round(v * netRatio * unitScale));
+          const averageStudent  = baseDebtStudentLoan.map(v => Math.round(v * incomeRatio * unitScale));
+          const averageAuto     = baseDebtAuto.map(v => Math.round(v * incomeRatio * unitScale));
+          const averageConsumer = baseDebtConsumer.map(v => Math.round(v * incomeRatio * unitScale));
+          const averageTotal = averageMortgage.map((value, index) =>
+            value + averageStudent[index] + averageAuto[index] + averageConsumer[index]);
+          const totalDebt = averageTotal.map((value, index) =>
+            Math.round(value * baseDebtMedianRatio[index]));
+          const mortgage = averageMortgage.map((value, index) =>
+            Math.round(value * baseDebtMedianRatio[index]));
+          const student = averageStudent.map((value, index) =>
+            Math.round(value * baseDebtMedianRatio[index]));
+          const auto = averageAuto.map((value, index) =>
+            Math.round(value * baseDebtMedianRatio[index]));
+          // Use consumer debt as the rounding residual so components reconcile
+          // exactly to the modeled median total at every age.
+          const consumer = totalDebt.map((value, index) =>
+            Math.max(0, value - mortgage[index] - student[index] - auto[index]));
           debtBreakdownChartInstance.data.labels = ageLabels;
           debtBreakdownChartInstance.data.datasets[0].data = mortgage;
           debtBreakdownChartInstance.data.datasets[1].data = student;
@@ -6227,8 +6370,8 @@
           debtBreakdownChartInstance.options.scales.y.min = 0;
           debtBreakdownChartInstance.options.scales.y.max = debtAxis.max;
           debtBreakdownChartInstance.options.scales.y.title.text = unit === 'households'
-            ? 'Total Debt ($ - Households)'
-            : 'Total Debt ($ - Individuals)';
+            ? 'Median Debt ($ - Households with Debt)'
+            : 'Median Debt ($ - Individuals with Debt)';
           if (debtBreakdownChartInstance.options.scales.x?.ticks) {
             debtBreakdownChartInstance.options.scales.x.ticks.callback = ageTickFormatter;
             debtBreakdownChartInstance.options.scales.x.ticks.autoSkip = false;
@@ -6499,7 +6642,7 @@
       const debtTitleEl = document.getElementById('debtBreakdownTitle');
       if (debtTitleEl) {
         const debtIcon = debtTitleEl.querySelector('.info-icon');
-        debtTitleEl.textContent = `Avg. Debt Breakdown by Age (${unitTitle}, ${BASE_YEAR}) - ${suffix}`;
+        debtTitleEl.textContent = `Median Debt Breakdown by Age (${unitTitle} with Debt, ${BASE_YEAR}) - ${suffix}`;
         if (debtIcon) debtTitleEl.appendChild(debtIcon);
       }
       // Update spending / discretionary / savings rate titles
@@ -6685,11 +6828,11 @@
       percentileIncomeChartInstance.data.datasets = [ { label: 'Income Distribution', data: incHist.points, backgroundColor: incColors, barPercentage: 0.98, categoryPercentage: 1, borderWidth: 0 } ];
       // Axes: X in dollars (linear), Y in percent probability
       percentileNetWorthChartInstance.options.scales = {
-        x: { type: 'linear', position: 'bottom', ticks: { color: '#b0c5e8', callback: (v)=> v >= 1e6 ? '$' + (v/1e6).toFixed(1) + 'M' : '$' + Math.round(v/1000) + 'k', maxTicksLimit: 10 }, grid: { color: 'rgba(255,255,255,0.05)' }, min: netHist.minX, max: netHist.maxX, title: { display: true, text: 'Net Worth ($)', color: '#e0e6ed' } },
+        x: { type: 'linear', position: 'bottom', offset: false, ticks: { color: '#b0c5e8', callback: compactChartDollar, maxTicksLimit: 10 }, grid: { offset: false, color: 'rgba(255,255,255,0.05)' }, min: netHist.minX, max: netHist.maxX, title: { display: true, text: 'Net Worth ($)', color: '#e0e6ed' } },
         y: { min: 0, ticks: { color: '#b0c5e8', callback: (v)=> v + '%' }, grid: { color: 'rgba(255,255,255,0.05)' }, title: { display: true, text: `Share of ${unitTitle} (%)`, color: '#e0e6ed' } }
       };
       percentileIncomeChartInstance.options.scales = {
-        x: { type: 'linear', position: 'bottom', ticks: { color: '#b0c5e8', callback: (v)=> '$' + Math.round(v/1000).toLocaleString() + 'k', maxTicksLimit: 10 }, grid: { color: 'rgba(255,255,255,0.05)' }, min: 0, max: incHist.maxX, title: { display: true, text: 'Employment Income ($)', color: '#e0e6ed' } },
+        x: { type: 'linear', position: 'bottom', offset: false, ticks: { color: '#b0c5e8', callback: compactChartDollar, maxTicksLimit: 10 }, grid: { offset: false, color: 'rgba(255,255,255,0.05)' }, min: 0, max: incHist.maxX, title: { display: true, text: 'Employment Income ($)', color: '#e0e6ed' } },
         y: { min: 0, ticks: { color: '#b0c5e8', callback: (v)=> v + '%' }, grid: { color: 'rgba(255,255,255,0.05)' }, title: { display: true, text: `Share of ${unitTitle} (%)`, color: '#e0e6ed' } }
       };
       // Save dist params for tooltips
@@ -6728,8 +6871,13 @@
         return `${formatPercentileLabel(pct)} — $${Math.round(x).toLocaleString()}`;
       };
       // Merge tooltip options instead of overwriting to preserve external handler
-      percentileNetWorthChartInstance.options.plugins.tooltip = Object.assign({}, percentileNetWorthChartInstance.options.plugins.tooltip || {}, { mode: 'nearest', intersect: false, callbacks: { label: histLabelPctile } });
-      percentileIncomeChartInstance.options.plugins.tooltip = Object.assign({}, percentileIncomeChartInstance.options.plugins.tooltip || {}, { mode: 'nearest', intersect: false, callbacks: { label: histLabelPctile } });
+      // Mutate the specific settings, not a shallow copy of Chart.js's resolved
+      // options proxy, so the standard tooltip callbacks keep their fallbacks.
+      [percentileNetWorthChartInstance, percentileIncomeChartInstance].forEach(chart => {
+        chart.options.plugins.tooltip.mode = 'nearest';
+        chart.options.plugins.tooltip.intersect = false;
+        chart.options.plugins.tooltip.callbacks.label = histLabelPctile;
+      });
       
       // Update histogram titles - preserve info-icons
       const netWorthHistEl = document.getElementById('percentileNetWorthTitle');
@@ -7435,6 +7583,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
         datasets: [
           {
             label: 'Mortgage / HELOC',
+            directLabel: 'Mortgage / HELOC',
             data: new Array(ageLabels.length).fill(0),
             borderColor: '#3b82f6',
             backgroundColor: 'rgba(59,130,246,0.75)',
@@ -7443,6 +7592,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
           },
           {
             label: 'Student Loans',
+            directLabel: 'Student loans',
             data: new Array(ageLabels.length).fill(0),
             borderColor: '#a855f7',
             backgroundColor: 'rgba(168,85,247,0.75)',
@@ -7451,6 +7601,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
           },
           {
             label: 'Auto Loans',
+            directLabel: 'Auto loans',
             data: new Array(ageLabels.length).fill(0),
             borderColor: '#f59e0b',
             backgroundColor: 'rgba(245,158,11,0.75)',
@@ -7459,6 +7610,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
           },
           {
             label: 'Consumer / Credit',
+            directLabel: 'Consumer / credit',
             data: new Array(ageLabels.length).fill(0),
             borderColor: '#f87171',
             backgroundColor: 'rgba(248,113,113,0.75)',
@@ -7466,7 +7618,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
             borderWidth: 0
           },
           {
-            label: 'Total Debt',
+            label: 'Median Total Debt',
             data: new Array(ageLabels.length).fill(0),
             borderColor: '#ffffff',
             backgroundColor: 'transparent',
@@ -7481,7 +7633,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
         step: 50000,
         axisLabels: {
           x: 'Age (Years)',
-          y: 'Total Debt ($ - Households)'
+          y: 'Median Debt ($ - Households with Debt)'
         }
       }, 'bar');
       if (debtBreakdownChartInstance?.options?.scales?.x) {
@@ -7661,8 +7813,13 @@ function createChart(canvasId, dataInfo, type = 'line') {
           : (window.Chart && window.Chart.instances ? Object.values(window.Chart.instances) : []);
         charts.forEach(chart => {
           if (chart && chart.tooltip && typeof chart.tooltip.setActiveElements === 'function') {
+            const wasActive = chart.$histogramPointer || chart.tooltip.getActiveElements().length || chart.getActiveElements().length;
+            chart.$histogramPointer = null;
+            chart.$tooltipDismissed = true;
+            chart.setActiveElements([]);
             chart.tooltip.setActiveElements([], { x: 0, y: 0 });
-            if (typeof chart.update === 'function') chart.update('none');
+            // draw() does not replay the last pointer event as update() does.
+            if (wasActive && typeof chart.draw === 'function') chart.draw();
           }
         });
         const tooltipEl = document.querySelector('.chartjs-tooltip');
@@ -7679,11 +7836,33 @@ function createChart(canvasId, dataInfo, type = 'line') {
         if (!e.target.closest('canvas.chart-canvas')) clearAllChartTooltips();
       });
 
-      let scrollTimeout;
-      document.addEventListener('scroll', () => {
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(clearAllChartTooltips, 80);
-      }, { passive: true });
+      document.addEventListener('scroll', clearAllChartTooltips, { passive: true, capture: true });
+      window.addEventListener('resize', clearAllChartTooltips, { passive: true });
+      window.visualViewport?.addEventListener('scroll', clearAllChartTooltips, { passive: true });
+
+      // A vertical swipe is page navigation, not a request to inspect a bar.
+      // A tap or mostly horizontal movement can still inspect chart values.
+      let touchGesture = null;
+      document.addEventListener('touchstart', event => {
+        const canvas = event.target.closest?.('canvas.chart-canvas');
+        const chart = canvas && Chart.getChart(canvas);
+        const touch = event.touches[0];
+        touchGesture = chart && touch ? { chart, x: touch.clientX, y: touch.clientY } : null;
+        if (chart) chart.$suppressTouchTooltip = false;
+        else clearAllChartTooltips();
+      }, { passive: true, capture: true });
+      document.addEventListener('touchmove', event => {
+        const touch = event.touches[0];
+        if (!touchGesture || !touch) return;
+        const dx = Math.abs(touch.clientX - touchGesture.x);
+        const dy = Math.abs(touch.clientY - touchGesture.y);
+        if (dy > 10 && dy > dx) {
+          touchGesture.chart.$suppressTouchTooltip = true;
+          clearAllChartTooltips();
+        }
+      }, { passive: true, capture: true });
+      document.addEventListener('touchend', () => { touchGesture = null; }, { passive: true });
+      document.addEventListener('touchcancel', () => { touchGesture = null; clearAllChartTooltips(); }, { passive: true });
     })();
 
     // Setup nav interactions and lazy initialization once DOM is ready
@@ -8257,7 +8436,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
       let axis = computeAxis(allVals, step);
       // These measures cannot fall below zero, even when a user marker expands
       // the displayed range.
-      if (chart === incomeChartInstance || chart === compositionChartInstance || chart === financialAssetsChartInstance) {
+      if (chart === incomeChartInstance || chart === compositionChartInstance || chart === financialAssetsChartInstance || chart === debtBreakdownChartInstance) {
         axis.min = 0;
       }
       // Savings rate chart: clamp to ±150% to prevent outlier base-data values from blowing the scale
@@ -8734,17 +8913,18 @@ function createChart(canvasId, dataInfo, type = 'line') {
         const userTotalDebt = (userMortgageVal || 0) + (userOtherMortgageVal || 0) + (userNonMortgageDebtVal || 0);
         const netRatio  = netWorthRatios[region] || 1;
         const unitScale = (unit === 'households') ? 1 : (1 / EQUIVALENCE_SCALE);
-        const avgDebt = Math.round((
+        const modeledAverageDebt = Math.round((
           baseDebtMortgage[idx]    * netRatio +
           baseDebtStudentLoan[idx] * incScale +
           baseDebtAuto[idx]        * incScale +
           baseDebtConsumer[idx]    * incScale
         ) * unitScale);
+        const medianDebt = Math.round(modeledAverageDebt * baseDebtMedianRatio[idx]);
         let debtPct;
         if (userTotalDebt <= 0) {
           debtPct = 5;
-        } else if (avgDebt > 0) {
-          const mu = Math.log(avgDebt) - 0.5;
+        } else if (medianDebt > 0) {
+          const mu = Math.log(medianDebt);
           const z  = (Math.log(userTotalDebt) - mu) / Math.sqrt(2);
           debtPct  = Math.round(50 * (1 + erf(z)));
           debtPct  = Math.max(1, Math.min(99, debtPct));
@@ -8753,7 +8933,7 @@ function createChart(canvasId, dataInfo, type = 'line') {
         }
         const debtEl = document.getElementById('debtTile');
         if (debtEl) debtEl.style.display = 'block';
-        setTile('debtTile', formatPercentileLabel(debtPct), `of your age group have less debt`);
+        setTile('debtTile', formatPercentileLabel(debtPct), `of debt-holding peers have less debt — median ${formatCurrency(medianDebt)}`);
       }
     }
     // Override with compact footer layout (PNG + Sources inline)
